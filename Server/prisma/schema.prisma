@@ -1,0 +1,237 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//Tablas con datos preestablecidos
+model EstadoProyecto {
+  idEstProyecto Int    @id @default(autoincrement())
+  nombre        String @db.VarChar(50)
+
+  proyecto Proyecto[]
+}
+
+model EstadoRetiro {
+  idEstRetiro Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(50)
+  retiro      Retiro[]
+}
+
+model TipoProyecto {
+  idTipoProyecto Int    @id @default(autoincrement())
+  nombre         String @db.VarChar(50)
+
+  proyecto Proyecto[]
+}
+
+model EstadoRouter {
+  idEstRouter Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(50)
+  router      Router[]
+}
+
+model EstadoInstalacion {
+  idEstInstalacion Int           @id @default(autoincrement())
+  nombre           String        @db.VarChar(50)
+  ldf              LDF_IPTV[]
+  panica           Panica_IPTV[]
+}
+
+model Tipo_OLT {
+  idTipo_OLT Int    @id @default(autoincrement())
+  nombre     String @db.VarChar(50)
+  olt        OLT[]
+}
+
+//Tablas dinamicas
+model OLT {
+  idOLT        Int    @id @default(autoincrement())
+  idTipo_OLT   Int
+  num_OLT      Int
+  ODF          Int
+  segmentoZona String @db.VarChar(100)
+  zona         String @db.VarChar(50)
+  ipGeneral    String @db.VarChar(60)
+
+  tipoOLT  Tipo_OLT       @relation(fields: [idTipo_OLT], references: [idTipo_OLT])
+  subredes Subredes_OLT[]
+}
+
+model Router {
+  idRouter    Int    @id @default(autoincrement())
+  idEstRouter Int
+  numActivo   Int
+  serie       String @db.VarChar(150)
+  macAddress  String @db.VarChar(150)
+
+  estadoRouter EstadoRouter @relation(fields: [idEstRouter], references: [idEstRouter])
+  proyecto     Proyecto[]
+}
+
+model ONT {
+  idONT             Int    @id @default(autoincrement())
+  potenciaRecepcion String @db.VarChar(70)
+  numActivo         Int
+  macAddress        String @db.VarChar(100)
+  numSN             String @db.VarChar(70)
+
+  proyecto Proyecto[]
+}
+
+model Proyecto {
+  idProyecto     Int      @id @default(autoincrement())
+  idTipoProyecto Int
+  idONT          Int
+  numCliente     String   @db.VarChar(70)
+  nombreCliente  String   @db.VarChar(70)
+  plan           String   @db.VarChar(70)
+  numOS          Int
+  PuertoNAT      Int
+  cajaDerivada   String   @db.VarChar(70)
+  idEstProyecto  Int
+  BW             Int
+  BW_KBPS        Int
+  idRouter       Int
+  comentario     String   @db.VarChar(100)
+  fecInstalacion DateTime
+  agente         String   @db.VarChar(50)
+
+  tipoProyecto     TipoProyecto          @relation(fields: [idTipoProyecto], references: [idTipoProyecto])
+  ont              ONT                   @relation(fields: [idONT], references: [idONT])
+  estadoProyecto   EstadoProyecto        @relation(fields: [idEstProyecto], references: [idEstProyecto])
+  router           Router                @relation(fields: [idRouter], references: [idRouter])
+  subredes         Subredes_OLT[]
+  condominio       Condominio[]
+  consecutivo      Consecutivo[]
+  direccionamiento Direccionamiento_IP[]
+}
+
+model Subredes_OLT {
+  idRed      Int    @id @default(autoincrement())
+  idProyecto Int
+  idOLT      Int
+  ip         String @db.VarChar(50)
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [idProyecto])
+  olt      OLT      @relation(fields: [idOLT], references: [idOLT])
+}
+
+model Condominio {
+  idCondominio   Int    @id @default(autoincrement())
+  idProyecto     Int
+  nombre         String @db.VarChar(50)
+  numCasa        Int
+  cloudMonitoreo String @db.VarChar(100)
+
+  proyecto   Proyecto     @relation(fields: [idProyecto], references: [idProyecto])
+  retiro     Retiro[]
+  estropeado Estropeado[]
+  ldf        LDF_IPTV[]
+}
+
+model Consecutivo {
+  idConsecutivo  Int    @id @default(autoincrement())
+  idProyecto     Int
+  nombre         String @db.VarChar(50)
+  cloudMonitoreo String @db.VarChar(100)
+
+  proyecto Proyecto      @relation(fields: [idProyecto], references: [idProyecto])
+  panica   Panica_IPTV[]
+}
+
+model Direccionamiento_IP {
+  idDireccionamiento Int    @id @default(autoincrement())
+  idProyecto         Int
+  subred             String @db.VarChar(50)
+  gateway            String @db.VarChar(80)
+  clienteIP          String @db.VarChar(50)
+  broadcast          String @db.VarChar(50)
+  punto              String @db.VarChar(50)
+  nota               String @db.VarChar(120)
+
+  proyecto Proyecto @relation(fields: [idProyecto], references: [idProyecto])
+}
+
+model Retiro {
+  idRetiro          Int      @id @default(autoincrement())
+  idCondominio      Int
+  osNuevo           Int //Puede estar nulo
+  osActual          Int //Se agrega el que tiene por defecto
+  idEstRetiro       Int
+  fecDesinstalacion DateTime
+  agente            String   @db.VarChar(50)
+
+  condominio Condominio   @relation(fields: [idCondominio], references: [idCondominio])
+  estRetiro  EstadoRetiro @relation(fields: [idEstRetiro], references: [idEstRetiro])
+}
+
+model Estropeado {
+  idEstropeado    Int      @id @default(autoincrement())
+  idCondominio    Int
+  fecInstalacion  DateTime
+  dispostivo      String   @db.VarChar(100)
+  direccionNueva  String   @db.VarChar(100)
+  direccionActual String   @db.VarChar(100)
+  comentario      String   @db.VarChar(100)
+
+  condominio Condominio @relation(fields: [idCondominio], references: [idCondominio])
+}
+
+model DNS_Stick {
+  idDNS          Int      @id @default(autoincrement())
+  correo         String   @db.VarChar(50)
+  clave          String   @db.VarChar(50)
+  macAddress     String   @db.VarChar(50)
+  dns            String   @db.VarChar(50)
+  fecInstalacion DateTime
+  comentario     String   @db.VarChar(100)
+
+  LDF_IPTV    LDF_IPTV[]
+  Panica_IPTV Panica_IPTV[]
+}
+
+model LDF_IPTV {
+  idLDF            Int      @id @default(autoincrement())
+  idCondominio     Int
+  idEstInstalacion Int
+  fecInstalacion   DateTime
+  comentario       String   @db.VarChar(100)
+  agente           String   @db.VarChar(50)
+  macAddress       String   @db.VarChar(50)
+  idDNS            Int
+  correo           String   @db.VarChar(50)
+  clave            String   @db.VarChar(50)
+  plan             String   @db.VarChar(50)
+
+  estInstalacion EstadoInstalacion @relation(fields: [idEstInstalacion], references: [idEstInstalacion])
+  condominio     Condominio        @relation(fields: [idCondominio], references: [idCondominio])
+  dns            DNS_Stick         @relation(fields: [idDNS], references: [idDNS])
+}
+
+model Panica_IPTV {
+  idPanica         Int      @id @default(autoincrement())
+  idConsecutivo    Int
+  idEstInstalacion Int
+  fecInstalacion   DateTime
+  comentario       String   @db.VarChar(100)
+  agente           String   @db.VarChar(50)
+  macAddress       String   @db.VarChar(50)
+  idDNS            Int
+  correo           String   @db.VarChar(50)
+  clave            String   @db.VarChar(50)
+  plan             String   @db.VarChar(50)
+
+  estInstalacion EstadoInstalacion @relation(fields: [idEstInstalacion], references: [idEstInstalacion])
+  consecutivo    Consecutivo       @relation(fields: [idConsecutivo], references: [idConsecutivo])
+  dns            DNS_Stick         @relation(fields: [idDNS], references: [idDNS])
+}
