@@ -3,6 +3,6 @@ export const estadoretiro = [
         nombre: "Deshabilitado",
     },
     {
-        nombre: "Pendiente deshabilitación",
+        nombre: "Pendiente deshabilitación", //Cambiar
     },
 ];

@@ -1,0 +1,165 @@
+<div
+  tabindex="-1"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+  [class.hidden]="!isVisible"
+>
+  <div class="relative p-6 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-lg">
+      <!-- Cerrar Modal -->
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+        data-modal-hide="update-modal"
+      >
+        <svg
+          class="w-4 h-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+          />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+
+      <!--Header-->
+      <div class="text-center p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Crear OLT</h3>
+      </div>
+
+      <!-- Formulario -->
+      <div class="p-6 space-y-4">
+        <form [formGroup]="oltForm" novalidate class="flex flex-col gap-4">
+       
+          <!-- Nombre de Tipo OLT -->
+          <div>
+            <label
+              for="nombreTipo"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Tipo OLT</label
+            >
+            <input
+              type="text"
+              id="nombreTipo"
+              name="nombreTipo"
+              formControlName="nombreTipo"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              #tipoInput
+              placeholder="Ingrese el nombre del tipo OLT"
+            />
+            <mat-error *ngIf="errorHandling('nombreTipo', 'required')">
+              El nombre del tipo de OLT es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          
+          <!--ODF-->
+          <div>
+            <label
+              for="ODF"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >ODF</label
+            >
+            <input
+              type="text"
+              id="ODF"
+              name="ODF"
+              formControlName="ODF"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="1234"
+              #odfInput
+              required
+            />
+            <mat-error *ngIf="errorHandling('ODF', 'required')">
+              El número de ODF es <strong>requerido</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Segmento de zona -->
+          <div>
+            <label
+              for="segmentoZona"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Segmento de zona</label
+            >
+            <input
+              type="text"
+              id="segmentoZona"
+              name="segmentoZona"
+              formControlName="segmentoZona"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese el segmento de zona"
+              #segmentoInput
+              required
+            />
+            <mat-error *ngIf="errorHandling('segmentoZona', 'required')">
+              El segmento de zona es <strong>requerido</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Ip General -->
+          <div>
+            <label
+              for="ipGeneral"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >IP Asignada</label
+            >
+            <input
+              type="text"
+              id="ipGeneral"
+              name="ipGeneral"
+              formControlName="ipGeneral"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              #serieInput
+              required
+              placeholder="Ingrese la IP General"
+            />
+            <mat-error *ngIf="errorHandling('ipGeneral', 'required')">
+              La dirección IP General es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Puerto NAT -->
+          <div>
+            <label
+              for="puertoNAT"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Puerto NAT</label
+            >
+            <input
+              type="text"
+              id="puertoNAT"
+              name="puertoNAT"
+              formControlName="puertoNAT"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              #puertoInput
+              required
+              placeholder="Ingrese el puerto NAT"
+            />
+            <mat-error *ngIf="errorHandling('puertoNAT', 'required')">
+              El puerto NAT es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Botón Crear -->
+          <div class="mt-6 text-center">
+            <button
+              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-10 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+              (click)="createOLT()"
+            >
+              Crear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-export const tipoproyecto = [
+export const tipocliente = [
     {
         nombre: "Los Delfines",
     },

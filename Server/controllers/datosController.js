@@ -60,3 +60,15 @@ module.exports.getTipoProyecto = async (request, response, next) => {
   });
   response.json(tipo);
 };
+
+//Tipo OLT
+
+//Get
+module.exports.getTipoOLT = async (request, response, next) => {
+  const tipo = await prisma.tipo_OLT.findMany({
+    orderBy: {
+      idTipo_OLT: "asc",
+    },
+  });
+  response.json(tipo);
+};

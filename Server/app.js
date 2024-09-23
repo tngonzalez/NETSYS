@@ -8,6 +8,10 @@ const app = express();
 const prism = new PrismaClient();
 //---Archivos de rutas---
 const datosRoutes = require('./routes/datosRoutes'); 
+const routerRoutes = require('./routes/routerRoutes'); 
+const ftthRoutes = require('./routes/ftthRoutes'); 
+const oltRoutes = require('./routes/oltRoutes'); 
+
 
 // Acceder a la configuracion del archivo .env
 dotEnv.config();
@@ -26,6 +30,9 @@ extended: true,
 );
 //---- Definir rutas ----
 app.use("/datos/", datosRoutes); 
+app.use("/router/", routerRoutes); 
+app.use("/ftth/", ftthRoutes); 
+app.use("/olt/", oltRoutes); 
 
 // Servidor
 app.listen(port, () => { 

@@ -1,0 +1,163 @@
+<div
+  tabindex="-1"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+  [class.hidden]="!isVisible"
+>
+  <div class="relative p-6 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-lg">
+
+      <!-- Cerrar Modal -->
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+        data-modal-hide="update-modal"
+      >
+        <svg
+          class="w-4 h-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+          />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+
+      <!--Header-->
+      <div class="text-center p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Crear dispositivo</h3>
+      </div>
+
+      <!-- Formulario -->
+      <div class="p-6 space-y-4">
+        <form [formGroup]="routerForm" novalidate class="flex flex-col gap-4">
+          <!--Estado-->            
+            <div>
+              <label
+                for="estado"
+              class="block mb-2 text-sm font-medium text-gray-700"
+                >Estado</label
+              >
+              <input
+                type="text"
+                id="estado"
+                name="estado"
+                formControlName="estado"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Disponible"
+                [attr.disabled]="true"
+              />
+            </div>
+
+            <!--Tipo Dispositivo-->
+            <div>
+              <label
+                for="activo"
+                class="block mb-2 text-sm font-medium text-gray-700"
+                >Tipo de dispositivo</label
+              >
+              <select
+              id="tipoDispositivo"
+              formControlName="tipoDispositivo"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              >
+              <option value="" disabled selected>Seleccione el tipo de dispositivo</option>
+              <option *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.label }}</option>
+              </select>
+              <mat-error *ngIf="errorHandling('tipoDispositivo', 'required')">
+                El tipo de dispositivo es <strong>requerida</strong>.
+              </mat-error>
+            </div>
+
+            <!-- Número de activo -->
+            <div>
+              <label
+                for="activo"
+                class="block mb-2 text-sm font-medium text-gray-700"
+                >Número de activo</label
+              >
+              <input
+                type="text"
+                id="activo"
+                name="activo"
+                formControlName="activo"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+                #activoInput
+                placeholder="Ingrese el número de activo"
+
+              />
+              <mat-error *ngIf="errorHandling('serie', 'required')">
+                El número de activo es <strong>requerida</strong>.
+              </mat-error>
+            </div>
+
+            <!-- Mac Address -->
+            <div>
+              <label
+                for="macAddress"
+                class="block mb-2 text-sm font-medium text-gray-700"
+                >Mac Address</label
+              >
+              <input
+                [ngModel]="router.macAddress"
+                type="text"
+                id="macAddress"
+                name="macAddress"
+                formControlName="macAddress"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                (ngModelChange)="macChange($event)"
+                placeholder="Ingrese la dirección MAC"
+                #macInput
+                required
+              />
+              <mat-error *ngIf="errorHandling('macAddress', 'required')">
+                El MAC Address es <strong>requerida</strong>.
+              </mat-error>
+            </div>
+
+            <!-- Serie -->
+            <div>
+              <label for="serie"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Serie</label
+              >
+              <input
+                [ngModel]="router.serie"
+                type="text"
+                id="serie"
+                name="serie"
+                formControlName="serie"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                #serieInput
+                required
+                placeholder="Ingrese el  número de serie"
+
+              />
+              <mat-error *ngIf="errorHandling('serie', 'required')">
+                El número de serie es <strong>requerida</strong>.
+              </mat-error>
+            </div>
+
+          <!-- Botón Crear -->
+          <div class="mt-6 text-center">
+            <button
+              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-10 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+              (click)="createRouter()"
+            >
+              Crear
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

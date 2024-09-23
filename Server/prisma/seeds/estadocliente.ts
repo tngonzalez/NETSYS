@@ -1,4 +1,4 @@
-export const estadoproyecto = [
+export const estadocliente = [
     {
         nombre: "Activo",
     },

@@ -1,0 +1,38 @@
+.sidebar-container {
+    width: 200px;
+    background-color: #89969C;
+    padding: 20px;
+    height: 100vh;
+  }
+  
+  .logo img {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  hr {
+    background-color: #E6E6E6;
+  }
+  
+  .menu-item {
+    width: 100%;
+    padding: 15px;
+    margin: 25px 0;
+    background-color: #909B9F;
+    color: #1B283B;
+    text-align: center;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: bold;
+    font-family: 'Saira Condonsed';
+    transition: background-color 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    }
+  
+  .menu-item:hover {
+    background-color: #1B283B;
+    color: white;
+    font-size: 17px;
+  }
+  

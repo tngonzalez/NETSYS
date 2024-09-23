@@ -1,0 +1,49 @@
+<div class="sidebar-container">
+    <!--Logo-->
+    <div class="logo">
+        <img src="../../../assets/logo.jpg" alt="Reico Logo" (click)="onItemSelected({ displayName: 'MAIN', route: '/main' })"
+        [ngClass]="{
+          'activo': router.isActive('/main', true)
+        }">
+    </div>
+    <hr>
+    <div class="my-10">
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'DASHBOARD', route: '/dashboard' })"
+          [ngClass]="{
+            'activo': router.isActive('/dashboard', true)
+          }">
+          <p>DASHBOARD</p>
+        </button>
+      
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'OLT', route: '/olt' })"
+          [ngClass]="{
+            'activo': router.isActive('/olt', true)
+          }">
+          <p>OLT</p>
+        </button>
+      
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'FTTH', route: '/ftth' })"
+          [ngClass]="{
+            'activo': router.isActive('/ftth', true)
+          }">
+          <p>FTTH</p>
+        </button>
+      
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'ROUTER', route: '/rtr' })"
+          [ngClass]="{
+            'activo': router.isActive('/rtr', true)
+          }">
+          <p>ROUTER</p>
+        </button>
+      
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'REPORTES', route: '/reportes' })"
+          [ngClass]="{
+            'activo': router.isActive('/reportes', true)
+          }">
+          <p>REPORTES</p>
+        </button>
+      </div>
+
+</div>
+
+
