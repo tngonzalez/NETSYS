@@ -4,15 +4,15 @@ const router = express.Router();
 const datos = require("../controllers/ftthController"); 
 
 router.get("/", datos.getFTTH); 
-//Ctr + k + c 
+router.get("/info", datos.getInfoCliente); 
+router.get("/bw", datos.getBW); 
+
 
 router.post("/crear", datos.create); 
-//router.put("/actualizar/:idRouter", datos.update); 
+router.put("/actualizar/:idCliente", datos.update); 
 
-//Filtros: Servicio + Estado + Id
-// router.get("/router/:idRouter", datos.getRouterById); 
-// router.get("/estado/:idEstado", datos.getRouterByEstado); 
+router.get("/ftth/:idCliente", datos.getFTTHById); 
 
-// router.delete("/eliminar/:idRouter", datos.deteleRouter); 
+router.delete("/eliminar/:idCliente", datos.delete); 
 
 module.exports = router;

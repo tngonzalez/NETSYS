@@ -3,6 +3,7 @@ CREATE TABLE `TipoCliente` (
     `idTipo` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(50) NOT NULL,
 
+    UNIQUE INDEX `TipoCliente_nombre_key`(`nombre`),
     PRIMARY KEY (`idTipo`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -90,7 +91,7 @@ CREATE TABLE `Zona_OLT` (
 CREATE TABLE `Condominio` (
     `idCondominio` INTEGER NOT NULL AUTO_INCREMENT,
     `zona` VARCHAR(100) NOT NULL,
-    `numCasa` INTEGER NOT NULL,
+    `numCasa` INTEGER NULL,
 
     PRIMARY KEY (`idCondominio`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -102,6 +103,7 @@ CREATE TABLE `InfoCliente` (
     `numero` VARCHAR(30) NOT NULL,
     `nombre` VARCHAR(100) NOT NULL,
 
+    UNIQUE INDEX `InfoCliente_numero_key`(`numero`),
     PRIMARY KEY (`idInfoCliente`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -122,10 +124,10 @@ CREATE TABLE `Cliente` (
     `idEstado` INTEGER NOT NULL,
     `idRouter` INTEGER NULL,
     `idBW` INTEGER NOT NULL,
-    `BW_KBPS` INTEGER NOT NULL,
-    `numOS` INTEGER NOT NULL,
+    `BW_KBPS` VARCHAR(50) NOT NULL,
+    `numOS` VARCHAR(50) NOT NULL,
     `cajaDerivada` VARCHAR(150) NOT NULL,
-    `fechaInstalacion` DATETIME(3) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NOT NULL,
     `comentario` VARCHAR(200) NOT NULL,
     `agente` VARCHAR(100) NOT NULL,
     `cloudMonitoreo` VARCHAR(150) NOT NULL,
@@ -147,7 +149,7 @@ CREATE TABLE `Retiro` (
     `idRetiro` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
     `idEstado` INTEGER NOT NULL,
-    `fechaDesinstalacion` DATETIME(3) NOT NULL,
+    `fechaDesinstalacion` VARCHAR(50) NOT NULL,
     `comentario` VARCHAR(200) NOT NULL,
     `agente` VARCHAR(100) NOT NULL,
 
@@ -166,12 +168,21 @@ CREATE TABLE `TipoDano` (
 CREATE TABLE `Danado` (
     `idDanado` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
-    `fechaInstalacion` DATETIME(3) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NOT NULL,
     `dispositivo` VARCHAR(150) NOT NULL,
     `direccionNueva` VARCHAR(100) NOT NULL,
     `direccionActual` VARCHAR(100) NOT NULL,
     `comentario` VARCHAR(200) NOT NULL,
     `idTipo` INTEGER NOT NULL,
+
+    PRIMARY KEY (`idDanado`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Suspencion` (
+    `idDanado` INTEGER NOT NULL AUTO_INCREMENT,
+    `idCliente` INTEGER NOT NULL,
+    `fechaSuspencion` VARCHAR(50) NOT NULL,
 
     PRIMARY KEY (`idDanado`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -191,7 +202,7 @@ CREATE TABLE `DNS_Stick` (
     `clave` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
     `dns` VARCHAR(100) NOT NULL,
-    `fechaInstalacion` DATETIME(3) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NOT NULL,
     `comentario` VARCHAR(200) NOT NULL,
 
     UNIQUE INDEX `DNS_Stick_macAddress_key`(`macAddress`),
@@ -204,7 +215,7 @@ CREATE TABLE `IPTV` (
     `idCliente` INTEGER NOT NULL,
     `idEstado` INTEGER NOT NULL,
     `idDNS` INTEGER NOT NULL,
-    `fechaInstalacion` DATETIME(3) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NOT NULL,
     `comentario` VARCHAR(200) NOT NULL,
     `agente` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
@@ -283,6 +294,9 @@ ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idCliente_fkey` FOREIGN KEY (`idClie
 
 -- AddForeignKey
 ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idTipo_fkey` FOREIGN KEY (`idTipo`) REFERENCES `TipoDano`(`idDano`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Suspencion` ADD CONSTRAINT `Suspencion_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;

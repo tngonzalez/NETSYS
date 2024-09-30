@@ -16,7 +16,7 @@ datasource db {
 //Tablas con datos preestablecidos
 model TipoCliente {
   idTipo Int    @id @default(autoincrement())
-  nombre String @db.VarChar(50)
+  nombre String @unique @db.VarChar(50)
 
   Cliente Cliente[]
 }
@@ -98,7 +98,7 @@ model Zona_OLT {
 model Condominio {
   idCondominio Int    @id @default(autoincrement())
   zona         String @db.VarChar(100)
-  numCasa      Int
+  numCasa      Int?
 
   infoCliente InfoCliente[]
 }
@@ -106,7 +106,7 @@ model Condominio {
 model InfoCliente {
   idInfoCliente Int    @id @default(autoincrement())
   idCondominio  Int
-  numero        String @db.VarChar(30)
+  numero        String @unique @db.VarChar(30)
   nombre        String @db.VarChar(100)
 
   condominio Condominio @relation(fields: [idCondominio], references: [idCondominio])
@@ -130,10 +130,10 @@ model Cliente {
   idEstado         Int
   idRouter         Int?
   idBW             Int
-  BW_KBPS          Int
-  numOS            Int
+  BW_KBPS          String   @db.VarChar(50)
+  numOS            String   @db.VarChar(50)
   cajaDerivada     String   @db.VarChar(150)
-  fechaInstalacion DateTime
+  fechaInstalacion String   @db.VarChar(50)
   comentario       String   @db.VarChar(200)
   agente           String   @db.VarChar(100)
   cloudMonitoreo   String   @unique @db.VarChar(150)
@@ -150,6 +150,8 @@ model Cliente {
   IPTV IPTV[]
 
   Danado Danado[]
+
+  Suspencion Suspencion[]
 }
 
 model EstadoRetiro {
@@ -163,7 +165,7 @@ model Retiro {
   idRetiro            Int      @id @default(autoincrement())
   idCliente           Int
   idEstado            Int
-  fechaDesinstalacion DateTime
+  fechaDesinstalacion String   @db.VarChar(50)
   comentario          String   @db.VarChar(200)
   agente              String   @db.VarChar(100)
 
@@ -181,7 +183,7 @@ model TipoDano {
 model Danado {
   idDanado         Int      @id @default(autoincrement())
   idCliente        Int
-  fechaInstalacion DateTime
+  fechaInstalacion String   @db.VarChar(50)
   dispositivo      String   @db.VarChar(150)
   direccionNueva   String   @db.VarChar(100)
   direccionActual  String   @db.VarChar(100)
@@ -190,6 +192,14 @@ model Danado {
 
   cliente   Cliente?   @relation(fields: [idCliente], references: [idCliente])
   tipo TipoDano @relation(fields: [idTipo], references: [idDano])
+}
+
+model Suspencion {
+  idDanado         Int      @id @default(autoincrement())
+  idCliente        Int
+  fechaSuspencion String   @db.VarChar(50)
+
+  cliente   Cliente?   @relation(fields: [idCliente], references: [idCliente])
 }
 
 model EstadoInstalacion {
@@ -205,7 +215,7 @@ model DNS_Stick {
   clave            String   @db.VarChar(100)
   macAddress       String   @unique @db.VarChar(100)
   dns              String   @db.VarChar(100)
-  fechaInstalacion DateTime
+  fechaInstalacion String   @db.VarChar(50)
   comentario       String   @db.VarChar(200)
 
   iptv IPTV[]
@@ -216,7 +226,7 @@ model IPTV {
   idCliente        Int
   idEstado         Int
   idDNS            Int
-  fechaInstalacion DateTime
+  fechaInstalacion String   @db.VarChar(50)
   comentario       String   @db.VarChar(200)
   agente           String   @db.VarChar(100)
   macAddress       String   @unique @db.VarChar(100)

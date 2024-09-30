@@ -29,6 +29,7 @@ module.exports.get = async (request, response, next) => {
           segmentoZona: o.segmentoZona,
           ipGeneral: o.ipGeneral,
           puertoNAT: o.puertoNAT,
+          combo: o.nombreTipo + " - " + o.ipGeneral, 
           existeRouter,
         };
       })
@@ -133,28 +134,6 @@ module.exports.update = async (request, response, next) => {
       },
     });
 
-    //  //New Zona - Array List
-    // let createdZonas = [];
-    // for(const nombre of data.zona) {
-
-    //   const existingZona = await prisma.zona_OLT.findFirst({
-    //     where: {
-    //       nombreZona: nombre
-    //     },
-    //   });
-
-    //   if(!existingZona) {
-
-    //     const newZona = await prisma.zona_OLT.create({
-    //       data:{
-    //         idOLT:idOLT,
-    //         nombreZona: nombre,
-    //       },
-    //     });
-
-    //     createdZonas.push(newZona);
-    //   } }
-
     response.json({
       olt: newOLT,
     });
@@ -170,3 +149,58 @@ module.exports.update = async (request, response, next) => {
 };
 
 //Reporte
+
+//Select Subred By IdOLT 
+module.exports.getSubrededByIdOLT = async (request, response, next) => {
+  try {
+    const idOLT = parseInt(request.params.idOLT);
+
+    const olt = await prisma.oLT.findUnique({
+      where: { idOLT: idOLT },
+    });
+
+    if (!olt) {
+      return response.status(404).json({ message: "OLT no encontrado" });
+    }
+
+    const ipGeneral = olt.ipGeneral.split('.').slice(0, 3).join('.');
+
+    //Subredes Existentes
+    const subredesExistentes = await prisma.subred_OLT.findMany({
+      where: {
+        idOLT: idOLT,
+        ip: {
+          startsWith: ipGeneral,
+        },
+      },
+    });
+
+    //Extre  el ultimo segmento de la IP
+    const ipsUsadas = subredesExistentes.map((subred) => {
+      return parseInt(subred.ip.split('.')[3]); 
+    });
+
+    // Generar una lista de las disponibles y excluyendo las asignadas
+    const subredesDisponibles = [];
+    for (let i = 50; i <= 254; i++) {
+      if (!ipsUsadas.includes(i)) {
+        subredesDisponibles.push(`${ipGeneral}.${i}`);
+      }
+    }
+
+    //Ordena subred: menor a mayor
+    subredesDisponibles.sort((a, b) => {
+      return parseInt(a.split('.')[3]) - parseInt(b.split('.')[3]);
+    });
+
+    //Selecciona las primeras 5 IPs
+    const subredesSeleccionadas = subredesDisponibles.slice(0, 5);
+
+    response.json({
+      subredesDisponibles: subredesSeleccionadas,
+    });
+    
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};

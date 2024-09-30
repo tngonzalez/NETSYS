@@ -9,6 +9,8 @@ router.post("/crear", olt.create);
 router.put("/actualizar/:idOLT", olt.update); 
 
 router.get("/olt/:idOLT", olt.getOLTById); 
+router.get("/red/:idOLT", olt.getSubrededByIdOLT); 
+
 
 router.delete("/eliminar/:idOLT", olt.deteleOLT); 
 

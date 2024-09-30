@@ -11,6 +11,7 @@ const datosRoutes = require('./routes/datosRoutes');
 const routerRoutes = require('./routes/routerRoutes'); 
 const ftthRoutes = require('./routes/ftthRoutes'); 
 const oltRoutes = require('./routes/oltRoutes'); 
+const servicesRoutes = require('./routes/servicesRoutes'); 
 
 
 // Acceder a la configuracion del archivo .env
@@ -33,6 +34,8 @@ app.use("/datos/", datosRoutes);
 app.use("/router/", routerRoutes); 
 app.use("/ftth/", ftthRoutes); 
 app.use("/olt/", oltRoutes); 
+app.use("/service/", servicesRoutes); 
+
 
 // Servidor
 app.listen(port, () => { 
