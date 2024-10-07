@@ -172,11 +172,11 @@ export class FtthIndexComponent implements AfterViewInit {
   selectedService: string | null = null;
 
   //Dropdown services
-  servicesChange(tipo: string) {
-    console.log(tipo); 
-    if (tipo) {
+  servicesChange(event: Event) {
+    console.log(event); 
+    if (event) {
       this.filteredData = this.datos.filter(
-        (i: any) => i.tipoCliente && i.tipoCliente.toString() === tipo
+        (i: any) => i.tipoCliente && i.tipoCliente.toString() === event
       );
     } else {
       this.filteredData = this.datos;
@@ -206,6 +206,10 @@ export class FtthIndexComponent implements AfterViewInit {
 
   redirectDetalle(id: any) {
     this.ftthDetalleModal.openModal(id);
+  }
+
+  redirectService() {
+    this.router.navigate(['service/']);
   }
 
   ngOnDestroy() {

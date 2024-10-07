@@ -11,7 +11,8 @@ import { OltModule } from './olt/olt.module';
 import { MainModule } from './main/main.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { FtthModule } from './ftth/ftth.module';
-
+import { ServiceModule } from './service/service.module';
+import 'flowbite';
 
 
 @NgModule ({
@@ -28,6 +29,7 @@ import { FtthModule } from './ftth/ftth.module';
     MainModule,
     DashboardModule,
     FtthModule,
+    ServiceModule,
 
   ],
   providers: [],

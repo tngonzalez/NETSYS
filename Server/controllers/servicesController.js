@@ -69,6 +69,40 @@ module.exports.getTipoClienteById = async (request, response, next) => {
   }
 };
 
+//Get Basic
+module.exports.getTipoById = async (request, response, next) => {
+  try {
+    let idTipo = parseInt(request.params.idTipo);
+
+    const services = await prisma.tipoCliente.findUnique({
+      where: { idTipo: idTipo },
+      include: {
+        Cliente: {
+          include: {
+            estado: true,
+          },
+        },
+      },
+    });
+
+    if (!services) {
+      return response.status(404).json({
+        message: "Error en la solicitud",
+      });
+    }
+
+    //Agrupar clientes por estado
+    const data = {
+      id: services.idTipo,
+      service: services.nombre,
+    };
+
+    response.json(data);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
 module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
@@ -95,12 +129,11 @@ module.exports.create = async (request, response, next) => {
 
 module.exports.update = async (request, response, next) => {
   try {
-    let idTipo = parseInt(request.params.idTipo);
     const data = request.body;
 
     const newService = await prisma.tipoCliente.update({
       where: {
-        idTipo: idTipo,
+        idTipo: data.idTipo,
       },
       data: {
         nombre: data.nombre,

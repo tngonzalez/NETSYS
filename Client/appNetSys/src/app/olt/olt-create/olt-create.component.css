@@ -1,0 +1,6 @@
+.desactivado {
+    background-color: #e9ecef; /* Gris claro */
+    color: #6c757d;            /* Color del texto gris */
+    cursor: not-allowed;        /* Cambia el cursor a no permitido */
+    opacity: 0.9; 
+  }

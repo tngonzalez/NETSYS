@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -11,9 +12,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { GenericService } from '../../shared/generic.service';
 import { NotificacionService } from '../../shared/notificacion.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { Datepicker } from 'flowbite';
-import type { DatepickerOptions, DatepickerInterface } from 'flowbite';
-import type { InstanceOptions } from 'flowbite';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-ftth-create',
@@ -58,26 +58,31 @@ export class FtthCreateComponent implements OnInit {
   destroy$: Subject<boolean> = new Subject<boolean>();
   respuesta: any;
   infoCliente: any;
-  displayedColumns: string[] = ['numero', 'accion'];
+  displayedColumns: string[] = ['nombre','numero', 'accion'];
+  displayedRouter: string[] = ['activo', 'serie', 'macAddress', 'accion'];
   filteredData: any;
 
   olts: any[] = [];
   router: any[] = [];
   bw: any[] = [];
   servicios: any[] = [];
-
+  subredes: any[] = [];
+  selectedOLT: number = 0;
+  selectedServices: number = 0;
+  selectedBW: number = 0;
+  
   createVisible: boolean = true;
   tableVisiblie: boolean = false;
   btnVisible: boolean = true;
 
   dataSource = new MatTableDataSource<any>();
   dataRouter = new MatTableDataSource<any>();
-
+  
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() ftthCrearModal: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('searchInput') searchInput!: ElementRef;
-  $datepickerEl: HTMLInputElement = document.getElementById(
-    'datepicker-custom'
-  ) as HTMLInputElement;
+
 
   constructor(
     public fb: FormBuilder,
@@ -101,7 +106,7 @@ export class FtthCreateComponent implements OnInit {
       numero: [null, Validators.required],
       nombre: [null, Validators.required],
       zona: [null, Validators.required],
-      numCasa: [null, Validators.required],
+      numCasa: [null, null],
       potenciaRecepcion: [null, Validators.required],
       numActivo: [null, Validators.required],
       macAdress: [null, Validators.required],
@@ -111,7 +116,7 @@ export class FtthCreateComponent implements OnInit {
       ip: [null, Validators.required],
       idRouter: [null, Validators.required],
       idTipo: [null, Validators.required],
-      idEstado: [null, Validators.required],
+      idEstado: [1],
       idBW: [null, Validators.required],
       kbps: [null, Validators.required],
       numOS: [null, Validators.required],
@@ -124,31 +129,20 @@ export class FtthCreateComponent implements OnInit {
     });
   }
 
-  //   options: DatepickerOptions = {
-  //     defaultDatepickerId: null,
-  //     autohide: false,
-  //     format: 'mm-dd-yyyy',
-  //     maxDate: null,
-  //     minDate: null,
-  //     orientation: 'bottom',
-  //     buttons: false,
-  //     autoSelectToday: 0,
-  //     title: null,
-  //     rangePicker: false,
-  //     onShow: () => {},
-  //     onHide: () => {},
-  // };
+  openModal() {
+    this.isVisible = true;
+    this.fetchSubredes(this.selectedOLT);
+  }
 
-  // instanceOptions: InstanceOptions = {
-  //   id: 'datepicker-custom-example',
-  //   override: true
-  // };
-
-  // datepicker: DatepickerInterface = new Datepicker(
-  //   // Datepicker,
-  //   // options,
-  //   // instanceOptions
-  // );
+  closeModal() {
+    this.submitted = false;
+    this.ftthForm.reset();
+    this.ftthCrearModal.emit();
+    this.isVisible = false;
+    this.createVisible = true;
+    this.btnVisible = true;
+    this.tableVisiblie = false;
+  }
 
   fetchServicios() {
     this.gService
@@ -157,6 +151,12 @@ export class FtthCreateComponent implements OnInit {
       .subscribe((response: any) => {
         this.servicios = response;
         console.log(this.servicios);
+
+        if (this.servicios && this.servicios.length > 0) {
+          this.ftthForm.patchValue({ idTipo: this.servicios[0].id });
+          this.selectedServices = this.servicios[0].id;
+        }
+
       });
   }
 
@@ -167,6 +167,12 @@ export class FtthCreateComponent implements OnInit {
       .subscribe((response: any) => {
         this.olts = response;
         console.log(this.olts);
+
+        if (this.olts && this.olts.length > 0) {
+          this.ftthForm.patchValue({ idOLT: this.olts[0].idOLT });
+          this.selectedOLT = this.olts[0].idOLT;
+          this.fetchSubredes(this.selectedOLT);
+        }
       });
   }
 
@@ -186,12 +192,17 @@ export class FtthCreateComponent implements OnInit {
 
   fetchRouter() {
     this.gService
-      .list('router/estado/2')
+      .list('router/estado/1')
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.router = response;
         console.log(this.router);
         this.dataRouter = new MatTableDataSource(this.router);
+        this.dataRouter.sort = this.sort;
+        this.dataRouter.paginator = this.paginator;
+      
+      }, error => {
+        console.error('Error Fetch ', error); 
       });
   }
 
@@ -202,27 +213,35 @@ export class FtthCreateComponent implements OnInit {
       .subscribe((response: any) => {
         this.bw = response;
         console.log(this.bw);
+
+        
+        if (this.bw && this.bw.length > 0) {
+          this.ftthForm.patchValue({ idBW: this.bw[0].id});
+          this.selectedBW = this.bw[0].id;
+        }
       });
   }
 
-  openModal() {
-    this.isVisible = true;
+  //Renderizar las subredes
+  fetchSubredes(idOLT: number): void {
+    this.gService
+      .get('olt/red', idOLT)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response: any) => {
+        if (response.subredesDisponibles) {
+          this.subredes = response.subredesDisponibles;
+
+          if (this.subredes && this.subredes.length > 0) {
+            this.ftthForm.patchValue({ ip: this.subredes[0] });
+          }
+        } else {
+          this.subredes = [];
+        }
+        console.log(this.subredes);
+      });
   }
 
-  closeModal() {
-    this.submitted = false;
-    this.ftthForm.reset();
-    this.ftthCrearModal.emit();
-    this.isVisible = false;
-    this.createVisible = true;
-    this.btnVisible = true;
-    this.tableVisiblie = false;
-  }
-
-  //Crear
-  crearFtth() {}
-
-  //Buscar por cliente
+  //Buscar por cliente - Tabla
   numberChange(event: any) {
     const numero = event.target.value.trim().toUpperCase();
     if (numero !== '') {
@@ -237,13 +256,13 @@ export class FtthCreateComponent implements OnInit {
     this.updateTable(this.filteredData);
   }
 
-  onStatusChange(event: Event) {
+  //Dropdown
+  onOLTChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedId = Number(selectElement.value);
 
-    this.ftthForm.patchValue({
-      idOLT: selectedId,
-    });
+    this.fetchSubredes(selectedId);
+    console.log(selectedId);
   }
 
   onBWChange(event: Event) {
@@ -279,14 +298,34 @@ export class FtthCreateComponent implements OnInit {
     this.updateTable(this.filteredData);
   }
 
-  updateTable(data: any) {
-    this.dataSource.data = data;
-  }
-
   searchCliente() {
     this.createVisible = false;
     this.btnVisible = false;
     this.tableVisiblie = true;
+  }
+
+  updateTable(data: any) {
+    this.dataSource.data = data;
+  }
+
+  //Tables: Cliente + Router
+  selectCliente(numero: number) {
+    this.ftthForm.patchValue({
+      numero: numero,
+    });
+  }
+
+  selectRouter(id: number) {
+    this.ftthForm.patchValue({
+      idRouter: id,
+    });
+
+  }
+
+  //Crear
+  createFTTH(){
+    console.log(this.ftthForm.value); 
+
   }
 
   ngOnDestroy() {
@@ -297,13 +336,13 @@ export class FtthCreateComponent implements OnInit {
   onReset() {
     this.ftthForm.reset();
   }
-  
+
   // Control de Errores
-  // public errorHandling = (control: string, error: string) => {
-  //   return (
-  //     this.ftthForm.controls[control].hasError(error) &&
-  //     this.ftthForm.controls[control].invalid &&
-  //     (this.makeSubmit || this.ftthForm.controls[control].touched)
-  //   );
-  // };
+  public errorHandling = (control: string, error: string) => {
+    return (
+      this.ftthForm.controls[control].hasError(error) &&
+      this.ftthForm.controls[control].invalid &&
+      (this.makeSubmit || this.ftthForm.controls[control].touched)
+    );
+  };
 }

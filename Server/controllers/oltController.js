@@ -123,13 +123,12 @@ module.exports.update = async (request, response, next) => {
 
     const newOLT = await prisma.oLT.update({
       where: {
-        idOLT: idOLT,
+        idOLT: data.idOLT,
       },
       data: {
         nombreTipo: data.nombreTipo,
         ODF: parseInt(data.ODF),
         segmentoZona: data.segmentoZona,
-        ipGeneral: data.ipGeneral,
         puertoNAT: data.puertoNAT,
       },
     });

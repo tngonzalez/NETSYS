@@ -31,7 +31,7 @@
 
       <!--Header-->
       <div class="text-center p-6 border-b border-gray-200">
-        <h3 class="text-xl font-semibold text-gray-800">Crear OLT</h3>
+        <h3 class="text-xl font-semibold text-gray-800">{{titleForm}} OLT</h3>
       </div>
 
       <!-- Formulario -->
@@ -55,7 +55,7 @@
               #tipoInput
               placeholder="Ingrese el nombre del tipo OLT"
             />
-            <mat-error *ngIf="errorHandling('nombreTipo', 'required')">
+            <mat-error  *ngIf="errorHandling('nombreTipo', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
               El nombre del tipo de OLT es <strong>requerida</strong>.
             </mat-error>
           </div>
@@ -78,7 +78,7 @@
               #odfInput
               required
             />
-            <mat-error *ngIf="errorHandling('ODF', 'required')">
+            <mat-error  *ngIf="errorHandling('ODF', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
               El número de ODF es <strong>requerido</strong>.
             </mat-error>
           </div>
@@ -100,7 +100,7 @@
               #segmentoInput
               required
             />
-            <mat-error *ngIf="errorHandling('segmentoZona', 'required')">
+            <mat-error *ngIf="errorHandling('segmentoZona', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
               El segmento de zona es <strong>requerido</strong>.
             </mat-error>
           </div>
@@ -121,8 +121,9 @@
               #serieInput
               required
               placeholder="Ingrese la IP General"
+              [ngClass]="{desactivado: oltForm.get('ipGeneral')?.disabled}"
             />
-            <mat-error *ngIf="errorHandling('ipGeneral', 'required')">
+            <mat-error  *ngIf="errorHandling('ipGeneral', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
               La dirección IP General es <strong>requerida</strong>.
             </mat-error>
           </div>
@@ -144,18 +145,26 @@
               required
               placeholder="Ingrese el puerto NAT"
             />
-            <mat-error *ngIf="errorHandling('puertoNAT', 'required')">
+            <mat-error  *ngIf="errorHandling('puertoNAT', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
               El puerto NAT es <strong>requerida</strong>.
             </mat-error>
           </div>
 
-          <!-- Botón Crear -->
-          <div class="mt-6 text-center">
+           <!-- Botones -->
+           <div class="flex justify-center p-4">
             <button
-              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-10 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+              type="submit"
               (click)="createOLT()"
+              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
             >
-              Crear
+              Guardar
+            </button>
+            <button
+              type="submit"
+              (click)="closeModal()"
+              class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+            >
+              Cancelar
             </button>
           </div>
         </form>

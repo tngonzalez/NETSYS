@@ -11,7 +11,6 @@
         type="button"
         (click)="closeModal()"
         class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
-        data-modal-hide="update-modal"
       >
         <svg
           class="w-4 h-4"
@@ -59,7 +58,7 @@
             <!--Tipo Dispositivo-->
             <div>
               <label
-                for="activo"
+                for="tipoDispositivo"
                 class="block mb-2 text-sm font-medium text-gray-700"
                 >Tipo de dispositivo</label
               >
@@ -69,10 +68,10 @@
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               >
-              <option value="" disabled selected>Seleccione el tipo de dispositivo</option>
+              <option value="" selected>Dispositivos</option>
               <option *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.label }}</option>
               </select>
-              <mat-error *ngIf="errorHandling('tipoDispositivo', 'required')">
+              <mat-error *ngIf="errorHandling('tipoDispositivo', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
                 El tipo de dispositivo es <strong>requerida</strong>.
               </mat-error>
             </div>
@@ -95,7 +94,7 @@
                 placeholder="Ingrese el número de activo"
 
               />
-              <mat-error *ngIf="errorHandling('serie', 'required')">
+              <mat-error *ngIf="errorHandling('serie', 'required')"  class="mt-2 text-sm text-red-600 dark:text-red-500">
                 El número de activo es <strong>requerida</strong>.
               </mat-error>
             </div>
@@ -119,7 +118,7 @@
                 #macInput
                 required
               />
-              <mat-error *ngIf="errorHandling('macAddress', 'required')">
+              <mat-error *ngIf="errorHandling('macAddress', 'required')"  class="mt-2 text-sm text-red-600 dark:text-red-500">
                 El MAC Address es <strong>requerida</strong>.
               </mat-error>
             </div>
@@ -142,7 +141,7 @@
                 placeholder="Ingrese el  número de serie"
 
               />
-              <mat-error *ngIf="errorHandling('serie', 'required')">
+              <mat-error *ngIf="errorHandling('serie', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
                 El número de serie es <strong>requerida</strong>.
               </mat-error>
             </div>
@@ -150,6 +149,7 @@
           <!-- Botón Crear -->
           <div class="mt-6 text-center">
             <button
+              type="submit"
               class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-10 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
               (click)="createRouter()"
             >

@@ -134,7 +134,7 @@ model Cliente {
   numOS            String   @db.VarChar(50)
   cajaDerivada     String   @db.VarChar(150)
   fechaInstalacion String   @db.VarChar(50)
-  comentario       String   @db.VarChar(200)
+  comentario       String?   @db.VarChar(200)
   agente           String   @db.VarChar(100)
   cloudMonitoreo   String   @unique @db.VarChar(150)
 

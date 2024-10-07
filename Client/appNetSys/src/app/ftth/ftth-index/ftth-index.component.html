@@ -6,9 +6,37 @@
         <h2 class="">Servicio FTTH</h2>
       </header>
 
-      <div
-        class="mx-5 my-5 h-fit rounded-lg p-2 justify-center gap-2 drop-shadow-sm"
-      >
+      <div class="mx-5 my-5 h-fit rounded-lg justify-center drop-shadow-sm">
+        <!-- ========== Agregar + Informe + Servicios ========== -->
+        <div class="grid justify-items-end pr-10 pb-2">
+          <button
+            type="button"
+            (click)="crear()"
+            class="btn-method py-2.5 px-7 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
+          >
+            <img src="../../../assets/img/router_icon.png" />
+            <p>Agregar</p>
+          </button>
+
+          <button
+            type="button"
+            (click)="crear()"
+            class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
+          >
+            <img src="../../../assets/img/inform_icon.png" />
+            <p>Informe</p>
+          </button>
+
+          <button
+            type="button"
+            (click)="redirectService()"
+            class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
+          >
+            <img src="../../../assets/img/add_service_ftth.png" />
+            <p>Servicios</p>
+          </button>
+        </div>
+
         <!--Área de botones-->
         <div class="flex w-full items-center justify-between py-3">
           <div class="flex mx-2">
@@ -16,6 +44,7 @@
             <form class="mx-2">
               <select
                 id="servicios"
+                name="servicios"
                 [(ngModel)]="selectedService"
                 [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="servicesChange($event)"
@@ -44,6 +73,8 @@
                 </option>
               </select>
             </form>
+
+            <span class="mx-80 example-spacer"></span>
 
             <!-- ========== Buscar por cliente  ========== -->
 
@@ -78,29 +109,6 @@
                 />
               </div>
             </div>
-          </div>
-
-          <span class="mx-40 example-spacer"></span>
-
-          <!-- ========== Agregar + Informe ========== -->
-          <div class="flex gap-3">
-            <button
-              type="button"
-              (click)="crear()"
-              class="btn-method py-2.5 px-7 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
-            >
-              <img src="../../../assets/img/router_icon.png" />
-              <p>Agregar</p>
-            </button>
-
-            <button
-              type="button"
-              (click)="crear()"
-              class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
-            >
-              <img src="../../../assets/img/inform_icon.png" />
-              <p>Informe</p>
-            </button>
           </div>
         </div>
 

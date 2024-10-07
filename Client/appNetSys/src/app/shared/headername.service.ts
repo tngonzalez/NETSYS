@@ -12,11 +12,14 @@ export class HeaderNameService {
         url = url.replace(/\/\d{1,2}$/, '');
         
         switch(url){
+            case '/dashboard': { 
+                return 'DASHBOARD' 
+             } 
             case '/ip': { 
                 return 'IP' 
              } 
-             case '/fttch': {
-                    return 'FTTCH'
+             case '/ftth': {
+                    return 'FTTH'
              } 
              case '/rtr': { 
                 return 'ROUTER'

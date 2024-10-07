@@ -7,7 +7,6 @@ import { MatSort } from '@angular/material/sort';
 import { GenericService } from '../../shared/generic.service';
 import { Router } from '@angular/router';
 import { OltCreateComponent } from '../olt-create/olt-create.component';
-import { OltUpdateComponent } from '../olt-update/olt-update.component';
 import { OltDeleteComponent } from '../olt-delete/olt-delete.component';
 import { OltDetalleComponent } from '../olt-detalle/olt-detalle.component';
 
@@ -28,7 +27,6 @@ export class OltIndexComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild('oltFormModal') oltFormModal!: OltCreateComponent;
-  @ViewChild('oltUpdateModal') oltUpdateModal!: OltUpdateComponent;
   @ViewChild('oltDeleteModal') oltDeleteModal!: OltDeleteComponent;
   @ViewChild('oltDetalleModal') oltDetalleModal!: OltDetalleComponent;
 
@@ -42,9 +40,6 @@ export class OltIndexComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.oltDeleteModal.oltDeleteModal.subscribe(() => {
-      this.fetchOLT(); 
-    });
-    this.oltUpdateModal.oltActualizar.subscribe(() => {
       this.fetchOLT(); 
     });
     this.oltDetalleModal.oltDetalleModal.subscribe(() => {
@@ -115,7 +110,7 @@ export class OltIndexComponent implements AfterViewInit {
   }
 
   update(id: any) {
-    this.oltUpdateModal.openModal(id);
+    this.oltFormModal.openModal(id);
   }
 
   deleteRouter(id: any) {

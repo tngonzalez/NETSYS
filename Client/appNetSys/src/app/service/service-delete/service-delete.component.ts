@@ -2,26 +2,23 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { GenericService } from '../../shared/generic.service';
-import {
-  NotificacionService,
-  TipoMessage,
-} from '../../shared/notificacion.service';
+import { NotificacionService, TipoMessage } from '../../shared/notificacion.service';
 
 @Component({
-  selector: 'app-olt-delete',
-  templateUrl: './olt-delete.component.html',
-  styleUrls: ['./olt-delete.component.css'],
+  selector: 'app-service-delete',
+  templateUrl: './service-delete.component.html',
+  styleUrl: './service-delete.component.css'
 })
-export class OltDeleteComponent {
+export class ServiceDeleteComponent {
   isVisible = false;
-  idO: number = 0;
+  idS: number = 0;
 
   respuesta: any;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  @Input() idOLT: number | null = null;
-  @Output() oltDeleteModal: EventEmitter<void> = new EventEmitter<void>();
+  @Input() idService: number | null = null;
+  @Output() serviceDeleteModal: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     public fb: FormBuilder,
@@ -30,7 +27,7 @@ export class OltDeleteComponent {
   ) {}
 
   openModal(id: any) {
-    this.idO = id;
+    this.idS = id;
     this.isVisible = true;
   }
 
@@ -38,19 +35,20 @@ export class OltDeleteComponent {
     this.isVisible = false;
   }
 
-  deleteOLT() {
+  deleteService() {
     this.gService
-      .delete('olt/eliminar', this.idO)
+      .delete('service/eliminar', this.idS)
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.respuesta = data;
+        console.log(data);
         this.noti.mensajeRedirect(
-         'OLT • Eliminado',
-          `El OLT seleccionado fue eliminado exitosamente. `,
+          'Servicio • Eliminado',
+          `El servicio seleccionado fue eliminado exitosamente. `,
           TipoMessage.success,
-          `/olt`
+          `/service`
         );
-        this.oltDeleteModal.emit();
+        this.serviceDeleteModal.emit();
       });
     this.closeModal();
   }
@@ -59,4 +57,6 @@ export class OltDeleteComponent {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
+
+
 }

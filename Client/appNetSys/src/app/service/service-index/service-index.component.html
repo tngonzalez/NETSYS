@@ -1,0 +1,147 @@
+<div class="flex">
+    <app-menu></app-menu>
+    <div class="w-full">
+      <div class="bg-gray-100 w-full h-full py-1">
+        <header class="header-content">
+          <h2 class="">Servicios</h2>
+        </header>
+  
+        <div class="mx-5 my-5 h-fit rounded-lg justify-center drop-shadow-sm">
+          <!-- ========== Agregar + Informe + Servicios ========== -->
+          <div class="grid justify-items-end pr-10 pb-2">
+            <button
+              type="button"
+              (click)="crear()"
+              class="btn-method py-2.5 px-7 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
+            >
+              <img src="../../../assets/img/add_service_ftth.png" />
+              <p>Agregar</p>
+            </button>
+  
+            <button
+              type="button"
+              (click)="crear()"
+              class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
+            >
+              <img src="../../../assets/img/inform_icon.png" />
+              <p>Informe</p>
+            </button>
+
+          </div>
+  
+          <!-- ========== Table service  ========== -->
+          <div class="relative overflow-x-auto py-3 shadow-md sm:rounded-lg">
+            <table
+              mat-table
+              [dataSource]="dataSource"
+              matSort
+              class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+            >
+              <ng-container matColumnDef="id">
+                <th
+                  scope="col"
+                  class="text-s text-black colcolor rounded-tl-md"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Número de servicio
+                </th>
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium"
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.id }}
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="nombre">
+                <th
+                  scope="col"
+                  class="text-s text-black colcolor"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Servicio
+                </th>
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium"
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.nombre }}
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="accion">
+                <th
+                  scope="col"
+                  class="text-s text-black colcolor"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                  style="margin: 0 auto"
+                >
+                  Acciones
+                </th>
+  
+                <td mat-cell *matCellDef="let row">
+                  <div class="flex gap-5">
+                    <button
+                      mat-mini-fab
+                      class="bt-editar"
+                      matTooltip="Editar"
+                      aria-label="Editar"
+                      (click)="update(row.id)"
+                    ></button>
+  
+                    <button
+                      mat-mini-fab
+                      class="bt-delete"
+                      matTooltip="Delete"
+                      aria-label="Desactivar"
+                      [disabled]="row.desactivado"
+                      [class.desactivado]="row.desactivado"
+                      (click)="deleteservice(row.id)"
+                    ></button>
+  
+                    <button
+                      mat-mini-fab
+                      class="bt-detalle"
+                      matTooltip="Ir a Detalle"
+                      aria-label="Ir a Detalle"
+                      (click)="redirectDetalle(row.id)"
+                    ></button>
+                  </div>
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+            <div>
+              <mat-paginator
+                #paginator
+                [lang]="'es'"
+                [length]="dataSource.data.length"
+                [pageIndex]="0"
+                [pageSize]="5"
+                aria-label="Seleccione una página"
+              >
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Rtr -->
+  <app-service-create #serviceFormModal></app-service-create>
+  <app-service-delete #serviceDeleteModal></app-service-delete>
+  <app-service-detalle #serviceDetalleModal></app-service-detalle>
+  

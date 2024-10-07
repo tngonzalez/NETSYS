@@ -21,6 +21,7 @@ import {
 })
 export class OltCreateComponent {
   isVisible = false;
+  idOLT: any;
   ODF: any;
   nombreTipo: any;
   segmentoZona: any;
@@ -38,6 +39,10 @@ export class OltCreateComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   respuesta: any;
 
+  //Creación/Actualización
+  isCreate: boolean = true;
+  titleForm: string = 'Crear';
+
   @Output() oltCrear: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('odfInput') odfInput!: ElementRef;
@@ -45,7 +50,6 @@ export class OltCreateComponent {
   @ViewChild('segmentoInput') segmentoInput!: ElementRef;
   @ViewChild('ipInput') ipInput!: ElementRef;
   @ViewChild('puertoInput') puertoInput!: ElementRef;
-
 
   constructor(
     public fb: FormBuilder,
@@ -64,12 +68,22 @@ export class OltCreateComponent {
       segmentoZona: [null, Validators.required],
       ipGeneral: [null, Validators.required],
       puertoNAT: [null, Validators.required],
-
     });
   }
 
-  openModal() {
+  openModal(id?: any) {
     this.isVisible = true;
+
+    if (id != undefined && !isNaN(Number(id))) {
+      this.loadData(id);
+      this.idOLT = id;
+      this.isCreate = false; 
+    } else{
+      this.isCreate = true; 
+      this.oltForm.get('ipGeneral')?.enable(); 
+
+    }
+
   }
 
   closeModal() {
@@ -79,31 +93,60 @@ export class OltCreateComponent {
     this.isVisible = false;
   }
 
-  createOLT() {
-    const data = {
-      nombreTipo: this.oltForm.value.nombreTipo,
-      ODF: parseInt(this.oltForm.value.ODF),
-      segmentoZona: this.oltForm.value.segmentoZona,
-      ipGeneral: this.oltForm.value.ipGeneral,
-      puertoNAT: this.oltForm.value.puertoNAT,
-    };
-
-    console.log(data);
+  loadData(id: any): void {
+    this.isCreate = false;
+    this.titleForm = 'Actualizar';
+    this.idOLT = id;
 
     this.gService
+      .get('olt/olt', id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data: any) => {
+        this.oltData = data;
+
+        this.oltForm.patchValue({
+          idOLT: this.oltData.id,
+          nombreTipo: this.oltData.nombreTipoOLT,
+          ODF: this.oltData.ODF,
+          segmentoZona: this.oltData.segmentoZona,
+          ipGeneral: this.oltData.ipGeneral,
+          puertoNAT: this.oltData.puertoNAT,
+        });
+
+        //Desactiva el input de ipGeneral
+        this.oltForm.get('ipGeneral')?.disable(); 
+      });
+  }
+
+  createOLT() {
+    this.submitted = true;
+
+    if(this.oltForm.invalid) {
+       return;
+    }
+    
+    if(this.isCreate){
+      
+      const data = {
+        nombreTipo: this.oltForm.value.nombreTipo,
+        ODF: parseInt(this.oltForm.value.ODF),
+        segmentoZona: this.oltForm.value.segmentoZona,
+        ipGeneral: this.oltForm.value.ipGeneral,
+        puertoNAT: this.oltForm.value.puertoNAT,
+      };
+
+      this.gService
       .create('olt/crear', data)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (response: any) => {
           this.respuesta = response;
-          this.noti.mensajeRedirect(
+          this.noti.mensaje(
             'OLT • Creación',
-            `OLT: ${data.segmentoZona} ha sido creado con exito.`,
-            TipoMessage.success,
-            `/olt`
+            `${data.segmentoZona} ha sido creado con exito.`,
+            TipoMessage.success
           );
           this.oltCrear.emit();
-          this.closeModal();
         },
         (error: any) => {
           if (error.status === 400) {
@@ -112,7 +155,7 @@ export class OltCreateComponent {
               `La información ingresada ya existe. Por favor, intente con otro OLT`,
               TipoMessage.error
             );
-            
+
             this.oltForm.controls['nombreTipo'].reset();
             this.oltForm.controls['ODF'].reset();
             this.oltForm.controls['segmentoZona'].reset();
@@ -122,15 +165,39 @@ export class OltCreateComponent {
             setTimeout(() => {
               this.tipoInput.nativeElement.focus();
             }, 0);
-          } else {
-            this.noti.mensaje(
-              'Error en la creación del OLT',
-              'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
-              TipoMessage.error
-            );
           }
         }
       );
+      this.closeModal(); 
+    }
+
+     else{  
+      const data = {
+        idOLT: this.idOLT,
+        nombreTipo: this.oltForm.value.nombreTipo,
+        ODF: parseInt(this.oltForm.value.ODF),
+        segmentoZona: this.oltForm.value.segmentoZona,
+        puertoNAT: this.oltForm.value.puertoNAT,
+      };
+
+      this.gService
+        .update('olt/actualizar', data)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (response: any) => {
+            this.respuesta = response;
+            this.noti.mensaje(
+              'OLT • Actualización',
+              `${data.segmentoZona} ha sido actualizada con exito.`,
+              TipoMessage.success
+            );
+            this.oltCrear.emit();
+          });
+      this.closeModal();     
+    }
+
+    this.oltCrear.emit();
+    this.closeModal();
   }
 
   ngOnDestroy() {

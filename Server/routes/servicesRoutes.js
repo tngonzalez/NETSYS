@@ -9,6 +9,8 @@ router.post("/crear", datos.create);
 router.put("/actualizar/:idTipo", datos.update); 
 
 router.get("/service/:idTipo", datos.getTipoClienteById); 
+router.get("/detalle/:idTipo", datos.getTipoById); 
+
 
 router.delete("/eliminar/:idTipo", datos.delete); 
 

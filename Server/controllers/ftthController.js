@@ -162,7 +162,7 @@ module.exports.create = async (request, response, next) => {
       },
     });
 
-    if (existCondominio === null) {
+    if (existCondominio === null && data.zona !== null) {
       existCondominio = await prisma.condominio.create({
         data: {
           zona: data.zona,
@@ -211,11 +211,6 @@ module.exports.create = async (request, response, next) => {
         idOLT: data.idOLT,
         ip: data.ip,
       },
-    });
-
-    await prisma.oLT.update({
-      where: {idOLT: data.idOLT},
-      data: {puertoNAT: data.puertoNAT},
     });
 
     await prisma.router.update({
@@ -460,6 +455,7 @@ module.exports.getInfoCliente = async (request, response, next) => {
 
     const data = info.map((r) => ({
       id: r.idInfoCliente,
+      nombre: r.nombre,
       numero: r.numero,
 
     }));
