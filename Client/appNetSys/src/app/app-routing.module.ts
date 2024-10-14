@@ -6,6 +6,8 @@ import { DashboardIndexComponent } from './dashboard/dashboard-index/dashboard-i
 import { OltIndexComponent } from './olt/olt-index/olt-index.component';
 import { FtthIndexComponent } from './ftth/ftth-index/ftth-index.component';
 import { ServiceIndexComponent } from './service/service-index/service-index.component';
+import { OntIndexComponent } from './ont/ont-index/ont-index.component';
+import { FtthCreateComponent } from './ftth/ftth-create/ftth-create.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full' }, //Dashboard por defecto
@@ -15,6 +17,8 @@ const routes: Routes = [
   {path: 'ftth', component: FtthIndexComponent},
   { path: 'olt', component: OltIndexComponent },
   { path: 'service', component: ServiceIndexComponent },
+  { path: 'ont', component: OntIndexComponent },
+
 
 
 ];

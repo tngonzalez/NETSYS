@@ -39,7 +39,7 @@ export class RtrDeleteComponent{
   deleteRouter() {
 
     this.gService
-      .delete('router/eliminar', this.idR)
+      .delete('rcasa/eliminar', this.idR)
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.respuesta = data;

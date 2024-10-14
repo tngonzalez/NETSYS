@@ -18,11 +18,11 @@ export const navItems: NavItem[] = [
     route: '/ftth',
   },
   {
-    displayName: 'ROUTER',
-    route: '/rtr',
+    displayName: 'ONT',
+    route: '/ont',
   },
   {
-    displayName: 'REPORTES',
-    route: '/reportes',
+    displayName: 'ROUTER',
+    route: '/rtr',
   },
 ];

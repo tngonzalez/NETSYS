@@ -28,6 +28,13 @@
           }">
           <p>FTTH</p>
         </button>
+
+        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'ONT', route: '/ont' })"
+        [ngClass]="{
+          'activo': router.isActive('/ont', true)
+        }">
+        <p>ONT</p>
+      </button>
       
         <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'ROUTER', route: '/rtr' })"
           [ngClass]="{
@@ -36,12 +43,6 @@
           <p>ROUTER</p>
         </button>
       
-        <button class="my-2 menu-item" (click)="onItemSelected({ displayName: 'REPORTES', route: '/reportes' })"
-          [ngClass]="{
-            'activo': router.isActive('/reportes', true)
-          }">
-          <p>REPORTES</p>
-        </button>
       </div>
 
 </div>

@@ -22,19 +22,26 @@ import { MatSort } from '@angular/material/sort';
 })
 export class FtthCreateComponent implements OnInit {
   isVisible = false;
+  idCliente: any;
 
   numero: any;
   nombre: any;
   zona: any;
   numCasa: any;
   potenciaRecepcion: any;
-  numActivo: any;
+  activo: any;
   macAdress: any;
+  serie: any;
+
+  numActivo: any;
+  macAdd: any;
   numSN: any;
+
   idOLT: any;
   nombreZona: any;
   ip: any;
-  idRouter: any;
+  idRouter_Casa: any;
+  idONT: any;
   idTipo: any;
   idEstado: any;
   idBW: any;
@@ -58,30 +65,60 @@ export class FtthCreateComponent implements OnInit {
   destroy$: Subject<boolean> = new Subject<boolean>();
   respuesta: any;
   infoCliente: any;
-  displayedColumns: string[] = ['nombre','numero', 'accion'];
+  displayedColumns: string[] = ['nombre', 'numero', 'accion'];
   displayedRouter: string[] = ['activo', 'serie', 'macAddress', 'accion'];
+  displayedONT: string[] = ['numActivo', 'numSN', 'macAdd', 'accion'];
+
   filteredData: any;
 
   olts: any[] = [];
   router: any[] = [];
+  ont: any[] = [];
   bw: any[] = [];
   servicios: any[] = [];
   subredes: any[] = [];
   selectedOLT: number = 0;
   selectedServices: number = 0;
   selectedBW: number = 0;
-  
+
   createVisible: boolean = true;
   tableVisiblie: boolean = false;
   btnVisible: boolean = true;
+  isDisabled: boolean = true; 
 
   dataSource = new MatTableDataSource<any>();
   dataRouter = new MatTableDataSource<any>();
-  
+  dataONT = new MatTableDataSource<any>();
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() ftthCrearModal: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('searchInput') searchInput!: ElementRef;
+
+  statuses = [
+    { id: 0, name: 'Estado' },
+    {
+      id: 1,
+      name: 'Activo',
+    },
+    {
+      id: 2,
+      name: 'Desactivado: Suspención',
+    },
+    {
+      id: 3,
+      name: 'Desactivado: Retiro',
+    },
+    {
+      id: 4,
+      name: 'Desactivado: Dañado',
+    },
+  ];
+
+  //Creación / Actualización
+  isCreate: boolean = true;
+  titleForm: string = 'Crear';
+  titleData: string = 'Nuevo';
 
 
   constructor(
@@ -98,6 +135,7 @@ export class FtthCreateComponent implements OnInit {
     this.fetchRouter();
     this.fetchBW();
     this.fetchServicios();
+    this.fetchONT();
   }
 
   reactiveForm() {
@@ -108,15 +146,21 @@ export class FtthCreateComponent implements OnInit {
       zona: [null, Validators.required],
       numCasa: [null, null],
       potenciaRecepcion: [null, Validators.required],
-      numActivo: [null, Validators.required],
+      activo: [null, Validators.required],
       macAdress: [null, Validators.required],
+      serie: [null, Validators.required],
+
+      numActivo: [null, Validators.required],
+      macAdd: [null, Validators.required],
       numSN: [null, Validators.required],
+
       idOLT: [null, Validators.required],
       nombreZona: [null, Validators.required],
       ip: [null, Validators.required],
-      idRouter: [null, Validators.required],
+      idRouter_Casa: [null, Validators.required],
+      idONT: [null, Validators.required],
       idTipo: [null, Validators.required],
-      idEstado: [1],
+      idEstado: [null, null],
       idBW: [null, Validators.required],
       kbps: [null, Validators.required],
       numOS: [null, Validators.required],
@@ -129,9 +173,25 @@ export class FtthCreateComponent implements OnInit {
     });
   }
 
-  openModal() {
+  openModal(id?: any) {
     this.isVisible = true;
+
     this.fetchSubredes(this.selectedOLT);
+    this.disabledBtn();
+
+    if (id != undefined && !isNaN(Number(id))) {
+      this.loadData(id);
+      this.idCliente = id;
+      this.isCreate = false;
+      this.isDisabled = true;
+      console.log(id); 
+    } else {
+      this.isCreate = true;
+      this.titleForm = 'Crear';
+      this.titleData= 'Nuevo';
+      this.isDisabled = false;
+
+    }
   }
 
   closeModal() {
@@ -142,6 +202,28 @@ export class FtthCreateComponent implements OnInit {
     this.createVisible = true;
     this.btnVisible = true;
     this.tableVisiblie = false;
+
+  }
+
+  //Cargar los datos en caso de actualizar
+  //Desactiva: InfoCliente 
+  loadData(id: any): void {
+    this.isCreate = false;
+    this.titleForm = 'Actualizar';
+    this.titleData= 'Datos';
+    this.idCliente = id;
+
+    this.gService
+      .get('ftth/ftth', id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data: any) => {
+        this.ftthData = data;
+
+        this.ftthForm.patchValue({
+          idCliente: this.ftthData.idCliente,
+
+        });
+      });
   }
 
   fetchServicios() {
@@ -156,7 +238,6 @@ export class FtthCreateComponent implements OnInit {
           this.ftthForm.patchValue({ idTipo: this.servicios[0].id });
           this.selectedServices = this.servicios[0].id;
         }
-
       });
   }
 
@@ -192,18 +273,38 @@ export class FtthCreateComponent implements OnInit {
 
   fetchRouter() {
     this.gService
-      .list('router/estado/1')
+      .list('rcasa/estado/1')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((response: any) => {
-        this.router = response;
-        console.log(this.router);
-        this.dataRouter = new MatTableDataSource(this.router);
-        this.dataRouter.sort = this.sort;
-        this.dataRouter.paginator = this.paginator;
-      
-      }, error => {
-        console.error('Error Fetch ', error); 
-      });
+      .subscribe(
+        (response: any) => {
+          this.router = response;
+          console.log(this.router);
+          this.dataRouter = new MatTableDataSource(this.router);
+          this.dataRouter.sort = this.sort;
+          this.dataRouter.paginator = this.paginator;
+        },
+        (error) => {
+          console.error('Error Fetch ', error);
+        }
+      );
+  }
+
+  fetchONT() {
+    this.gService
+      .list('ont/estado/1')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (response: any) => {
+          this.ont = response;
+          console.log(this.router);
+          this.dataONT = new MatTableDataSource(this.ont);
+          this.dataONT.sort = this.sort;
+          this.dataONT.paginator = this.paginator;
+        },
+        (error) => {
+          console.error('Error Fetch ', error);
+        }
+      );
   }
 
   fetchBW() {
@@ -214,9 +315,8 @@ export class FtthCreateComponent implements OnInit {
         this.bw = response;
         console.log(this.bw);
 
-        
         if (this.bw && this.bw.length > 0) {
-          this.ftthForm.patchValue({ idBW: this.bw[0].id});
+          this.ftthForm.patchValue({ idBW: this.bw[0].id });
           this.selectedBW = this.bw[0].id;
         }
       });
@@ -309,22 +409,74 @@ export class FtthCreateComponent implements OnInit {
   }
 
   //Tables: Cliente + Router
+  //Unable row when its selected
+  //Select it throught the process of create/update
+
   selectCliente(numero: number) {
     this.ftthForm.patchValue({
       numero: numero,
     });
   }
 
-  selectRouter(id: number) {
-    this.ftthForm.patchValue({
-      idRouter: id,
-    });
+  selectedButton: string | null = null;
 
+  selectRouter(element: any) {
+    if (this.idRouter_Casa !== element.id) {
+      this.idRouter_Casa = element.id;
+
+      element.desactivado = true;
+
+      this.selectedButton = element.id;
+
+      this.ftthForm.patchValue({
+        idRouter_Casa: element.id,
+        activo: element.activo,
+        serie: element.serie,
+        macAdress: element.macAddress,
+      });
+    }
+    if (this.idRouter_Casa === element.id) {
+      element.desactivado = false;
+    }
   }
 
+  selectONT(element: any) {
+    if (this.idONT !== element.id) {
+      this.idONT = element.id;
+
+      element.desactivado = true;
+
+      this.selectedButton = element.id;
+
+      this.ftthForm.patchValue({
+        idONT: element.id,
+        numActivo: element.numActivo,
+        numSN: element.numSN,
+        macAdd: element.macAdd,
+      });
+    }
+    if (this.idONT === element.id) {
+      element.desactivado = false;
+    }
+  }
+
+  disabledBtn() {
+    this.ftthForm.get('activo')?.disable();
+    this.ftthForm.get('serie')?.disable();
+    this.ftthForm.get('macAdress')?.disable();
+
+    this.ftthForm.get('numActivo')?.disable();
+    this.ftthForm.get('numSN')?.disable();
+    this.ftthForm.get('macAdd')?.disable();
+  }
+
+  getDate() {
+    this.ftthForm.get('fechaInstalacion')?.value;
+    console.log(this.fechaInstalacion);
+  }
   //Crear
-  createFTTH(){
-    console.log(this.ftthForm.value); 
+  createFTTH() {
+    console.log(this.ftthForm.value);
 
   }
 
@@ -338,7 +490,7 @@ export class FtthCreateComponent implements OnInit {
   }
 
   // Control de Errores
-  public errorHandling = (control: string, error: string) => {
+  errorHandling = (control: string, error: string) => {
     return (
       this.ftthForm.controls[control].hasError(error) &&
       this.ftthForm.controls[control].invalid &&

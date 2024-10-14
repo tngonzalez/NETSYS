@@ -22,3 +22,26 @@
     margin-top: 10px;
   }
   
+  .desactivado {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  input:disabled {
+    background-color: #f0f0f0;
+    color: #a0a0a0; 
+    border-color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.fila-desactivada {
+  background-color: #f0f0f0;
+  color: #a0a0a0; 
+  border-color: #d1d5db;
+  cursor: not-allowed; 
+}
+
+.hidden {
+  display: none;
+}

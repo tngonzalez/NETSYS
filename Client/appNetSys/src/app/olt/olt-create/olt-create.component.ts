@@ -80,6 +80,7 @@ export class OltCreateComponent {
       this.isCreate = false; 
     } else{
       this.isCreate = true; 
+      this.titleForm = "Crear"
       this.oltForm.get('ipGeneral')?.enable(); 
 
     }

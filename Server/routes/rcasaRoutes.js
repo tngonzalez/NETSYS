@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const datos = require("../controllers/routerController"); 
+const datos = require("../controllers/rcasaController"); 
 
 router.get("/", datos.getRouter); 
 

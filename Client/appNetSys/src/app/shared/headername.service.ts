@@ -21,12 +21,12 @@ export class HeaderNameService {
              case '/ftth': {
                     return 'FTTH'
              } 
+             case '/ont': {
+                return 'ONT'
+            } 
              case '/rtr': { 
                 return 'ROUTER'
-         }
-            case '/reportes': {
-                return 'REPORTES'
-            } 
+            }
              default: { 
                 return 'Reico';
             } 

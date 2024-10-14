@@ -12,7 +12,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { SharedModule } from '../shared/shared.module';
 import { RtrCreateComponent } from './rtr-create/rtr-create.component';
-import { RtrUpdateComponent } from './rtr-update/rtr-update.component';
 import { RtrDeleteComponent } from './rtr-delete/rtr-delete.component';
 import { RtrDetalleComponent } from './rtr-detalle/rtr-detalle.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +21,6 @@ import { MatButtonModule } from '@angular/material/button';
   declarations: [
     RtrIndexComponent,
     RtrCreateComponent,
-    RtrUpdateComponent,
     RtrDeleteComponent,
     RtrDetalleComponent,
   ],

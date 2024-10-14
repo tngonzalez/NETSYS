@@ -16,7 +16,7 @@ module.exports.get = async (request, response, next) => {
 
     const data = await Promise.all(
       dataOLT.map(async (o) => {
-        const router = await prisma.router.findUnique({
+        const router = await prisma.router_Gestor.findUnique({
           where: { idOLT: o.idOLT },
         });
 

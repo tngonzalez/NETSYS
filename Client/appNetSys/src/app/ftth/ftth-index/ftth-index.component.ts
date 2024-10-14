@@ -6,7 +6,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FtthCreateComponent } from '../ftth-create/ftth-create.component';
-import { FtthUpdateComponent } from '../ftth-update/ftth-update.component';
 import { FtthDeleteComponent } from '../ftth-delete/ftth-delete.component';
 import { FtthDetalleComponent } from '../ftth-detalle/ftth-detalle.component';
 import { Router } from '@angular/router';
@@ -51,13 +50,13 @@ export class FtthIndexComponent implements AfterViewInit {
   ];
 
   servicios: any[] = [];
+  selectedService: string | null = "Servicios";
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild('ftthFormModal') ftthFormModal!: FtthCreateComponent;
-  @ViewChild('ftthUpdateModal') ftthUpdateModal!: FtthUpdateComponent;
   @ViewChild('ftthDeleteModal') ftthDeleteModal!: FtthDeleteComponent;
   @ViewChild('ftthDetalleModal') ftthDetalleModal!: FtthDetalleComponent;
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -68,10 +67,6 @@ export class FtthIndexComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.ftthDeleteModal.ftthDeleteModal.subscribe(() => {
-      this.fetchFtth();
-      this.fetchServicios();
-    });
-    this.ftthUpdateModal.ftthUpdateModal.subscribe(() => {
       this.fetchFtth();
       this.fetchServicios();
     });
@@ -96,7 +91,6 @@ export class FtthIndexComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.datos = response;
-        console.log(this.datos);
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -113,7 +107,8 @@ export class FtthIndexComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.servicios = response;
-        console.log(this.servicios);
+
+        this.servicios.unshift({nombre: 'Servicios'}); 
       });
   }
 
@@ -169,17 +164,19 @@ export class FtthIndexComponent implements AfterViewInit {
     this.updateTable(this.filteredData);
   }
 
-  selectedService: string | null = null;
 
   //Dropdown services
-  servicesChange(event: Event) {
-    console.log(event); 
-    if (event) {
+  servicesChange(event: any) {
+
+    const selectedService = event;
+
+    if (selectedService === 'Servicios') {
+
+      this.filteredData = this.datos;
+    } else {
       this.filteredData = this.datos.filter(
         (i: any) => i.tipoCliente && i.tipoCliente.toString() === event
       );
-    } else {
-      this.filteredData = this.datos;
     }
     this.updateTable(this.filteredData);
   }
@@ -197,7 +194,7 @@ export class FtthIndexComponent implements AfterViewInit {
   }
 
   update(id: any) {
-    this.ftthUpdateModal.openModal(id);
+    this.ftthFormModal.openModal(id);
   }
 
   deleteFtth(id: any) {

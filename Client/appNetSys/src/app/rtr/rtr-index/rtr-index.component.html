@@ -25,18 +25,6 @@
               </select>
             </form>
 
-            <!-- ========== Dropdown Tipo  ========== -->
-            <form class="mx-2">
-              <select
-                id="tipos"
-                (change)="typesChange($event.target)"
-                class="text-[#112346] h-fit font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center border-solid border-2 border-black-600"
-              >
-                <option *ngFor="let tipo of tipos" [value]="tipo.value">
-                  {{ tipo.value }}
-                </option>
-              </select>
-            </form>
             <!-- ========== Buscar por activo  ========== -->
 
             <div class="flex w-48 mx-2">
@@ -211,6 +199,8 @@
                     class="bt-delete"
                     matTooltip="Delete"
                     aria-label="Desactivar"
+                    [disabled]="row.desactivado"
+                    [class.desactivado]="row.desactivado"
                     (click)="deleteRouter(row.id)"
                   ></button>
 
@@ -249,4 +239,3 @@
 <app-rtr-create #routerFormModal></app-rtr-create>
 <app-rtr-delete #routerDeleteModal></app-rtr-delete>
 <app-rtr-detalle #routerDetalleModal></app-rtr-detalle>
-<app-rtr-update #routerUpdateModal></app-rtr-update>

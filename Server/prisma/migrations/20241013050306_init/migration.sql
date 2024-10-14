@@ -8,9 +8,25 @@ CREATE TABLE `TipoCliente` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `EstadoCliente` (
+    `idEstado` INTEGER NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (`idEstado`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `EstadoActivo` (
+    `idEstado` INTEGER NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (`idEstado`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `ONT` (
     `idONT` INTEGER NOT NULL AUTO_INCREMENT,
-    `potenciaRecepcion` VARCHAR(100) NOT NULL,
+    `idEstado` INTEGER NOT NULL,
     `numActivo` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
     `numSN` VARCHAR(100) NOT NULL,
@@ -21,37 +37,27 @@ CREATE TABLE `ONT` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `EstadoCliente` (
-    `idEstado` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(50) NOT NULL,
-
-    PRIMARY KEY (`idEstado`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `EstadoRouter` (
-    `idEstado` INTEGER NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(50) NOT NULL,
-
-    PRIMARY KEY (`idEstado`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Router` (
-    `idRouter` INTEGER NOT NULL AUTO_INCREMENT,
+CREATE TABLE `Router_Casa` (
+    `idRouter_Casa` INTEGER NOT NULL AUTO_INCREMENT,
     `idEstado` INTEGER NOT NULL,
     `numActivo` VARCHAR(50) NOT NULL,
     `serie` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
-    `tipoDispositivo` VARCHAR(50) NOT NULL,
-    `idSubred_OLT` INTEGER NULL,
-    `idZona_OLT` INTEGER NULL,
-    `idOLT` INTEGER NULL,
 
-    UNIQUE INDEX `Router_numActivo_key`(`numActivo`),
-    UNIQUE INDEX `Router_serie_key`(`serie`),
-    UNIQUE INDEX `Router_macAddress_key`(`macAddress`),
-    PRIMARY KEY (`idRouter`)
+    UNIQUE INDEX `Router_Casa_numActivo_key`(`numActivo`),
+    UNIQUE INDEX `Router_Casa_serie_key`(`serie`),
+    UNIQUE INDEX `Router_Casa_macAddress_key`(`macAddress`),
+    PRIMARY KEY (`idRouter_Casa`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Router_Gestor` (
+    `idRouter_Gestor` INTEGER NOT NULL AUTO_INCREMENT,
+    `idSubred_OLT` INTEGER NOT NULL,
+    `idZona_OLT` INTEGER NOT NULL,
+    `idOLT` INTEGER NOT NULL,
+
+    PRIMARY KEY (`idRouter_Gestor`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -99,7 +105,6 @@ CREATE TABLE `Condominio` (
 -- CreateTable
 CREATE TABLE `InfoCliente` (
     `idInfoCliente` INTEGER NOT NULL AUTO_INCREMENT,
-    `idCondominio` INTEGER NOT NULL,
     `numero` VARCHAR(30) NOT NULL,
     `nombre` VARCHAR(100) NOT NULL,
 
@@ -122,18 +127,30 @@ CREATE TABLE `Cliente` (
     `idTipo` INTEGER NOT NULL,
     `idONT` INTEGER NOT NULL,
     `idEstado` INTEGER NOT NULL,
-    `idRouter` INTEGER NULL,
+    `idRouter_Gestor` INTEGER NULL,
+    `idRouter_Casa` INTEGER NULL,
     `idBW` INTEGER NOT NULL,
     `BW_KBPS` VARCHAR(50) NOT NULL,
     `numOS` VARCHAR(50) NOT NULL,
     `cajaDerivada` VARCHAR(150) NOT NULL,
     `fechaInstalacion` VARCHAR(50) NOT NULL,
-    `comentario` VARCHAR(200) NOT NULL,
+    `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NOT NULL,
     `cloudMonitoreo` VARCHAR(150) NOT NULL,
+    `potenciaRecepcion` VARCHAR(100) NOT NULL,
 
     UNIQUE INDEX `Cliente_cloudMonitoreo_key`(`cloudMonitoreo`),
     PRIMARY KEY (`idCliente`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Cliente_Condominio` (
+    `idHistorial` INTEGER NOT NULL AUTO_INCREMENT,
+    `idInfoCliente` INTEGER NOT NULL,
+    `idCondominio` INTEGER NOT NULL,
+    `estado` INTEGER NOT NULL,
+
+    PRIMARY KEY (`idHistorial`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -227,6 +244,16 @@ CREATE TABLE `IPTV` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `InfoCliente_IPpublica` (
+    `idInfoCliente` INTEGER NOT NULL AUTO_INCREMENT,
+    `numero` VARCHAR(30) NOT NULL,
+    `nombre` VARCHAR(100) NOT NULL,
+
+    UNIQUE INDEX `InfoCliente_IPpublica_numero_key`(`numero`),
+    PRIMARY KEY (`idInfoCliente`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `IpPublica` (
     `idIP` INTEGER NOT NULL AUTO_INCREMENT,
     `idInfoCliente` INTEGER NOT NULL,
@@ -245,25 +272,25 @@ CREATE TABLE `IpPublica` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Router` ADD CONSTRAINT `Router_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoRouter`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ONT` ADD CONSTRAINT `ONT_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoActivo`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Router` ADD CONSTRAINT `Router_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Router_Casa` ADD CONSTRAINT `Router_Casa_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoActivo`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Router` ADD CONSTRAINT `Router_idSubred_OLT_fkey` FOREIGN KEY (`idSubred_OLT`) REFERENCES `Subred_OLT`(`idRed`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Router` ADD CONSTRAINT `Router_idZona_OLT_fkey` FOREIGN KEY (`idZona_OLT`) REFERENCES `Zona_OLT`(`idZona`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idSubred_OLT_fkey` FOREIGN KEY (`idSubred_OLT`) REFERENCES `Subred_OLT`(`idRed`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idZona_OLT_fkey` FOREIGN KEY (`idZona_OLT`) REFERENCES `Zona_OLT`(`idZona`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Subred_OLT` ADD CONSTRAINT `Subred_OLT_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Zona_OLT` ADD CONSTRAINT `Zona_OLT_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `InfoCliente` ADD CONSTRAINT `InfoCliente_idCondominio_fkey` FOREIGN KEY (`idCondominio`) REFERENCES `Condominio`(`idCondominio`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -281,7 +308,16 @@ ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idEstado_fkey` FOREIGN KEY (`idEst
 ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idBW_fkey` FOREIGN KEY (`idBW`) REFERENCES `BW`(`idBW`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idRouter_fkey` FOREIGN KEY (`idRouter`) REFERENCES `Router`(`idRouter`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idRouter_Gestor_fkey` FOREIGN KEY (`idRouter_Gestor`) REFERENCES `Router_Gestor`(`idRouter_Gestor`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idRouter_Casa_fkey` FOREIGN KEY (`idRouter_Casa`) REFERENCES `Router_Casa`(`idRouter_Casa`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Cliente_Condominio` ADD CONSTRAINT `Cliente_Condominio_idCondominio_fkey` FOREIGN KEY (`idCondominio`) REFERENCES `Condominio`(`idCondominio`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Cliente_Condominio` ADD CONSTRAINT `Cliente_Condominio_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Retiro` ADD CONSTRAINT `Retiro_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -308,4 +344,4 @@ ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstado_fkey` FOREIGN KEY (`idEstado`) 
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idDNS_fkey` FOREIGN KEY (`idDNS`) REFERENCES `DNS_Stick`(`idDNS`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `IpPublica` ADD CONSTRAINT `IpPublica_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `IpPublica` ADD CONSTRAINT `IpPublica_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente_IPpublica`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -13,7 +13,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { FtthModule } from './ftth/ftth.module';
 import { ServiceModule } from './service/service.module';
 import 'flowbite';
-
+import { OntModule } from './ont/ont.module';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core'; 
 
 @NgModule ({
   declarations: [AppComponent],
@@ -30,6 +32,9 @@ import 'flowbite';
     DashboardModule,
     FtthModule,
     ServiceModule,
+    OntModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
 
   ],
   providers: [],

@@ -1,26 +1,24 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
-import { Subject } from 'rxjs/internal/Subject';
-import { GenericService } from '../../shared/generic.service';
-import { takeUntil } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { RtrCreateComponent } from '../rtr-create/rtr-create.component';
-import { RtrDetalleComponent } from '../rtr-detalle/rtr-detalle.component';
-import { RtrDeleteComponent } from '../rtr-delete/rtr-delete.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subject, takeUntil } from 'rxjs';
+import { OntCreateComponent } from '../ont-create/ont-create.component';
+import { OntDeleteComponent } from '../ont-delete/ont-delete.component';
+import { OntDetalleComponent } from '../ont-detalle/ont-detalle.component';
+import { Router } from '@angular/router';
+import { GenericService } from '../../shared/generic.service';
 
 @Component({
-  selector: 'app-rtr-index',
-  templateUrl: './rtr-index.component.html',
-  styleUrls: ['./rtr-index.component.css'],
+  selector: 'app-ont-index',
+  templateUrl: './ont-index.component.html',
+  styleUrls: ['./ont-index.component.css'],
 })
-export class RtrIndexComponent implements AfterViewInit {
+export class OntIndexComponent implements AfterViewInit {
   selectedStatus: any;
   datos: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  displayedColumns = ['activo', 'serie', 'macAddress', 'estado', 'accion'];
+  displayedColumns = ['numActivo', 'macAddress', 'numSN', 'estado', 'accion'];
   filteredData: any;
 
   statuses = [
@@ -35,14 +33,13 @@ export class RtrIndexComponent implements AfterViewInit {
     },
   ];
 
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<any>();
 
-  @ViewChild('routerFormModal') routerFormModal!: RtrCreateComponent;
-  @ViewChild('routerDeleteModal') routerDeleteModal!: RtrDeleteComponent;
-  @ViewChild('routerDetalleModal') routerDetalleModal!: RtrDetalleComponent;
+  @ViewChild('ontFormModal') ontFormModal!: OntCreateComponent;
+  @ViewChild('ontDeleteModal') ontDeleteModal!: OntDeleteComponent;
+  @ViewChild('ontDetalleModal') ontDetalleModal!: OntDetalleComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
@@ -51,28 +48,28 @@ export class RtrIndexComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.routerDeleteModal.routerDeleteModal.subscribe(() => {
-      this.fetchRouter();
+    // this.ontDetalleModal.ontDetalleModal.subscribe(() => {
+    //   this.fetchONT();
+    // });
+    this.ontDeleteModal.ontDeleteModal.subscribe(() => {
+      this.fetchONT();
     });
-    this.routerDetalleModal.routerDetalleModal.subscribe(() => {
-      this.fetchRouter();
-    });
-    this.routerFormModal.routerCrear.subscribe(() => {
-      this.fetchRouter();
+    this.ontFormModal.ontCrear.subscribe(() => {
+      this.fetchONT();
     });
   }
 
   ngOnInit(): void {
-    this.fetchRouter();
+    this.fetchONT();
   }
 
-  fetchRouter() {
+  fetchONT() {
     this.gService
-      .list('rcasa/')
+      .list('ont/')
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.datos = response;
-        this.disableButton(); 
+        this.disableButton();
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -86,7 +83,7 @@ export class RtrIndexComponent implements AfterViewInit {
   disableButton() {
     if (this.datos) {
       this.datos.forEach((i: any) => {
-        if (i.existeRouter === true) {
+        if (i.existeCliente === true) {
           i.desactivado = true;
         } else {
           i.desactivado = false;
@@ -118,7 +115,6 @@ export class RtrIndexComponent implements AfterViewInit {
     }
   }
 
-
   //Update by Status
   updateTable(data: any) {
     this.dataSource.data = data;
@@ -129,10 +125,10 @@ export class RtrIndexComponent implements AfterViewInit {
 
   //Update By NumActivo
   numberChange(event: any) {
-    const activo = event.target.value.trim();
-    if (activo !== '') {
+    const numActivo = event.target.value.trim();
+    if (numActivo !== '') {
       this.filteredData = this.datos.filter(
-        (i: any) => i.activo && i.activo.toString().includes(activo)
+        (i: any) => i.numActivo && i.numActivo.toString().includes(numActivo)
       );
     } else {
       this.filteredData = this.datos;
@@ -142,24 +138,23 @@ export class RtrIndexComponent implements AfterViewInit {
   }
 
   crear() {
-    this.routerFormModal.openModal();
+    this.ontFormModal.openModal();
   }
 
   update(id: any) {
-    this.routerFormModal.openModal(id);
+    this.ontFormModal.openModal(id);
   }
 
-  deleteRouter(id: any) {
-    this.routerDeleteModal.openModal(id);
+  deleteONT(id: any) {
+    this.ontDeleteModal.openModal(id);
   }
 
   redirectDetalle(id: any) {
-    this.routerDetalleModal.openModal(id);
+   this.ontDetalleModal.openModal(id);
   }
 
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

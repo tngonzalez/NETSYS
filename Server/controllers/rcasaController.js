@@ -6,24 +6,35 @@ const prisma = new PrismaClient();
 //Get All - L
 module.exports.getRouter = async (request, response, next) => {
   try {
-    const router = await prisma.router.findMany({
+    const router = await prisma.router_Casa.findMany({
       orderBy: {
-        idRouter: "asc",
+        idRouter_Casa: "asc",
       },
       include: {
         estado: true,
       },
     });
 
-    const data = router.map((r) => ({
-      id: r.idRouter,
-      idEstado: r.idEstado,
-      estado: r.estado.nombre,
-      activo: r.numActivo,
-      serie: r.serie,
-      macAddress: r.macAddress,
-      tipoDispositivo: r.tipoDispositivo,
-    }));
+    const data = await Promise.all(
+      router.map(async (r) => {
+        const cliente = await prisma.cliente.findUnique({
+          where: {
+            idRouter_Casa: r.idRouter_Casa,
+          },
+        });
+
+        return {
+          id: r.idRouter_Casa,
+          idEstado: r.idEstado,
+          estado: r.estado.nombre,
+          activo: r.numActivo,
+          serie: r.serie,
+          macAddress: r.macAddress,
+          existeRouter: cliente ? true : false,
+        };
+      })
+    );
+
     response.json(data);
   } catch (error) {
     response.status(500).json({ message: "Error en la solicitud", error });
@@ -34,9 +45,9 @@ module.exports.getRouter = async (request, response, next) => {
 module.exports.getRouterById = async (request, response, next) => {
   try {
     let idRouter = parseInt(request.params.idRouter);
-    const router = await prisma.router.findUnique({
+    const router = await prisma.router_Casa.findUnique({
       where: {
-        idRouter: idRouter,
+        idRouter_Casa: idRouter,
       },
       include: {
         estado: true,
@@ -50,13 +61,12 @@ module.exports.getRouterById = async (request, response, next) => {
     }
 
     const data = {
-      id: router.idRouter,
+      id: router.idRouter_Casa,
       idEstado: router.idEstado,
       estado: router.estado.nombre,
       activo: router.numActivo,
       serie: router.serie,
       macAddress: router.macAddress,
-      tipoDispositivo: router.tipoDispositivo,
     };
     response.json(data);
   } catch (error) {
@@ -69,15 +79,12 @@ module.exports.getRouterDetailById = async (request, response, next) => {
   try {
     let idRouter = parseInt(request.params.idRouter);
 
-    const router = await prisma.router.findUnique({
+    const router = await prisma.router_Casa.findUnique({
       where: {
-        idRouter: idRouter,
+        idRouter_Casa: idRouter,
       },
       include: {
         estado: true,
-        olt: true,
-        zona: true,
-        subred: true,
       },
     });
 
@@ -87,53 +94,51 @@ module.exports.getRouterDetailById = async (request, response, next) => {
       });
     }
 
-  if (router.estado.idEstado === 2) {
+    if (router.estado.idEstado === 2) {
+      const get = await prisma.cliente.findFirst({
+        where: { idRouter_Casa: idRouter },
+        include: {
+          estado: true,
+          tipoCliente: true,
+          bw: true,
+          infoCliente: { include: { condominio: true } },
+          Router_Casa: true,
+          Router_Gestor: true,
+          ont: true,
+        },
+      });
 
-    const get = await prisma.cliente.findFirst({
-      where: {idRouter: idRouter},
-      include: {
-        estado: true,
-        tipoCliente: true,
-        bw: true,
-        infoCliente: { include: {condominio: true}},
-        router: { include: {subred: true, olt: true, zona: true }},
-        ont: true,
-      },
-    }); 
+      const info = {
+        tipoCliente: get.tipoCliente.nombre,
+        estado: get.estado.nombre,
+        numCliente: get.infoCliente.numero,
+        nombreCliente: get.infoCliente.nombre,
+        condominio: get.infoCliente.condominio.zona,
+        numCasa: get.infoCliente.condominio.numCasa,
+        bw: get.bw.nombre,
+        kbps: get.BW_KBPS,
+        ont: get.ont,
+        router_casa: get.Router_Casa,
+        router_gestor: get.Router_Gestor,
+        agente: get.agente,
+        cloudMonitoreo: get.cloudMonitoreo,
+        comentario: get.comentario,
+        cajaDerivada: get.cajaDerivada,
+        numOS: get.numOS,
+        fecha: get.fechaInstalacion,
+      };
 
-    const info = {
-      tipoCliente: get.tipoCliente.nombre,
-      estado: get.estado.nombre,
-      numCliente: get.infoCliente.numero,
-      nombreCliente: get.infoCliente.nombre,
-      condominio: get.infoCliente.condominio.zona,
-      numCasa: get.infoCliente.condominio.numCasa,
-      bw: get.bw.nombre,
-      kbps: get.BW_KBPS,
-      ont: get.ont,
-      router: get.router,
-      agente: get.agente,
-      cloudMonitoreo: get.cloudMonitoreo,
-      comentario: get.comentario,
-      cajaDerivada: get.cajaDerivada,
-      numOS: get.numOS,
-      fecha: get.fechaInstalacion
-    };
-
-    response.json({
-      info
-    });
-
+      response.json({
+        info,
+      });
     } else {
       const data = {
-        id: router.idRouter,
+        id: router.idRouter_Casa,
         idEstado: router.idEstado,
         estado: router.estado.nombre,
         activo: router.numActivo,
         serie: router.serie,
         macAddress: router.macAddress,
-        tipoDispositivo: router.tipoDispositivo,
-        
       };
       response.json(data);
     }
@@ -146,13 +151,12 @@ module.exports.getRouterDetailById = async (request, response, next) => {
 module.exports.getRouterByEstado = async (request, response, next) => {
   try {
     let idEstado = parseInt(request.params.idEstado);
-    const router = await prisma.router.findMany({
+    const router = await prisma.router_Casa.findMany({
       where: {
         idEstado: idEstado,
       },
       include: {
         estado: true,
-        Cliente: true,
       },
     });
 
@@ -162,7 +166,7 @@ module.exports.getRouterByEstado = async (request, response, next) => {
       });
     }
     const data = router.map((router) => ({
-      id: router.idRouter,
+      id: router.idRouter_Casa,
       idEstado: router.idEstado,
       activo: router.numActivo,
       serie: router.serie,
@@ -175,48 +179,15 @@ module.exports.getRouterByEstado = async (request, response, next) => {
   }
 };
 
-//Delete -- Probar una vez módulo FTTH esté listo
+//Delete - L
 module.exports.deteleRouter = async (request, response, next) => {
   let idRouter = parseInt(request.params.idRouter);
   try {
-    const router = await prisma.router.findUnique({
+    await prisma.router_Casa.delete({
       where: {
-        idRouter: idRouter,
-      },
-      include: {
-        estado: true,
-        Cliente: true,
+        idRouter_Casa: Number(idRouter),
       },
     });
-
-    if (router.idEstado === 1) {
-      await prisma.router.delete({
-        where: {
-          idRouter: Number(idRouter),
-        },
-      });
-    } else {
-      await prisma.cliente.update({
-        where: {
-          idRouter: idRouter,
-        },
-        data: {
-          idRouter: null,
-        },
-      });
-
-      await prisma.subred_OLT.delete({
-        where: {
-          idOLT: Number(router.idOLT),
-        },
-      });
-
-      await prisma.router.delete({
-        where: {
-          idRouter: Number(idRouter),
-        },
-      });
-    }
 
     response.json("Eliminación exitosa");
   } catch (error) {
@@ -227,21 +198,18 @@ module.exports.deteleRouter = async (request, response, next) => {
 //Create
 module.exports.create = async (request, response, next) => {
   try {
-    const { idEstado, numActivo, serie, macAddress, tipoDispositivo } =
+    const { numActivo, serie, macAddress } =
       request.body;
 
-    const newRouter = await prisma.router.create({
+    const newRouter = await prisma.router_Casa.create({
       data: {
-        idEstado: idEstado,
+        idEstado: 1,
         numActivo: numActivo,
         serie: serie,
-        macAddress: macAddress,
-        tipoDispositivo: tipoDispositivo,
-        idOLT: null,
-        idZona_OLT: null,
-        idSubred_OLT: null,
+        macAddress: macAddress
       },
     });
+
     response.json(newRouter);
   } catch (error) {
     if (error.code === "P2002") {
@@ -257,13 +225,13 @@ module.exports.create = async (request, response, next) => {
 //Update
 module.exports.update = async (request, response, next) => {
   try {
-    const { idEstado, activo, serie, macAddress, tipoDispositivo } =
+    const { idEstado, activo, serie, macAddress } =
       request.body;
     let idRouter = parseInt(request.params.idRouter);
 
-    const oldRouter = await prisma.router.findUnique({
+    const oldRouter = await prisma.router_Casa.findUnique({
       where: {
-        idRouter: Number(idRouter),
+        idRouter_Casa: Number(idRouter),
       },
     });
 
@@ -271,17 +239,13 @@ module.exports.update = async (request, response, next) => {
       return response.status(404).json({ message: "Router no encontrado" });
     }
 
-    const newRouter = await prisma.router.update({
-      where: { idRouter: idRouter },
+    const newRouter = await prisma.router_Casa.update({
+      where: { idRouter_Casa: idRouter },
       data: {
         idEstado: idEstado,
         numActivo: activo,
         serie: serie,
-        macAddress: macAddress,
-        tipoDispositivo: tipoDispositivo,
-        idOLT: null,
-        idZona_OLT: null,
-        idSubred_OLT: null,
+        macAddress: macAddress
       },
     });
 

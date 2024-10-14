@@ -1,4 +1,4 @@
-export const estadorouter = [
+export const estadoactivo = [
     {
         nombre: "Disponible",
     },
