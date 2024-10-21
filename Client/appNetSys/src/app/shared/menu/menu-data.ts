@@ -6,16 +6,16 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    displayName: 'DASHBOARD',
-    route: '/dashboard',
-  },
-  {
     displayName: 'OLT',
     route: '/olt',
   },
   {
     displayName: 'FTTH',
     route: '/ftth',
+  },
+  {
+    displayName: 'IPTV',
+    route: '/iptv',
   },
   {
     displayName: 'ONT',

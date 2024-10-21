@@ -107,7 +107,7 @@ model Zona_OLT {
 model Condominio {
   idCondominio Int    @id @default(autoincrement())
   zona         String @db.VarChar(100)
-  numCasa      Int?
+  numCasa      String? @db.VarChar(100)
 
   Cliente_Condominio Cliente_Condominio[]
 }
@@ -133,7 +133,7 @@ model Cliente {
   idCliente         Int     @id @default(autoincrement())
   idInfoCliente     Int
   idTipo            Int
-  idONT             Int
+  idONT             Int?
   idEstado          Int
   idRouter_Gestor   Int?
   idRouter_Casa     Int?
@@ -141,7 +141,7 @@ model Cliente {
   BW_KBPS           String  @db.VarChar(50)
   numOS             String  @db.VarChar(50)
   cajaDerivada      String  @db.VarChar(150)
-  fechaInstalacion  String  @db.VarChar(50)
+  fechaInstalacion  String?  @db.VarChar(50)
   comentario        String? @db.VarChar(200)
   agente            String  @db.VarChar(100)
   cloudMonitoreo    String  @unique @db.VarChar(150)
@@ -149,7 +149,7 @@ model Cliente {
 
   infoCliente   InfoCliente    @relation(fields: [idInfoCliente], references: [idInfoCliente])
   tipoCliente   TipoCliente    @relation(fields: [idTipo], references: [idTipo])
-  ont           ONT            @relation(fields: [idONT], references: [idONT])
+  ont           ONT?           @relation(fields: [idONT], references: [idONT])
   estado        EstadoCliente  @relation(fields: [idEstado], references: [idEstado])
   bw            BW             @relation(fields: [idBW], references: [idBW])
   Router_Gestor Router_Gestor? @relation(fields: [idRouter_Gestor], references: [idRouter_Gestor])
@@ -159,9 +159,9 @@ model Cliente {
 
   IPTV IPTV[]
 
-  Danado Danado[]
-
   Suspencion Suspencion[]
+
+  Danado Danado[]
 }
 
 model Cliente_Condominio {
@@ -184,13 +184,14 @@ model EstadoRetiro {
 model Retiro {
   idRetiro            Int    @id @default(autoincrement())
   idCliente           Int
-  idEstado            Int
-  fechaDesinstalacion String @db.VarChar(50)
-  comentario          String @db.VarChar(200)
-  agente              String @db.VarChar(100)
+  idEstadoR           Int
+  numOS               String?  @db.VarChar(50)
+  fechaDesinstalacion String? @db.VarChar(50)
+  comentario          String? @db.VarChar(200)
+  agente              String? @db.VarChar(100)
 
   cliente Cliente      @relation(fields: [idCliente], references: [idCliente])
-  estado  EstadoRetiro @relation(fields: [idEstado], references: [idEstado])
+  estado  EstadoRetiro @relation(fields: [idEstadoR], references: [idEstado])
 }
 
 model TipoDano {
@@ -203,19 +204,19 @@ model TipoDano {
 model Danado {
   idDanado         Int    @id @default(autoincrement())
   idCliente        Int
-  fechaInstalacion String @db.VarChar(50)
+  fechaInstalacion String? @db.VarChar(50)
   dispositivo      String @db.VarChar(150)
-  direccionNueva   String @db.VarChar(100)
+  direccionNueva   String? @db.VarChar(100)
   direccionActual  String @db.VarChar(100)
-  comentario       String @db.VarChar(200)
-  idTipo           Int
+  comentario       String? @db.VarChar(200)
+  idTipoDano           Int
 
-  cliente Cliente? @relation(fields: [idCliente], references: [idCliente])
-  tipo    TipoDano @relation(fields: [idTipo], references: [idDano])
+  tipo    TipoDano @relation(fields: [idTipoDano], references: [idDano])
+  cliente Cliente @relation(fields: [idCliente], references: [idCliente])
 }
 
 model Suspencion {
-  idDanado        Int    @id @default(autoincrement())
+  idSuspencion       Int    @id @default(autoincrement())
   idCliente       Int
   fechaSuspencion String @db.VarChar(50)
 

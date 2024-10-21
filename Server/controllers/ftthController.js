@@ -7,7 +7,7 @@ module.exports.getFTTH = async (request, response, next) => {
   try {
     const ftth = await prisma.cliente.findMany({
       orderBy: {
-        idCliente: "asc",
+        idCliente: "desc",
       },
       include: {
         infoCliente: true,
@@ -110,13 +110,27 @@ module.exports.getFTTHById = async (request, response, next) => {
     const ftth = await prisma.cliente.findUnique({
       where: { idCliente: idCliente },
       include: {
-        infoCliente: true,
+        infoCliente: {
+          include: {
+            Cliente_Condominio: {
+              where: { estado: 1 },
+              include: {
+                condominio: true,
+              },
+            },
+          },
+        },
         tipoCliente: true,
         ont: true,
         estado: true,
         bw: true,
         Router_Casa: true,
-        Router_Gestor: true,
+        Router_Gestor: {
+          include: {
+            subred: true,
+            zona: true,
+          },
+        },
       },
     });
 
@@ -128,7 +142,7 @@ module.exports.getFTTHById = async (request, response, next) => {
 
     const data = {
       id: ftth.idCliente,
-      fechaInstalacion: ftth.fecInstalacion,
+      fechaInstalacion: ftth.fechaInstalacion,
       numOS: ftth.numOS,
       estado: ftth.estado,
       tipoCliente: ftth.tipoCliente,
@@ -142,6 +156,7 @@ module.exports.getFTTHById = async (request, response, next) => {
       rcasa: ftth.Router_Casa,
       rgestor: ftth.Router_Gestor,
       ont: ftth.ont,
+      potenciaRecepcion: ftth.potenciaRecepcion,
     };
 
     response.json(data);
@@ -154,7 +169,6 @@ module.exports.getFTTHById = async (request, response, next) => {
 module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
-
     let existCondominio = await prisma.condominio.findFirst({
       where: {
         zona: data.zona,
@@ -234,12 +248,27 @@ module.exports.create = async (request, response, next) => {
       },
     });
 
+    let cloudMonitoreo;
+
+    if (data.idTipo === 2) {
+      const existType = await prisma.cliente.count({
+        where: {
+          idTipo: 2,
+        },
+      });
+
+      const newNum = (existType + 1).toString().padStart(3, "0");
+      cloudMonitoreo = `PAN${newNum}_OS${data.numOS}_${data.numero}_${data.nombre}`;
+    } else {
+      cloudMonitoreo = `${data.numCasa}_OS${data.numOS}_${data.numero}_${data.nombre}_${data.zona}`;
+    }
+
     const cliente = await prisma.cliente.create({
       data: {
         idInfoCliente: existClient.idInfoCliente,
         idTipo: data.idTipo,
         idONT: data.idONT,
-        idEstado: data.idEstado,
+        idEstado: 1,
         idRouter_Casa: data.idRouter_Casa,
         idRouter_Gestor: router_gestor.idRouter_Gestor,
         idBW: data.idBW,
@@ -249,7 +278,7 @@ module.exports.create = async (request, response, next) => {
         fechaInstalacion: data.fechaInstalacion,
         comentario: data.comentario,
         agente: data.agente,
-        cloudMonitoreo: data.cloudMonitoreo,
+        cloudMonitoreo: cloudMonitoreo,
         potenciaRecepcion: data.potenciaRecepcion,
       },
     });
@@ -515,12 +544,11 @@ module.exports.delete = async (request, response, next) => {
     });
 
     if (existHistorial.length !== 0) {
-      
       // Eliminar historial de manera concurrente
       await prisma.cliente_Condominio.deleteMany({
         where: { idInfoCliente: cliente.infoCliente.idInfoCliente },
       });
-      
+
       // Eliminar condominios de manera concurrente
       const deleteCondominios = existHistorial.map(async (i) => {
         await prisma.condominio.delete({
@@ -529,7 +557,6 @@ module.exports.delete = async (request, response, next) => {
       });
 
       await Promise.all(deleteCondominios);
-
     }
 
     // Finalmente, eliminar el cliente
@@ -538,7 +565,7 @@ module.exports.delete = async (request, response, next) => {
     });
 
     await prisma.infoCliente.delete({
-      where:{ idInfoCliente: cliente.infoCliente.idInfoCliente}
+      where: { idInfoCliente: cliente.infoCliente.idInfoCliente },
     });
 
     response.status(200).json({
@@ -557,6 +584,13 @@ module.exports.getInfoCliente = async (request, response, next) => {
     const info = await prisma.infoCliente.findMany({
       orderBy: {
         idInfoCliente: "asc",
+      },
+      include: {
+        Cliente_Condominio: {
+          include: {
+            condominio: true,
+          },
+        },
       },
     });
 
@@ -585,6 +619,278 @@ module.exports.getBW = async (request, response, next) => {
       bw: r.nombre,
     }));
     response.json(data);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Estado: Retiro
+module.exports.updateStateRetiro = async (request, response, next) => {
+  const data = request.body;
+  try {
+    const updateService = await prisma.cliente.update({
+      where: { idCliente: data.idCliente },
+      data: {
+        idEstado: 3,
+      },
+    });
+
+    const newRetiro = await prisma.retiro.create({
+      data: {
+        idCliente: data.idCliente,
+        idEstadoR: data.idEstadoR,
+        numOS: data.numOS,
+        fechaDesinstalacion: data.fechaDesinstalacion,
+        comentario: data.comentario,
+        agente: data.agente,
+      },
+    });
+
+    response.json(newRetiro);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Estado: Suspención
+module.exports.updateStateSuspencion = async (request, response, next) => {
+  const data = request.body;
+  try {
+    const updateService = await prisma.cliente.update({
+      where: { idCliente: data.idCliente },
+      data: {
+        idEstado: 2,
+      },
+    });
+
+    const newSuspencion = await prisma.suspencion.create({
+      data: {
+        idCliente: data.idCliente,
+        fechaSuspencion: data.fechaSuspencion,
+      },
+    });
+
+    response.json(newSuspencion);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Estado: Dañado
+async function updateDispositivo(
+  prisma,
+  dispositivo,
+  direcActual,
+  direcNueva,
+  idCliente
+) {
+  if (dispositivo === "ONT") {
+    await prisma.oNT.update({
+      where: { macAddress: direcActual },
+      data: { idEstado: 1 }, 
+    });
+
+    await prisma.oNT.update({
+      where: { macAddress: direcNueva },
+      data: { idEstado: 2 }, 
+    });
+
+    const ont = await prisma.oNT.findUnique({
+      where: { macAddress: direcNueva },
+    });
+
+    await prisma.cliente.update({
+      where: { idCliente: idCliente },
+      data: { idONT: ont.idONT },
+    });
+
+  } else {
+    await prisma.router_Casa.update({
+      where: { macAddress: direcActual },
+      data: { idEstado: 1 },
+    });
+
+    await prisma.router_Casa.update({
+      where: { macAddress: direcNueva },
+      data: { idEstado: 2 }, 
+    });
+
+    const router = await prisma.router_Casa.findUnique({
+      where: { macAddress: direcNueva },
+    });
+
+    await prisma.cliente.update({
+      where: { idCliente: idCliente },
+      data: { idRouter_Casa: router.idRouter_Casa },
+    });
+  }
+}
+
+module.exports.createStateDanado = async (request, response, next) => {
+  const {
+    idCliente,
+    fechaInstalacion,
+    dispositivo1,
+    direcNueva1,
+    direcActual1,
+    comentario,
+    idTipoDano1,
+    idDanado,
+    dispositivo2,
+    direcNueva2,
+    direcActual2,
+  } = request.body;
+
+  try {
+    if (!dispositivo1 || !direcActual1 || !idTipoDano1) {
+      return response
+        .status(400)
+        .json({ message: "Datos incompletos para el primer dispositivo" });
+    }
+
+    await prisma.$transaction(async (prisma) => {
+      //Creación del primer dispositivo
+      await prisma.danado.upsert({
+        where:  {idDanado: idDanado || -1, direccionActual: direcActual1},
+        update: {
+          fechaInstalacion: fechaInstalacion || null,
+          direccionNueva: direcNueva1 || null,
+          comentario: comentario || null,
+        },
+        create: {
+          idCliente: idCliente,
+          fechaInstalacion: fechaInstalacion || null,
+          dispositivo: dispositivo1,
+          direccionNueva: direcNueva1 || null,
+          direccionActual: direcActual1,
+          comentario: comentario || null,
+          idTipoDano: idTipoDano1,
+        },
+      });
+
+      //Dependiendo del tipo de dispositivo actualice el estado del dispositivo
+      //Liberando el dispostivo y asignado otro a ftth
+      if (fechaInstalacion !== null && direcNueva1 !== null) {
+        await prisma.cliente.update({
+          where: { idCliente: idCliente },
+          data: {
+            idEstado: 1,
+          },
+        });
+      } else {
+        await prisma.cliente.update({
+          where: { idCliente: idCliente },
+          data: {
+            idEstado: 4,
+          },
+        });
+      }
+
+      await updateDispositivo(
+        prisma,
+        dispositivo1,
+        direcActual1,
+        direcNueva1,
+        idCliente
+      );
+
+      //Segundo Dispositivo
+      if (dispositivo2 && direcActual2) {
+
+        await prisma.danado.upsert({
+          where: { idDanado: idDanado + 1 || -1, direccionActual: direcActual2 },
+          update: {
+            fechaInstalacion: fechaInstalacion || null,
+            direccionNueva: direcNueva2 || null,
+            comentario: comentario || null,
+          },
+          create: {
+            idCliente: idCliente,
+            fechaInstalacion: fechaInstalacion || null,
+            dispositivo: dispositivo2,
+            direccionNueva: direcNueva2 || null,
+            direccionActual: direcActual2,
+            comentario: comentario || null,
+            idTipoDano: idTipoDano1,
+          },
+        });
+
+        if (fechaInstalacion !== null && direcNueva2 !== null) {
+          await prisma.cliente.update({
+            where: { idCliente: idCliente },
+            data: {
+              idEstado: 1,
+            },
+          });
+        } else {
+          await prisma.cliente.update({
+            where: { idCliente: idCliente },
+            data: {
+              idEstado: 4,
+            },
+          });
+        }
+
+        await updateDispositivo(
+          prisma,
+          dispositivo2,
+          direcActual2,
+          direcNueva2,
+          idCliente
+        );
+      }
+    });
+
+    response.status(201).json();
+  } catch (error) {
+    //console.error("Detalles del error:", error);
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//GetEstado
+module.exports.getEstado = async (request, response, next) => {
+  try {
+    const { idCliente, idEstado } = request.body;
+
+    if (idEstado == 2) {
+      let suspencion = await prisma.suspencion.findMany({
+        where: {
+          idCliente: parseInt(idCliente),
+        },
+      });
+
+      suspencion = suspencion.map((susp) => {
+        const [day, month, year] = susp.fechaSuspencion.split("/");
+        return {
+          ...susp,
+          fechaDate: new Date(`${year}-${month}-${day}`),
+        };
+      });
+
+      suspencion.sort((a, b) => b.fechaDate - a.fechaDate);
+
+      response.json(suspencion[0]);
+    } else if (idEstado == 3) {
+      let retiro = await prisma.retiro.findFirst({
+        where: {
+          idCliente: parseInt(idCliente),
+        },
+      });
+
+      response.json(retiro);
+    } else {
+      let dano = await prisma.danado.findMany({
+        where: {
+          idCliente: parseInt(idCliente),
+          fechaInstalacion: null,
+          direccionNueva: null,
+          comentario: null,
+        },
+      });
+
+      response.json(dano);
+    }
   } catch (error) {
     response.status(500).json({ message: "Error en la solicitud", error });
   }

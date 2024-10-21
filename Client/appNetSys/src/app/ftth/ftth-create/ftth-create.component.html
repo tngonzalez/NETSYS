@@ -34,17 +34,26 @@
 
         <!--Header-->
         <div class="text-center p-6 border-b border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-800">{{titleForm}} Servicio</h3>
+          <h3 class="text-xl font-semibold text-gray-800">
+            {{ titleForm }} Servicio
+          </h3>
         </div>
 
         <!-- Formulario -->
         <div class="p-6 space-y-4">
-          <form [formGroup]="ftthForm" novalidate class="flex flex-col gap-4">
+          <form
+            [formGroup]="ftthForm"
+            novalidate
+            class="flex flex-col gap-4"
+            autocomplete="off"
+          >
             <!-- 2  Columns-->
             <div class="grid gap-6 mb-6 md:grid-cols-2">
               <!--Cliente - Crear-->
-              <div [class.hidden]="!createVisible">
-                <h4><strong>{{titleData}} Cliente</strong></h4>
+              <div>
+                <h4>
+                  <strong>{{ titleData }} Cliente</strong>
+                </h4>
 
                 <div>
                   <label
@@ -60,7 +69,6 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese el nombre completo"
                     required
-                    [disabled]="isDisabled"
                   />
                   <mat-error
                     *ngIf="errorHandling('nombre', 'required')"
@@ -84,8 +92,6 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese el número del cliente"
                     required
-                    [disabled]="isDisabled"
-
                   />
                   <mat-error
                     *ngIf="errorHandling('numero', 'required')"
@@ -94,8 +100,24 @@
                     El número de cliente es <strong>requerida</strong>.
                   </mat-error>
                 </div>
+
+                <!-- Cloud Monitoreo - Actualizar -->
+                <div *ngIf="!isCreate">
+                  <label
+                    for="cloudMonitoreo"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Cloud Monitoreo</label
+                  >
+                  <input
+                    type="text"
+                    id="cloudMonitoreo"
+                    name="cloudMonitoreo"
+                    formControlName="cloudMonitoreo"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
               </div>
-              <div [class.hidden]="!createVisible">
+              <div>
                 <h4><strong>Condominio</strong></h4>
 
                 <div>
@@ -134,135 +156,9 @@
                     formControlName="numCasa"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese el número de casa"
-                    required
                   />
                 </div>
               </div>
-
-              <div *ngIf="isCreate">
-                <div *ngIf="btnVisible" ngClass="'hidden': !btnVisible">
-                  <button
-                    class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-2 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
-                    (click)="searchCliente()"
-                  >
-                    Buscar Cliente
-                  </button>
-                </div>
-  
-                <div *ngIf="tableVisiblie" ngClass="'hidden': !tableVisiblie">
-                  <h4><strong>Clientes con servicios previos</strong></h4>
-  
-                  <div class="flex w-96 mt-2">
-                    <div class="relative">
-                      <div
-                        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-                      >
-                        <svg
-                          class="w-4 h-4 text-indigo-600"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                          />
-                        </svg>
-                      </div>
-                      <input
-                        (change)="numberChange($event)"
-                        type="search"
-                        id="default-search"
-                        class="w-96 h-11 pl-[50px] text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
-                        placeholder="Buscar por número de cliente"
-                        #searchInput
-                      />
-                    </div>
-                  </div>
-  
-                  <!-- Table Número Cliente -->
-                  <div>
-                    <table mat-table [dataSource]="dataSource" matSort>
-                      <ng-container matColumnDef="nombre">
-                        <th
-                          scope="col"
-                          class="text-s text-black colcolor"
-                          mat-header-cell
-                          *matHeaderCellDef
-                          mat-sort-header
-                        >
-                          Cliente
-                        </th>
-                        <td scope="row" mat-cell *matCellDef="let row">
-                          {{ row.nombre }}
-                        </td>
-                      </ng-container>
-  
-                      <ng-container matColumnDef="numero">
-                        <th
-                          scope="col"
-                          class="text-s text-black colcolor"
-                          mat-header-cell
-                          *matHeaderCellDef
-                          mat-sort-header
-                        >
-                          Número Cliente
-                        </th>
-                        <td scope="row" mat-cell *matCellDef="let row">
-                          {{ row.numero }}
-                        </td>
-                      </ng-container>
-  
-                      <ng-container matColumnDef="accion">
-                        <th
-                          scope="col"
-                          class="text-s text-black colcolor"
-                          mat-header-cell
-                          *matHeaderCellDef
-                          mat-sort-header
-                          style="margin: 0 auto"
-                        >
-                          Seleccionar
-                        </th>
-  
-                        <td mat-cell *matCellDef="let row">
-                          <div class="flex gap-5">
-                            <button
-                              mat-mini-fab
-                              class="bt-editar"
-                              matTooltip="Editar"
-                              aria-label="Editar"
-                              (click)="selectCliente(row.numero)"
-                            ></button>
-                          </div>
-                        </td>
-                      </ng-container>
-                      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                      <tr
-                        mat-row
-                        *matRowDef="let row; columns: displayedColumns"
-                      ></tr>
-                    </table>
-                    <div>
-                      <mat-paginator
-                        #paginator
-                        [lang]="'es'"
-                        [length]="dataSource.data.length"
-                        [pageIndex]="0"
-                        [pageSize]="4"
-                        aria-label="Seleccione una página"
-                      >
-                      </mat-paginator>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <span *ngIf="isCreate" class="mx-40 example-spacer"></span>
 
               <!-- Datos Servicio: Tipo + Caja + OS -->
               <div>
@@ -401,6 +297,39 @@
                 <h4><strong>Routers Disponibles</strong></h4>
 
                 <div>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-indigo-600"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      (change)="activeNumChange($event)"
+                      type="search"
+                      id="default-search"
+                      class="block w-full h-11 py-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                      placeholder="Buscar por número activo"
+                      #searchInput
+                      [disabled]="isTablaRouter"
+                    />
+                  </div>
+                </div>
+
+                <div>
                   <table mat-table [dataSource]="dataRouter" matSort>
                     <ng-container matColumnDef="activo">
                       <th
@@ -466,12 +395,11 @@
                             class="bt-editar"
                             matTooltip="Editar"
                             aria-label="Editar"
-                            [disabled]="element.desactivado"
-                            [class.desactivado]="element.desactivado"
                             [class.selected-button]="
                               selectedButton === element.id
                             "
                             (click)="selectRouter(element)"
+                            [disabled]="isTablaRouter"
                           ></button>
                         </div>
                       </td>
@@ -551,6 +479,39 @@
                 <h4><strong>ONT Disponibles</strong></h4>
 
                 <div>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-indigo-600"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      (change)="activeNumONTChange($event)"
+                      type="search"
+                      id="search"
+                      class="block w-full h-11 py-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                      placeholder="Buscar por número activo"
+                      #searchONTInput
+                      [disabled]="isTablaONT"
+                    />
+                  </div>
+                </div>
+
+                <div>
                   <table mat-table [dataSource]="dataONT" matSort>
                     <ng-container matColumnDef="numActivo">
                       <th
@@ -567,21 +528,6 @@
                       </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="numSN">
-                      <th
-                        scope="col"
-                        class="text-s text-black colcolor"
-                        mat-header-cell
-                        *matHeaderCellDef
-                        mat-sort-header
-                      >
-                        Serie
-                      </th>
-                      <td scope="element" mat-cell *matCellDef="let element">
-                        {{ element.numSN }}
-                      </td>
-                    </ng-container>
-
                     <ng-container matColumnDef="macAdd">
                       <th
                         scope="col"
@@ -594,6 +540,21 @@
                       </th>
                       <td scope="element" mat-cell *matCellDef="let element">
                         {{ element.macAdd }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="numSN">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        Serie
+                      </th>
+                      <td scope="element" mat-cell *matCellDef="let element">
+                        {{ element.numSN }}
                       </td>
                     </ng-container>
 
@@ -616,12 +577,11 @@
                             class="bt-editar"
                             matTooltip="Editar"
                             aria-label="Editar"
-                            [disabled]="element.desactivado"
-                            [class.desactivado]="element.desactivado"
                             [class.selected-button]="
-                              selectedButton === element.id
+                              selectedButtonONT === element.id
                             "
                             (click)="selectONT(element)"
+                            [disabled]="isTablaONT"
                           ></button>
                         </div>
                       </td>
@@ -649,8 +609,6 @@
 
               <!--Cargar ONT-->
               <div>
-                <br />
-
                 <div>
                   <label
                     for="numActivo"
@@ -798,29 +756,6 @@
                     <strong>requerida</strong>.
                   </mat-error>
                 </div>
-
-                <div>
-                  <label
-                    for="puertoNAT"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Puerto NAT</label
-                  >
-                  <input
-                    type="text"
-                    id="puertoNAT"
-                    name="puertoNAT"
-                    formControlName="puertoNAT"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Ingrese el puerto NAT"
-                    required
-                  />
-                  <mat-error
-                    *ngIf="errorHandling('puertoNAT', 'required')"
-                    class="mt-2 text-sm text-red-600 dark:text-red-500"
-                  >
-                    El puerto NAT es <strong>requerido</strong>.
-                  </mat-error>
-                </div>
               </div>
 
               <!--Adicional-->
@@ -891,8 +826,7 @@
               </div>
 
               <!-- Estado  -->
-              <!-- Validar que unicamente se muestre esto cuando se necesite crear -->
-              <div > <!--*ngIf="estadoVisible"-->
+              <div *ngIf="!isCreate">
                 <h4><strong>Estado del servicio</strong></h4>
 
                 <div>
@@ -903,6 +837,8 @@
                   >
                   <select
                     id="idEstado"
+                    formControlName="idEstado"
+                    (change)="selectStatus($event)"
                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option *ngFor="let status of statuses" [value]="status.id">
@@ -910,36 +846,211 @@
                     </option>
                   </select>
                 </div>
- 
+
+                <!-- Dañados Info -->
+                <div *ngIf="!isCreate && idEstado === 4" [formGroup]="danoForm">
+                  <h4><strong>Dañado </strong></h4>
+
+                  <div>
+                    <label
+                      for="idTipoDano"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Tipo de daño</label
+                    >
+                    <select
+                      id="idTipoDano"
+                      formControlName="idTipoDano"
+                      (change)="danoStatus($event)"
+                      class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option *ngFor="let dano of danos" [value]="dano.id">
+                        {{ dano.name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Info Daño -->
+                  <div>
+                    <label
+                      for="fechaInstalacionDano"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Fecha de instalación</label
+                    >
+                    <input
+                      id="fechaInstalacionDano"
+                      formControlName="fechaInstalacionDano"
+                      type="text"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="dd/mm/yyyy"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      for="comentarioDano"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Comentario adicional</label
+                    >
+                    <textarea
+                      id="comentarioDano"
+                      name="comentarioDano"
+                      formControlName="comentarioDano"
+                      rows="5"
+                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Ingrese su comentario"
+                    ></textarea>
+                  </div>
+                </div>
               </div>
 
-              <!-- Retiro -->
-              <!-- <div>
-                <h4><strong>Retiro</strong></h4>
-
+              <!-- Dañados - Table-->
+              <div *ngIf="!isCreate && idEstado === 4" [formGroup]="danoForm">
+                <!--Dropdown: Tipos de dispositivos-->
                 <div>
                   <label
-                    for=""
+                    for="dispositivo1"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Estado del servicio</label
+                    >Tipo de dispositivo</label
                   >
                   <select
-                    id="idEstado"
-                    class="text-[#112346] h-fit font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center border-solid border-2 border-black-600"
+                    id="dispositivo1"
+                    formControlName="dispositivo1"
+                    (change)="dispositivosStatus($event)"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option *ngFor="let status of statuses" [value]="status.id">
-                      {{ status.name }}
+                    <option
+                      *ngFor="let dispositivo of dispositivos"
+                      [value]="dispositivo.name"
+                    >
+                      {{ dispositivo.name }}
                     </option>
                   </select>
                 </div>
- 
-              </div> -->
-              
 
+                <!--Cargar ONT o Router-->
+                <div>
+                  <div>
+                    <label
+                      for="direccionActual"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Dirección actual</label
+                    >
+                    <input
+                      type="text"
+                      id="direccionActual"
+                      name="direccionActual"
+                      formControlName="direccionActual"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    />
+                  </div>
 
+                  <div>
+                    <label
+                      for="direccionNuevo"
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Dirección nueva</label
+                    >
+                    <input
+                      type="text"
+                      id="direccionNuevo"
+                      name="direccionNuevo"
+                      formControlName="direccionNuevo"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
 
+              <!-- Retiro -->
+              <div *ngIf="!isCreate && idEstado === 3" [formGroup]="retiroForm">
+                <h4><strong>Retiro </strong></h4>
 
+                <div>
+                  <label
+                    for="idEstadoR"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Estado del retiro</label
+                  >
+                  <select
+                    id="idEstadoR"
+                    formControlName="idEstadoR"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option *ngFor="let retiro of retiros" [value]="retiro.id">
+                      {{ retiro.name }}
+                    </option>
+                  </select>
+                </div>
 
+                <!-- Info Retiro -->
+                <div>
+                  <label
+                    for="numOSRetiro"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Número de orden de servicio</label
+                  >
+                  <input
+                    id="numOSRetiro"
+                    formControlName="numOSRetiro"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese el número de orden de servicio"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="fechaDesinstalacionRetiro"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Fecha de desinstalación</label
+                  >
+                  <input
+                    id="fechaDesinstalacionRetiro"
+                    formControlName="fechaDesinstalacionRetiro"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="dd/mm/yyyy"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="agenteRetiro"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Nombre del agente encargado
+                  </label>
+                  <input
+                    id="agenteRetiro"
+                    formControlName="agenteRetiro"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese el nombre del agente encargado"
+                  />
+                </div>
+              </div>
+
+              <!-- Suspencion Info -->
+              <div
+                *ngIf="!isCreate && idEstado === 2"
+                [formGroup]="suspencionForm"
+              >
+                <h4><strong>Suspención </strong></h4>
+
+                <div>
+                  <label
+                    for="fechaSuspencion"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Fecha de instalación</label
+                  >
+                  <input
+                    id="fechaSuspencion"
+                    formControlName="fechaSuspencion"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="dd/mm/yyyy"
+                  />
+                </div>
+              </div>
             </div>
 
             <!-- Botones -->
@@ -954,7 +1065,7 @@
                 </button>
                 <button
                   type="submit"
-                  (click)="createFTTH()"
+                  (click)="closeModal()"
                   class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
                 >
                   Cancelar

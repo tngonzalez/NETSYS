@@ -169,8 +169,8 @@ export class OntCreateComponent {
   }
 
   // Control de Errores
-  errorHandling = (control: string, error: string) => {
-    return;
-    this.ontForm.controls[control].hasError(error);
-  };
+  errorHandling(control: string, error: string) {
+    return this.ontForm.controls[control].hasError(error) && (this.submitted || this.ontForm.controls[control].touched);
+  }
+  
 }

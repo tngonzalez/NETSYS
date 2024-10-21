@@ -250,8 +250,7 @@ export class RtrCreateComponent implements OnInit {
 
  
   // Control de Errores
-  errorHandling = (control: string, error: string) => {
-    return
-      this.routerForm.controls[control].hasError(error);
-  };
+  errorHandling(control: string, error: string) {
+    return this.routerForm.controls[control].hasError(error) && (this.submitted || this.routerForm.controls[control].touched);
+  }
 }

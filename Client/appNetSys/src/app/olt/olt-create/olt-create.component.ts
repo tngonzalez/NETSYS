@@ -113,7 +113,7 @@ export class OltCreateComponent {
           ipGeneral: this.oltData.ipGeneral,
           puertoNAT: this.oltData.puertoNAT,
         });
-
+        
         //Desactiva el input de ipGeneral
         this.oltForm.get('ipGeneral')?.disable(); 
       });
@@ -210,11 +210,7 @@ export class OltCreateComponent {
     this.oltForm.reset();
   }
   // Control de Errores
-  public errorHandling = (control: string, error: string) => {
-    return (
-      this.oltForm.controls[control].hasError(error) &&
-      this.oltForm.controls[control].invalid &&
-      (this.makeSubmit || this.oltForm.controls[control].touched)
-    );
-  };
+  errorHandling(control: string, error: string) {
+    return this.oltForm.controls[control].hasError(error) && (this.submitted || this.oltForm.controls[control].touched);
+  }
 }

@@ -97,7 +97,7 @@ CREATE TABLE `Zona_OLT` (
 CREATE TABLE `Condominio` (
     `idCondominio` INTEGER NOT NULL AUTO_INCREMENT,
     `zona` VARCHAR(100) NOT NULL,
-    `numCasa` INTEGER NULL,
+    `numCasa` VARCHAR(100) NULL,
 
     PRIMARY KEY (`idCondominio`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -125,7 +125,7 @@ CREATE TABLE `Cliente` (
     `idCliente` INTEGER NOT NULL AUTO_INCREMENT,
     `idInfoCliente` INTEGER NOT NULL,
     `idTipo` INTEGER NOT NULL,
-    `idONT` INTEGER NOT NULL,
+    `idONT` INTEGER NULL,
     `idEstado` INTEGER NOT NULL,
     `idRouter_Gestor` INTEGER NULL,
     `idRouter_Casa` INTEGER NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `Cliente` (
     `BW_KBPS` VARCHAR(50) NOT NULL,
     `numOS` VARCHAR(50) NOT NULL,
     `cajaDerivada` VARCHAR(150) NOT NULL,
-    `fechaInstalacion` VARCHAR(50) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NULL,
     `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NOT NULL,
     `cloudMonitoreo` VARCHAR(150) NOT NULL,
@@ -165,10 +165,11 @@ CREATE TABLE `EstadoRetiro` (
 CREATE TABLE `Retiro` (
     `idRetiro` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
-    `idEstado` INTEGER NOT NULL,
-    `fechaDesinstalacion` VARCHAR(50) NOT NULL,
-    `comentario` VARCHAR(200) NOT NULL,
-    `agente` VARCHAR(100) NOT NULL,
+    `idEstadoR` INTEGER NOT NULL,
+    `numOS` VARCHAR(50) NULL,
+    `fechaDesinstalacion` VARCHAR(50) NULL,
+    `comentario` VARCHAR(200) NULL,
+    `agente` VARCHAR(100) NULL,
 
     PRIMARY KEY (`idRetiro`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -185,23 +186,23 @@ CREATE TABLE `TipoDano` (
 CREATE TABLE `Danado` (
     `idDanado` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
-    `fechaInstalacion` VARCHAR(50) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NULL,
     `dispositivo` VARCHAR(150) NOT NULL,
-    `direccionNueva` VARCHAR(100) NOT NULL,
+    `direccionNueva` VARCHAR(100) NULL,
     `direccionActual` VARCHAR(100) NOT NULL,
-    `comentario` VARCHAR(200) NOT NULL,
-    `idTipo` INTEGER NOT NULL,
+    `comentario` VARCHAR(200) NULL,
+    `idTipoDano` INTEGER NOT NULL,
 
     PRIMARY KEY (`idDanado`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Suspencion` (
-    `idDanado` INTEGER NOT NULL AUTO_INCREMENT,
+    `idSuspencion` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
     `fechaSuspencion` VARCHAR(50) NOT NULL,
 
-    PRIMARY KEY (`idDanado`)
+    PRIMARY KEY (`idSuspencion`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -299,7 +300,7 @@ ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idInfoCliente_fkey` FOREIGN KEY (`
 ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idTipo_fkey` FOREIGN KEY (`idTipo`) REFERENCES `TipoCliente`(`idTipo`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idONT_fkey` FOREIGN KEY (`idONT`) REFERENCES `ONT`(`idONT`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idONT_fkey` FOREIGN KEY (`idONT`) REFERENCES `ONT`(`idONT`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoCliente`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -323,13 +324,13 @@ ALTER TABLE `Cliente_Condominio` ADD CONSTRAINT `Cliente_Condominio_idInfoClient
 ALTER TABLE `Retiro` ADD CONSTRAINT `Retiro_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Retiro` ADD CONSTRAINT `Retiro_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoRetiro`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Retiro` ADD CONSTRAINT `Retiro_idEstadoR_fkey` FOREIGN KEY (`idEstadoR`) REFERENCES `EstadoRetiro`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idTipoDano_fkey` FOREIGN KEY (`idTipoDano`) REFERENCES `TipoDano`(`idDano`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idTipo_fkey` FOREIGN KEY (`idTipo`) REFERENCES `TipoDano`(`idDano`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Suspencion` ADD CONSTRAINT `Suspencion_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;

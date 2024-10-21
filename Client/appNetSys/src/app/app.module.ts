@@ -15,7 +15,8 @@ import { ServiceModule } from './service/service.module';
 import 'flowbite';
 import { OntModule } from './ont/ont.module';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; 
+import { MatNativeDateModule } from '@angular/material/core';
+import { IptvModule } from './iptv/iptv.module'; 
 
 @NgModule ({
   declarations: [AppComponent],
@@ -35,6 +36,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     OntModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    IptvModule,
 
   ],
   providers: [],

@@ -45,3 +45,12 @@
 .hidden {
   display: none;
 }
+
+input{
+  text-transform: uppercase;
+  
+}
+
+input::placeholder {
+  text-transform: none; /* Evita que el placeholder se convierta en mayúsculas */
+}
