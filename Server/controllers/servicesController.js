@@ -7,7 +7,7 @@ module.exports.getTipoCliente = async (request, response, next) => {
   try {
     const services = await prisma.tipoCliente.findMany({
       orderBy: {
-        idTipo: "asc",
+        idTipo: "desc",
       },
       include: {
         Cliente: true,

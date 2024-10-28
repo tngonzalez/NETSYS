@@ -6,7 +6,7 @@ module.exports.get = async (request, response, next) => {
   try {
     const dataONT = await prisma.oNT.findMany({
       orderBy: {
-        idONT: "asc",
+        idONT: "desc",
       },
       include: {
         estado: true,

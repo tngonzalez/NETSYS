@@ -26,6 +26,8 @@ model EstadoCliente {
   nombre   String @db.VarChar(50)
 
   Cliente Cliente[]
+
+  IPTV IPTV[]
 }
 
 model EstadoActivo {
@@ -33,7 +35,8 @@ model EstadoActivo {
   nombre   String @db.VarChar(50)
 
   Router_Casa Router_Casa[]
-  ont ONT[]
+  ont         ONT[]
+  dns         DNS_Stick[]
 }
 
 model ONT {
@@ -105,8 +108,8 @@ model Zona_OLT {
 }
 
 model Condominio {
-  idCondominio Int    @id @default(autoincrement())
-  zona         String @db.VarChar(100)
+  idCondominio Int     @id @default(autoincrement())
+  zona         String  @db.VarChar(100)
   numCasa      String? @db.VarChar(100)
 
   Cliente_Condominio Cliente_Condominio[]
@@ -117,7 +120,7 @@ model InfoCliente {
   numero        String @unique @db.VarChar(30)
   nombre        String @db.VarChar(100)
 
-  cliente    Cliente[]
+  cliente Cliente[]
 
   Cliente_Condominio Cliente_Condominio[]
 }
@@ -141,7 +144,7 @@ model Cliente {
   BW_KBPS           String  @db.VarChar(50)
   numOS             String  @db.VarChar(50)
   cajaDerivada      String  @db.VarChar(150)
-  fechaInstalacion  String?  @db.VarChar(50)
+  fechaInstalacion  String? @db.VarChar(50)
   comentario        String? @db.VarChar(200)
   agente            String  @db.VarChar(100)
   cloudMonitoreo    String  @unique @db.VarChar(150)
@@ -165,13 +168,13 @@ model Cliente {
 }
 
 model Cliente_Condominio {
-  idHistorial    Int     @id @default(autoincrement())
+  idHistorial   Int @id @default(autoincrement())
   idInfoCliente Int
-  idCondominio Int 
-  estado Int //1 = Actual  2 = Pasado
+  idCondominio  Int
+  estado        Int //1 = Actual  2 = Pasado
 
-  condominio Condominio @relation(fields: [idCondominio], references: [idCondominio])
-  infoCliente   InfoCliente    @relation(fields: [idInfoCliente], references: [idInfoCliente])
+  condominio  Condominio  @relation(fields: [idCondominio], references: [idCondominio])
+  infoCliente InfoCliente @relation(fields: [idInfoCliente], references: [idInfoCliente])
 }
 
 model EstadoRetiro {
@@ -182,10 +185,10 @@ model EstadoRetiro {
 }
 
 model Retiro {
-  idRetiro            Int    @id @default(autoincrement())
+  idRetiro            Int     @id @default(autoincrement())
   idCliente           Int
   idEstadoR           Int
-  numOS               String?  @db.VarChar(50)
+  numOS               String? @db.VarChar(50)
   fechaDesinstalacion String? @db.VarChar(50)
   comentario          String? @db.VarChar(200)
   agente              String? @db.VarChar(100)
@@ -202,21 +205,21 @@ model TipoDano {
 }
 
 model Danado {
-  idDanado         Int    @id @default(autoincrement())
+  idDanado         Int     @id @default(autoincrement())
   idCliente        Int
   fechaInstalacion String? @db.VarChar(50)
-  dispositivo      String @db.VarChar(150)
+  dispositivo      String  @db.VarChar(150)
   direccionNueva   String? @db.VarChar(100)
-  direccionActual  String @db.VarChar(100)
+  direccionActual  String  @db.VarChar(100)
   comentario       String? @db.VarChar(200)
-  idTipoDano           Int
+  idTipoDano       Int
 
   tipo    TipoDano @relation(fields: [idTipoDano], references: [idDano])
-  cliente Cliente @relation(fields: [idCliente], references: [idCliente])
+  cliente Cliente  @relation(fields: [idCliente], references: [idCliente])
 }
 
 model Suspencion {
-  idSuspencion       Int    @id @default(autoincrement())
+  idSuspencion    Int    @id @default(autoincrement())
   idCliente       Int
   fechaSuspencion String @db.VarChar(50)
 
@@ -231,32 +234,36 @@ model EstadoInstalacion {
 }
 
 model DNS_Stick {
-  idDNS            Int    @id @default(autoincrement())
-  correo           String @db.VarChar(100)
-  clave            String @db.VarChar(100)
-  macAddress       String @unique @db.VarChar(100)
-  dns              String @db.VarChar(100)
-  fechaInstalacion String @db.VarChar(50)
-  comentario       String @db.VarChar(200)
+  idDNS      Int     @id @default(autoincrement())
+  idEstado   Int
+  nombre     String? @db.VarChar(100)
+  correo     String  @db.VarChar(100)
+  clave      String  @db.VarChar(100)
+  macAddress String  @unique @db.VarChar(100)
+  dns        String  @unique @db.VarChar(100) //Similar al NumSN
 
-  iptv IPTV[]
+  iptv   IPTV[]
+  estado EstadoActivo @relation(fields: [idEstado], references: [idEstado])
 }
 
 model IPTV {
-  idIPTV           Int    @id @default(autoincrement())
-  idCliente        Int
-  idEstado         Int
-  idDNS            Int
-  fechaInstalacion String @db.VarChar(50)
-  comentario       String @db.VarChar(200)
-  agente           String @db.VarChar(100)
-  macAddress       String @unique @db.VarChar(100)
-  correo           String @db.VarChar(100)
-  clave            String @db.VarChar(100)
+  idIPTV              Int    @id @default(autoincrement())
+  idCliente           Int
+  idEstado            Int //Activo Dañado Suspención
+  idEstadoInstalacion Int //Instalado - Pendiente 
+  idDNS               Int @unique
+  fechaInstalacion    String? @db.VarChar(50)
+  comentario          String? @db.VarChar(200)
+  agente              String @db.VarChar(100)
+  macAddress          String @unique @db.VarChar(100)
+  correo              String @unique @db.VarChar(100)
+  clave               String @unique @db.VarChar(100)
 
   cliente Cliente           @relation(fields: [idCliente], references: [idCliente])
-  estado  EstadoInstalacion @relation(fields: [idEstado], references: [idEstado])
+  estadoInst  EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])
   dns     DNS_Stick         @relation(fields: [idDNS], references: [idDNS])
+  estadoServicio  EstadoCliente @relation(fields: [idEstado], references: [idEstado])
+
 }
 
 model InfoCliente_IPpublica {

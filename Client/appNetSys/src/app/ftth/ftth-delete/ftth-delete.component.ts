@@ -44,7 +44,7 @@ deleteFTTH() {
       this.respuesta = data;
       this.noti.mensajeRedirect(
        'Cliente • Eliminado',
-        `El Cliente seleccionado fue eliminado exitosamente. `,
+        `El cliente seleccionado fue eliminado exitosamente. `,
         TipoMessage.success,
         `/ftth`
       );

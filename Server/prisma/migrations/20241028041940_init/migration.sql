@@ -216,14 +216,15 @@ CREATE TABLE `EstadoInstalacion` (
 -- CreateTable
 CREATE TABLE `DNS_Stick` (
     `idDNS` INTEGER NOT NULL AUTO_INCREMENT,
+    `idEstado` INTEGER NOT NULL,
+    `nombre` VARCHAR(100) NULL,
     `correo` VARCHAR(100) NOT NULL,
     `clave` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
     `dns` VARCHAR(100) NOT NULL,
-    `fechaInstalacion` VARCHAR(50) NOT NULL,
-    `comentario` VARCHAR(200) NOT NULL,
 
     UNIQUE INDEX `DNS_Stick_macAddress_key`(`macAddress`),
+    UNIQUE INDEX `DNS_Stick_dns_key`(`dns`),
     PRIMARY KEY (`idDNS`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -232,15 +233,19 @@ CREATE TABLE `IPTV` (
     `idIPTV` INTEGER NOT NULL AUTO_INCREMENT,
     `idCliente` INTEGER NOT NULL,
     `idEstado` INTEGER NOT NULL,
+    `idEstadoInstalacion` INTEGER NOT NULL,
     `idDNS` INTEGER NOT NULL,
-    `fechaInstalacion` VARCHAR(50) NOT NULL,
-    `comentario` VARCHAR(200) NOT NULL,
+    `fechaInstalacion` VARCHAR(50) NULL,
+    `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NOT NULL,
     `macAddress` VARCHAR(100) NOT NULL,
     `correo` VARCHAR(100) NOT NULL,
     `clave` VARCHAR(100) NOT NULL,
 
+    UNIQUE INDEX `IPTV_idDNS_key`(`idDNS`),
     UNIQUE INDEX `IPTV_macAddress_key`(`macAddress`),
+    UNIQUE INDEX `IPTV_correo_key`(`correo`),
+    UNIQUE INDEX `IPTV_clave_key`(`clave`),
     PRIMARY KEY (`idIPTV`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -336,13 +341,19 @@ ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idCliente_fkey` FOREIGN KEY (`idClie
 ALTER TABLE `Suspencion` ADD CONSTRAINT `Suspencion_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `DNS_Stick` ADD CONSTRAINT `DNS_Stick_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoActivo`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoInstalacion`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstadoInstalacion_fkey` FOREIGN KEY (`idEstadoInstalacion`) REFERENCES `EstadoInstalacion`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idDNS_fkey` FOREIGN KEY (`idDNS`) REFERENCES `DNS_Stick`(`idDNS`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoCliente`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `IpPublica` ADD CONSTRAINT `IpPublica_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente_IPpublica`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;

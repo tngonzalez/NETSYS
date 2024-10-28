@@ -8,7 +8,7 @@ module.exports.getRouter = async (request, response, next) => {
   try {
     const router = await prisma.router_Casa.findMany({
       orderBy: {
-        idRouter_Casa: "asc",
+        idRouter_Casa: "desc",
       },
       include: {
         estado: true,

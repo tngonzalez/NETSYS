@@ -6,7 +6,7 @@ module.exports.get = async (request, response, next) => {
   try {
     const dataOLT = await prisma.oLT.findMany({
       orderBy: {
-        idOLT: "asc",
+        idOLT: "desc",
       },
       include: {
         Subred_OLT: true,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { GenericService } from '../../shared/generic.service';
@@ -31,8 +31,22 @@ export class OntCreateComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   respuesta: any;
 
+  dataScanned: string = '';
+  isScanningMac: boolean = true; 
+  scanTimeOut: any = null; 
+
   @Output() ontCrear: EventEmitter<void> = new EventEmitter<void>();
 
+  @ViewChild('macInput') macInput!: ElementRef;
+  @ViewChild('serieInput') serieInput!: ElementRef;
+  @ViewChild('activoInput') activoInput!: ElementRef;
+
+  
+  ont = {
+    macAddress: '',
+    serie: '',
+  };
+  
   //Creación / Actualización
   isCreate: boolean = true;
   titleForm: string = 'Crear';
@@ -54,6 +68,38 @@ export class OntCreateComponent {
       numSN: [null, Validators.required],
       macAddress: [null, Validators.required],
     });
+  }
+
+
+  isValid(key: string): boolean {
+    const validKeys = /^[a-zA-Z0-9-]+$/; // Solo letras, números y guiones
+    return validKeys.test(key);
+  }
+
+  //Escucha los eventos del teclado
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    const key = event.key;
+
+    if (key === 'Shift') {
+      return;
+    }
+
+    if (key === 'Enter') {
+      clearTimeout(this.scanTimeOut);
+
+      this.scanTimeOut = setTimeout(() => {
+        if (this.isScanningMac) {
+          this.ontForm.controls['macAddress'].setValue(this.dataScanned);
+          this.isScanningMac = false;
+        } else {
+          this.ontForm.controls['numSN'].setValue(this.dataScanned);
+          this.isScanningMac = true;
+        }
+
+        this.dataScanned = '';
+      }, 200);
+    }
   }
 
   openModal(id?: any) {

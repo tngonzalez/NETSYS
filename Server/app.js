@@ -13,6 +13,8 @@ const ftthRoutes = require('./routes/ftthRoutes');
 const oltRoutes = require('./routes/oltRoutes'); 
 const servicesRoutes = require('./routes/servicesRoutes'); 
 const ontRoutes = require('./routes/ontRoutes'); 
+const dnsRoutes = require('./routes/dnsRoutes'); 
+const iptvRoutes = require('./routes/iptvRoutes'); 
 
 
 // Acceder a la configuracion del archivo .env
@@ -37,6 +39,8 @@ app.use("/ftth/", ftthRoutes);
 app.use("/olt/", oltRoutes); 
 app.use("/service/", servicesRoutes); 
 app.use("/ont/", ontRoutes); 
+app.use("/dns/", dnsRoutes); 
+app.use("/iptv/", iptvRoutes); 
 
 
 // Servidor

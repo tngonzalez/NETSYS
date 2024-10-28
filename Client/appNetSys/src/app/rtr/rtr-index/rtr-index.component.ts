@@ -33,6 +33,10 @@ export class RtrIndexComponent implements AfterViewInit {
       id: 2,
       name: 'Asignado',
     },
+    {
+      id: 3,
+      name: 'Dañado',
+    },
   ];
 
 
@@ -97,6 +101,13 @@ export class RtrIndexComponent implements AfterViewInit {
 
   statusChange(value: any, valueDeactivate?: any) {
     switch (value.value) {
+      case '3': {
+        this.filteredData = this.datos.filter(
+          (data: any) => data.idEstado === 3
+        );
+        this.updateTable(this.filteredData);
+        break;
+      }
       case '2': {
         this.filteredData = this.datos.filter(
           (data: any) => data.idEstado === 2

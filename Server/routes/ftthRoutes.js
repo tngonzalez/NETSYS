@@ -15,7 +15,7 @@ router.post("/suspencion/crear", datos.updateStateSuspencion);
 router.post("/danado/crear", datos.createStateDanado); 
 
 
-router.put("/actualizar/:idCliente", datos.update); 
+router.put("/actualizar/:id", datos.update); 
 
 router.get("/ftth/:idCliente", datos.getFTTHById); 
 

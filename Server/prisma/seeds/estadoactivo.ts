@@ -5,4 +5,7 @@ export const estadoactivo = [
     {
         nombre: "Asignado",
     },
+    {
+        nombre: "Dañado",
+    },
 ];

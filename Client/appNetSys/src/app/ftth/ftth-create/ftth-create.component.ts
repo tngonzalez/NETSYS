@@ -56,6 +56,8 @@ export class FtthCreateComponent implements OnInit {
   agente: any;
   cloudMonitoreo: any;
   puertoNAT: any;
+  id: any;
+  idRouter_Gestor: any;
 
   //Retiro
   idRetiro: any;
@@ -93,12 +95,11 @@ export class FtthCreateComponent implements OnInit {
   danoForm!: FormGroup;
   danoData: any;
 
-  retiroForm!: FormGroup; 
-  retiroData: any; 
+  retiroForm!: FormGroup;
+  retiroData: any;
 
-  suspencionForm!: FormGroup; 
-  suspencionData: any; 
-
+  suspencionForm!: FormGroup;
+  suspencionData: any;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   respuesta: any;
@@ -135,6 +136,8 @@ export class FtthCreateComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Output() ftthCrearModal: EventEmitter<void> = new EventEmitter<void>();
+  @ViewChild('searchInput') searchInput!: ElementRef;
+  @ViewChild('searchONTInput') searchONTInput!: ElementRef;
 
   statuses = [
     { id: 0, name: 'Estado' },
@@ -215,12 +218,11 @@ export class FtthCreateComponent implements OnInit {
 
   reactiveForm() {
     this.ftthForm = this.fb.group({
-
       //Cliente
       id: [null, null],
       numero: [null, Validators.required],
       nombre: [null, Validators.required],
-      cloudMonitoreo: [null, null], //Actualizar
+      cloudMonitoreo: [null], //Actualizar
 
       //Condominio
       zona: [null, Validators.required],
@@ -232,6 +234,9 @@ export class FtthCreateComponent implements OnInit {
       activo: [null, Validators.required],
       macAdress: [null, Validators.required],
       serie: [null, Validators.required],
+
+      //Router_Gestor
+      idRouter_Gestor: [null, null],
 
       //ONT
       idONT: [null, null],
@@ -256,14 +261,14 @@ export class FtthCreateComponent implements OnInit {
 
       //Adicional
       fechaInstalacion: [null, null],
-      comentario: [null,null],
+      comentario: [null, null],
       agente: [null, Validators.required],
     });
   }
 
   retiroReactiveForm() {
     this.retiroForm = this.fb.group({
-      id: [null, null], 
+      id: [null, null],
       //Retiro
       idCliente: [null, null],
       idRetiro: [null, null],
@@ -276,7 +281,7 @@ export class FtthCreateComponent implements OnInit {
 
   danoReactiveForm() {
     this.danoForm = this.fb.group({
-      id: [null, null], 
+      id: [null, null],
 
       //Dañado
       idDanado: [null, null],
@@ -300,7 +305,7 @@ export class FtthCreateComponent implements OnInit {
 
   suspencionReactiveForm() {
     this.suspencionForm = this.fb.group({
-      id: [null, null], 
+      id: [null, null],
 
       //Suspendición
       fechaSuspencion: [null, Validators.required],
@@ -328,7 +333,7 @@ export class FtthCreateComponent implements OnInit {
 
       this.ftthForm.get('numero')?.disable();
       this.ftthForm.get('nombre')?.disable();
-      this.ftthForm.get('cloudMonitoreo')?.disable(); 
+      this.ftthForm.get('cloudMonitoreo')?.disable();
     } else {
       this.isCreate = true;
       this.titleForm = 'Crear';
@@ -347,7 +352,38 @@ export class FtthCreateComponent implements OnInit {
 
   closeModal() {
     this.submitted = false;
-    this.resetScroll();
+
+    [
+      'zona',
+      'numCasa',
+      'potenciaRecepcion',
+      'kbps',
+      'numOS',
+      'cajaDerivada',
+      'fechaInstalacion',
+      'comentario',
+      'agente',
+      'nombreZona',
+      'nombre',
+      'numero',
+    ].forEach((campo) => {
+      this.ftthForm.get(campo)?.enable();
+    });
+
+    // Habilitar Dropdowns
+    this.ftthForm.get('idOLT')?.enable();
+    this.ftthForm.get('idBW')?.enable();
+    this.ftthForm.get('idTipo')?.enable();
+    this.ftthForm.get('ip')?.enable();
+
+    // Habilitar Tablas
+    this.isTablaRouter = false;
+    this.isTablaONT = false;
+    this.isRouterS = false;
+    this.isONTS = false;
+
+    this.searchInput.nativeElement.value = '';
+    this.searchONTInput.nativeElement.value = '';
 
     this.ftthForm.reset();
     this.retiroForm.reset();
@@ -355,11 +391,12 @@ export class FtthCreateComponent implements OnInit {
     this.suspencionForm.reset();
 
     this.createVisible = true;
+    this.isCreate = true;
 
     this.ftthCrearModal.emit();
-    this.isVisible = false;
 
-    this.resetScroll(); 
+    this.isVisible = false;
+    this.resetScroll();
   }
 
   //Cargar los datos en caso de actualizar
@@ -379,114 +416,111 @@ export class FtthCreateComponent implements OnInit {
       .subscribe((data: any) => {
         this.ftthData = data;
         this.ftthForm.patchValue({
+          //Cliente
+          id: this.ftthData.id,
+          numero: this.ftthData.infoCliente.numero,
+          nombre: this.ftthData.infoCliente.nombre,
+          cloudMonitoreo: this.ftthData.cloudMonitoreo,
 
-        //Cliente 
-        idCliente: this.ftthData.infoCliente.id,
-        numero: this.ftthData.infoCliente.numero, 
-        nombre: this.ftthData.infoCliente.nombre,  
-        cloudMonitoreo: this.ftthData.cloudMonitoreo,
+          //Condominio
+          zona: this.ftthData.infoCliente.Cliente_Condominio[0]?.condominio
+            ?.zona,
+          numCasa:
+            this.ftthData.infoCliente.Cliente_Condominio[0]?.condominio
+              ?.numCasa,
 
-        //Condominio 
-        zona: this.ftthData.infoCliente.Cliente_Condominio[0]?.condominio?.zona,
-        numCasa: this.ftthData.infoCliente.Cliente_Condominio[0]?.condominio?.numCasa,
+          //Servicio
+          idTipo: this.ftthData.tipoCliente.idTipo,
+          numOS: this.ftthData.numOS,
+          cajaDerivada: this.ftthData.cajaDerivada,
 
-        //Servicio 
-        idTipo: this.ftthData.tipoCliente.idTipo,
-        numOS: this.ftthData.numOS, 
-        cajaDerivada: this.ftthData.cajaDerivada, 
+          //BW
+          idBW: this.ftthData.bw.idBW,
+          kbps: this.ftthData.BW_KBPS,
 
-        //BW
-        idBW: this.ftthData.bw.idBW,
-        kbps: this.ftthData.BW_KBPS, 
+          //Router_Casa
+          idRouter_Casa: this.ftthData.rcasa.idRouter_Casa,
+          activo: this.ftthData.rcasa.numActivo,
+          serie: this.ftthData.rcasa.serie,
+          macAdress: this.ftthData.rcasa.macAddress,
 
-        //Router_Casa
-        idRouter_Casa: this.ftthData.rcasa.idRouter_Casa, 
-        activo: this.ftthData.rcasa.numActivo,  
-        serie: this.ftthData.rcasa.serie, 
-        macAdress: this.ftthData.rcasa.macAddress, 
+          //Router_Gestor
+          idRouter_Gestor: this.ftthData.rgestor.idRouter_Gestor,
 
-        //ONT
-        idONT: this.ftthData.ont.idONT, 
-        numActivo: this.ftthData.ont.numActivo,  
-        macAdd: this.ftthData.ont.macAddress, 
-        numSN: this.ftthData.ont.numSN, 
-        potenciaRecepcion: this.ftthData.potenciaRecepcion,
+          //ONT
+          idONT: this.ftthData.ont.idONT,
+          numActivo: this.ftthData.ont.numActivo,
+          macAdd: this.ftthData.ont.macAddress,
+          numSN: this.ftthData.ont.numSN,
+          potenciaRecepcion: this.ftthData.potenciaRecepcion,
 
-        //OLT 
-        idOLT: this.ftthData.rgestor.idOLT, 
-        ip: this.ftthData.rgestor.subred.ip,
-        nombreZona: this.ftthData.rgestor.zona.nombreZona,
+          //OLT
+          idOLT: this.ftthData.rgestor.idOLT,
+          ip: this.ftthData.rgestor.subred.ip,
+          nombreZona: this.ftthData.rgestor.zona.nombreZona,
 
-        //Adicional
-        fechaInstalacion: this.ftthData.fechaInstalacion,
-        comentario: this.ftthData.comentario, 
-        agente: this.ftthData.agente, 
-        
-        idEstado: this.ftthData.estado.idEstado,
+          //Adicional
+          fechaInstalacion: this.ftthData.fechaInstalacion,
+          comentario: this.ftthData.comentario,
+          agente: this.ftthData.agente,
 
+          idEstado: this.ftthData.estado.idEstado,
         });
 
         //Añade la IP asignada al listado de IP`s
         if (this.subredes.indexOf(this.ftthData.rgestor.ip) === -1) {
           this.subredes.push(this.ftthData.rgestor.subred.ip);
         }
-
       });
 
-      setTimeout(() => {
-        const data = {
-          idCliente: this.idCliente,
-          idEstado: this.ftthForm.value.idEstado,
-        };
+    setTimeout(() => {
+      const data = {
+        idCliente: this.idCliente,
+        idEstado: this.ftthForm.value.idEstado,
+      };
 
-        this.idEstado = this.ftthForm.value.idEstado;
+      this.idEstado = this.ftthForm.value.idEstado;
 
-        if(this.idEstado !== 1) {
-          this.gService
+      if (this.idEstado !== 1) {
+        this.gService
           .create('ftth/estado', data)
           .pipe(takeUntil(this.destroy$))
           .subscribe((data: any) => {
-    
-            if(this.ftthForm.value.idEstado == 2) {
+            if (this.ftthForm.value.idEstado == 2) {
               this.suspencionData = data;
               this.suspencionForm.patchValue({
                 idSuspencion: this.suspencionData.idSuspencion,
-               fechaSuspencion: this.suspencionData.fechaSuspencion,
+                fechaSuspencion: this.suspencionData.fechaSuspencion,
               });
-           }
-           else if(this.ftthForm.value.idEstado == 3) {
-             this.retiroData = data;
-             this.retiroForm.patchValue({
-               idRetiro: this.retiroData.idRetiro,
-               fechaDesinstalacionRetiro: this.retiroData.fechaDesinstalacion,
-               numOSRetiro: this.retiroData.numOS,
-               comentario: this.retiroData.comentario,
-               agenteRetiro: this.retiroData.agente,
-               idEstadoR: this.retiroData.idEstadoR,
-             });
-           }
-           else if(this.ftthForm.value.idEstado == 4) {
-            this.danoData = data;
-            this.danoForm.patchValue({
-              idDanado: this.danoData.idDanado,
-              fechaInstalacionDano: this.danoData.fechaInstalacion,
-              dispositivo1: this.danoData.dispositivo1,
-              direccionActual1: this.danoData.direccionActual1,
-              direccionNuevo1: this.danoData.direccionNuevo1,
-              comentarioDano: this.danoData.comentario,
-              idTipoDano1: this.danoData.idTipoDano1,
+            } else if (this.ftthForm.value.idEstado == 3) {
+              this.retiroData = data;
+              this.retiroForm.patchValue({
+                idRetiro: this.retiroData.idRetiro,
+                fechaDesinstalacionRetiro: this.retiroData.fechaDesinstalacion,
+                numOSRetiro: this.retiroData.numOS,
+                comentario: this.retiroData.comentario,
+                agenteRetiro: this.retiroData.agente,
+                idEstadoR: this.retiroData.idEstadoR,
+              });
+            } else if (this.ftthForm.value.idEstado == 4) {
+              this.danoData = data;
+              this.danoForm.patchValue({
+                idDanado: this.danoData.idDanado,
+                fechaInstalacionDano: this.danoData.fechaInstalacion,
+                dispositivo1: this.danoData.dispositivo1,
+                direccionActual1: this.danoData.direccionActual1,
+                direccionNuevo1: this.danoData.direccionNuevo1,
+                comentarioDano: this.danoData.comentario,
+                idTipoDano1: this.danoData.idTipoDano1,
 
-              dispositivo2: this.danoData.dispositivo2,
-              direccionActual2: this.danoData.direccionActual2,
-              direccionNuevo2: this.danoData.direccionNuevo2,
-            });
-          }
-          
-          }); 
-        }
-
-      }, 100);
- 
+                dispositivo2: this.danoData.dispositivo2,
+                direccionActual2: this.danoData.direccionActual2,
+                direccionNuevo2: this.danoData.direccionNuevo2,
+              });
+            }
+          });
+      }
+    }, 100);
   }
 
   fetchServicios() {
@@ -645,11 +679,10 @@ export class FtthCreateComponent implements OnInit {
   selectedButton: string | null = null;
 
   selectRouter(element: any) {
+
     if (this.idRouter_Casa !== element.id) {
       this.idRouter_Casa = element.id;
-
       element.desactivado = true;
-
       this.selectedButton = element.id;
 
       this.ftthForm.patchValue({
@@ -658,6 +691,7 @@ export class FtthCreateComponent implements OnInit {
         serie: element.serie,
         macAdress: element.macAddress,
       });
+
     }
     if (this.idRouter_Casa === element.id) {
       element.desactivado = false;
@@ -727,6 +761,7 @@ export class FtthCreateComponent implements OnInit {
       this.ftthForm.get('idOLT')?.disable();
       this.ftthForm.get('idBW')?.disable();
       this.ftthForm.get('idTipo')?.disable();
+      this.ftthForm.get('ip')?.disable();
 
       // Desactivar Tablas
       this.isTablaRouter = true;
@@ -755,6 +790,7 @@ export class FtthCreateComponent implements OnInit {
       this.ftthForm.get('idOLT')?.enable();
       this.ftthForm.get('idBW')?.enable();
       this.ftthForm.get('idTipo')?.enable();
+      this.ftthForm.get('ip')?.enable();
 
       // Habilitar Tablas
       this.isTablaRouter = false;
@@ -798,63 +834,102 @@ export class FtthCreateComponent implements OnInit {
   createFTTH() {
     this.submitted = true;
 
-    if (this.ftthForm.invalid) {
-      console.log("invalido")
-      return;
-    }
+    if (this.isCreate) {
+      const data = {
+        numero:
+          this.ftthForm.value.numero &&
+          isNaN(this.ftthForm.value.numero.toUpperCase())
+            ? this.ftthForm.value.numero.toUpperCase()
+            : this.ftthForm.value.numero,
+        nombre: this.ftthForm.value.nombre.toUpperCase(),
+        zona: this.ftthForm.value.zona.toUpperCase(),
+        numCasa:
+          this.ftthForm.value.numCasa && isNaN(this.ftthForm.value.numCasa)
+            ? this.ftthForm.value.numCasa.toUpperCase()
+            : this.ftthForm.value.numCasa,
+        potenciaRecepcion: this.ftthForm.value.potenciaRecepcion,
+        idONT: parseInt(this.ftthForm.value.idONT),
+        idOLT: parseInt(this.ftthForm.value.idOLT),
+        nombreZona:  this.ftthForm.value.nombreZona && isNaN( this.ftthForm.value.nombreZona)
+        ? this.ftthForm.value.nombreZona.toUpperCase()
+        :  this.ftthForm.value.nombreZona,
+        ip: this.ftthForm.value.ip,
+        idRouter_Casa: parseInt(this.ftthForm.value.idRouter_Casa),
+        idTipo: parseInt(this.ftthForm.value.idTipo),
+        idBW: parseInt(this.ftthForm.value.idBW),
+        kbps: this.ftthForm.value.kbps,
+        numOS: this.ftthForm.value.numOS,
+        cajaDerivada: this.ftthForm.value.cajaDerivada,
+        fechaInstalacion: this.ftthForm.value.fechaInstalacion,
+        comentario: this.ftthForm.value.comentario,
+        agente: this.ftthForm.value.agente.toUpperCase(),
+      };
 
-    const data = {
-      numero: this.ftthForm.value.numero.toUpperCase(),
-      nombre: this.ftthForm.value.nombre.toUpperCase(),
-      zona: this.ftthForm.value.zona.toUpperCase(),
-      numCasa: (this.ftthForm.value.numCasa && isNaN(this.ftthForm.value.numCasa)) ? this.ftthForm.value.numCasa.toUpperCase() : this.ftthForm.value.numCasa,
-      potenciaRecepcion: this.ftthForm.value.potenciaRecepcion,
-      idONT: parseInt(this.ftthForm.value.idONT),
-      idOLT: parseInt(this.ftthForm.value.idOLT),
-      nombreZona: this.ftthForm.value.nombreZona.toUpperCase(),
-      ip: this.ftthForm.value.ip,
-      idRouter_Casa: parseInt(this.ftthForm.value.idRouter_Casa),
-      idTipo: parseInt(this.ftthForm.value.idTipo),
-      idBW: parseInt(this.ftthForm.value.idBW),
-      kbps: this.ftthForm.value.kbps,
-      numOS: this.ftthForm.value.numOS,
-      cajaDerivada: this.ftthForm.value.cajaDerivada,
-      fechaInstalacion: this.ftthForm.value.fechaInstalacion,
-      comentario: this.ftthForm.value.comentario,
-      agente: this.ftthForm.value.agente.toUpperCase(),
-    };
-
-    this.gService
-      .create('ftth/crear', data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (response: any) => {
-          this.respuesta = response;
+      this.gService
+        .create('ftth/crear', data)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (response: any) => {
+            this.respuesta = response;
+            this.noti.mensajeRedirect(
+              'FTTH • Creación',
+              `${data.numero} ha sido creado con exito.`,
+              TipoMessage.success,
+              `/ftth`
+            );
+            this.closeModal();
+            this.ftthCrearModal.emit();
+          },
+          (error: any) => {
+            if (error.status === 400) {
+              this.noti.mensaje(
+                'Error en la creación del FTTH',
+                error.error.mensaje,
+                TipoMessage.error
+              );
+            }
+          }
+        );
+      this.closeModal();
+    } else {
+      this.gService
+        .update('ftth/actualizar', this.ftthForm.value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: any) => {
+          this.respuesta = data;
           this.noti.mensajeRedirect(
-            'FTTH • Creación',
-            `${data.numero} ha sido creado con exito.`,
+            'FTTH • Actualización',
+            `${this.ftthData.infoCliente.numero} ha sido actualizado con exito.`,
             TipoMessage.success,
             `/ftth`
           );
-          this.ftthCrearModal.emit();
-        },
-        (error: any) => {
-          if (error.status === 400) {
-            this.noti.mensaje(
-              'Error en la creación del FTTH',
-              error.error.mensaje,
-              TipoMessage.error
-            );
-          }
-        }
-      );
+        });
 
-    
+      // this.idEstado = this.ftthForm.value.idEstado;
+
+      // if (this.idEstado !== 1) {
+      //   //Suspención
+      //   if (this.idEstado === 1) {
+      //     const data = {
+      //       idCliente: this.idCliente,
+      //       fechaSuspencion: this.suspencionData.value.fechaSuspencion,
+      //     };
+
+      //     //this.gService
+      //     //   .create('ftth/suspencion/crear', data)
+      //     //   .pipe(takeUntil(this.destroy$))
+      //     //   .subscribe((data: any) => {
+      //     //     this.respuesta = data;
+      //     //     console.log(data);
+      //     //     this.closeModal();
+      //     // });
+      //   }
+      // }
+      this.closeModal();
+      this.ftthCrearModal.emit();
+    }
+    this.ftthCrearModal.emit();
     this.closeModal();
-
-    // else {
-
-    // }
   }
 
   ngOnDestroy() {
@@ -869,6 +944,9 @@ export class FtthCreateComponent implements OnInit {
 
   // Control de Errores
   errorHandling(control: string, error: string) {
-    return this.ftthForm.controls[control].hasError(error) && (this.submitted || this.ftthForm.controls[control].touched);
+    return (
+      this.ftthForm.controls[control].hasError(error) &&
+      (this.ftthForm.controls[control].touched || this.submitted)
+    );
   }
 }
