@@ -98,7 +98,7 @@ h2 {
 .header-content {
   display: flex;
   align-items: center;
-  margin: 30px 0 -30px 0;
+  margin: 50px;
   justify-content: center;
 }
 

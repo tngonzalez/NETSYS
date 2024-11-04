@@ -148,7 +148,7 @@ model Cliente {
   comentario        String? @db.VarChar(200)
   agente            String  @db.VarChar(100)
   cloudMonitoreo    String  @unique @db.VarChar(150)
-  potenciaRecepcion String  @db.VarChar(100)
+  potenciaRecepcion String?  @db.VarChar(100)
 
   infoCliente   InfoCliente    @relation(fields: [idInfoCliente], references: [idInfoCliente])
   tipoCliente   TipoCliente    @relation(fields: [idTipo], references: [idTipo])
@@ -251,17 +251,17 @@ model IPTV {
   idCliente           Int
   idEstado            Int //Activo Dañado Suspención
   idEstadoInstalacion Int //Instalado - Pendiente 
-  idDNS               Int @unique
+  idDNS               Int?
   fechaInstalacion    String? @db.VarChar(50)
   comentario          String? @db.VarChar(200)
-  agente              String @db.VarChar(100)
+  agente              String? @db.VarChar(100)
   macAddress          String @unique @db.VarChar(100)
   correo              String @unique @db.VarChar(100)
   clave               String @unique @db.VarChar(100)
 
   cliente Cliente           @relation(fields: [idCliente], references: [idCliente])
   estadoInst  EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])
-  dns     DNS_Stick         @relation(fields: [idDNS], references: [idDNS])
+  dns     DNS_Stick?         @relation(fields: [idDNS], references: [idDNS])
   estadoServicio  EstadoCliente @relation(fields: [idEstado], references: [idEstado])
 
 }

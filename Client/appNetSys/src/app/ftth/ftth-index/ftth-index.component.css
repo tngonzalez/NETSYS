@@ -31,6 +31,15 @@
   box-shadow: none;
 }
 
+.bt-estado {
+  background-image: url("../../../assets/img/setting_icon.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+  background-color: #fffbff;
+  box-shadow: none;
+}
+
 .bt-delete {
   background-image: url("../../../assets/img/delete_icon.png");
   background-repeat: no-repeat;

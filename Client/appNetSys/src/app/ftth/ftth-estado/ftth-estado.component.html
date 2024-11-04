@@ -1,0 +1,74 @@
+<p>ftth-estado works!</p>
+<div
+  tabindex="-1" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+  [class.hidden]="!isVisible"
+>
+  <div class="relative p-6 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-lg">
+
+      <!-- Cerrar Modal -->
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+        >
+        <svg
+          class="w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+          />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+
+      <!--Header-->
+      <div class="text-center p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Modificar Estado del Servicio FTTH</h3>
+      </div>
+
+        <!-- Formulario -->
+        <div class="p-6 space-y-4">
+            <form
+              [formGroup]="estadoForm"
+              novalidate
+              class="flex flex-col gap-4"
+              autocomplete="off"
+            >
+              <!-- 2  Columns-->
+              <div class="grid gap-6 mb-6 md:grid-cols-2">
+  
+ 
+              </div>
+  
+              <!-- Botones -->
+              <div>
+                <div class="flex justify-center p-4">
+                  <button
+                    type="submit"
+                    class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                  type="button"
+                  (click)="closeModal()"
+                    class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+    </div>
+  </div>
+</div>

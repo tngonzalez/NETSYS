@@ -137,7 +137,7 @@ CREATE TABLE `Cliente` (
     `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NOT NULL,
     `cloudMonitoreo` VARCHAR(150) NOT NULL,
-    `potenciaRecepcion` VARCHAR(100) NOT NULL,
+    `potenciaRecepcion` VARCHAR(100) NULL,
 
     UNIQUE INDEX `Cliente_cloudMonitoreo_key`(`cloudMonitoreo`),
     PRIMARY KEY (`idCliente`)
@@ -242,7 +242,6 @@ CREATE TABLE `IPTV` (
     `correo` VARCHAR(100) NOT NULL,
     `clave` VARCHAR(100) NOT NULL,
 
-    UNIQUE INDEX `IPTV_idDNS_key`(`idDNS`),
     UNIQUE INDEX `IPTV_macAddress_key`(`macAddress`),
     UNIQUE INDEX `IPTV_correo_key`(`correo`),
     UNIQUE INDEX `IPTV_clave_key`(`clave`),

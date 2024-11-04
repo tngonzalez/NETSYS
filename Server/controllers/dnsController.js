@@ -52,12 +52,47 @@ module.exports.getById = async (request, response, next) => {
 
     const data = {
         id: dns.idDNS,
-        correo: dns.correo,
-        macAddress: dns.macAddress,
+        email: dns.correo,
+        clave: dns.clave,
+        mac: dns.macAddress,
         dns: dns.dns, 
         estado: dns.estado.nombre,
         idEstado: dns.idEstado,
+        nombre: dns.nombre,
     };
+
+    response.json(data);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Get By Id
+module.exports.getByIdEstado = async (request, response, next) => {
+  try {
+    let idEstado = parseInt(request.params.idEstado);
+
+    const dns = await prisma.dNS_Stick.findMany({
+      where: { idEstado: idEstado },
+      include: {
+        estado: true,
+      },
+    });
+
+    if (!dns) {
+      return response.status(404).json({
+        message: "Error en la solicitud",
+      });
+    }
+
+    const data = dns.map((dns) => ({
+      id: dns.idDNS,
+      email: dns.correo,
+      mac: dns.macAddress,
+      dns: dns.dns, 
+      estado: dns.estado.nombre,
+      idEstado: dns.idEstado,
+    })); 
 
     response.json(data);
   } catch (error) {

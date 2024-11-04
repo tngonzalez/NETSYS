@@ -416,7 +416,9 @@ module.exports.update = async (request, response, next) => {
 
         newRouter = await prisma.Router_Gestor.create({
           data: {
-            idSubred_OLT: newSubred ? newSubred.idRed  : ftth.Router_Gestor.idSubred_OLT,
+            idSubred_OLT: newSubred
+              ? newSubred.idRed
+              : ftth.Router_Gestor.idSubred_OLT,
             idZona_OLT: zona ? zona.idZona : ftth.Router_Gestor.idZona_OLT,
             idOLT: parseInt(data.idOLT),
           },
@@ -426,7 +428,9 @@ module.exports.update = async (request, response, next) => {
         newRouter = await prisma.Router_Gestor.update({
           where: { idRouter_Gestor: data.idRouter_Gestor },
           data: {
-            idSubred_OLT: newSubred ? newSubred.idRed  : ftth.Router_Gestor.idSubred_OLT,
+            idSubred_OLT: newSubred
+              ? newSubred.idRed
+              : ftth.Router_Gestor.idSubred_OLT,
             idZona_OLT: zona ? zona.idZona : ftth.Router_Gestor.idZona_OLT,
             idOLT: parseInt(data.idOLT),
           },
@@ -457,19 +461,16 @@ module.exports.update = async (request, response, next) => {
     const cliente = await prisma.cliente.update({
       where: { idCliente: data.id },
       data: {
-        idTipo: data.idTipo,
         idONT: data.idONT,
         idEstado: data.idEstado,
         idRouter_Gestor: data.idRouter_Gestor,
         idRouter_Casa: data.idRouter_Casa,
         idBW: data.idBW,
         BW_KBPS: data.kbps,
-        numOS: data.numOS,
         cajaDerivada: data.cajaDerivada,
         fechaInstalacion: data.fechaInstalacion,
         comentario: data.comentario,
         agente: data.agente,
-        cloudMonitoreo: data.cloudMonitoreo,
         potenciaRecepcion: data.potenciaRecepcion,
       },
     });
@@ -637,6 +638,7 @@ module.exports.getBW = async (request, response, next) => {
 //Estado: Retiro
 module.exports.updateStateRetiro = async (request, response, next) => {
   const data = request.body;
+
   try {
     await prisma.cliente.update({
       where: { idCliente: data.idCliente },
@@ -645,12 +647,9 @@ module.exports.updateStateRetiro = async (request, response, next) => {
       },
     });
 
-    const newRetiro = await prisma.retiro.findUnique({
-      where: {idRetiro: idRetiro}
-    });
+    let newRetiro;
 
-    if(newRetiro.length === 0) {
-
+    if (!data.idRetiro) {
       newRetiro = await prisma.retiro.create({
         data: {
           idCliente: data.idCliente,
@@ -662,10 +661,23 @@ module.exports.updateStateRetiro = async (request, response, next) => {
         },
       });
 
-    } else {
+      //Actualizar - IPTV
 
+      const iptvDatos = await prisma.iPTV.findMany({
+        where: { idCliente: data.idCliente },
+      });
+
+      if (iptvDatos.length > 0) {
+        await prisma.iPTV.updateMany({
+          where: { idCliente: data.idCliente },
+          data: {
+            idEstado: 3,
+          },
+        });
+      }
+    } else {
       newRetiro = await prisma.retiro.update({
-        where: {idRetiro: idRetiro},
+        where: { idRetiro: data.idRetiro },
         data: {
           idCliente: data.idCliente,
           idEstadoR: data.idEstadoR,
@@ -676,11 +688,6 @@ module.exports.updateStateRetiro = async (request, response, next) => {
         },
       });
     }
-
-    await prisma.iPTV.update({
-      where: { idCliente: data.idCliente},
-      data: { idEstado: 3}
-    }); 
 
     response.json(newRetiro);
   } catch (error) {
@@ -706,10 +713,19 @@ module.exports.updateStateSuspencion = async (request, response, next) => {
       },
     });
 
-    await prisma.iPTV.update({
-      where: { idCliente: data.idCliente},
-      data: { idEstado: 2}
+    //Actualizar - IPTV
+    const iptvDatos = await prisma.iPTV.findMany({
+      where: { idCliente: data.idCliente },
     });
+
+    if (iptvDatos.length > 0) {
+      await prisma.iPTV.updateMany({
+        where: { idCliente: data.idCliente },
+        data: {
+          idEstado: 2,
+        },
+      });
+    }
 
     response.json(newSuspencion);
   } catch (error) {
@@ -780,8 +796,8 @@ async function updateDispositivo(
   }
 
   await prisma.iPTV.update({
-    where: { idCliente: data.idCliente},
-    data: { idEstado: 4}
+    where: { idCliente: data.idCliente },
+    data: { idEstado: 4 },
   });
 }
 
@@ -789,19 +805,16 @@ module.exports.createStateDanado = async (request, response, next) => {
   const {
     idCliente,
     fechaInstalacion,
-    dispositivo1,
-    direcNueva1,
-    direcActual1,
+    dispositivo,
+    direcNueva,
+    direcActual,
     comentario,
-    idTipoDano1,
+    idTipoDano,
     idDanado,
-    dispositivo2,
-    direcNueva2,
-    direcActual2,
   } = request.body;
 
   try {
-    if (!dispositivo1 || !direcActual1 || !idTipoDano1) {
+    if (!dispositivo || !direcActual || !idTipoDano) {
       return response
         .status(400)
         .json({ message: "Datos incompletos para el primer dispositivo" });
@@ -810,96 +823,48 @@ module.exports.createStateDanado = async (request, response, next) => {
     await prisma.$transaction(async (prisma) => {
       //Creación del primer dispositivo
       await prisma.danado.upsert({
-        where: { idDanado: idDanado || -1, direccionActual: direcActual1 },
+        where: { idDanado: idDanado || -1, direccionActual: direcActual },
         update: {
           fechaInstalacion: fechaInstalacion || null,
-          direccionNueva: direcNueva1 || null,
+          direccionNueva: direcNueva || null,
           comentario: comentario || null,
         },
         create: {
           idCliente: idCliente,
           fechaInstalacion: fechaInstalacion || null,
-          dispositivo: dispositivo1,
-          direccionNueva: direcNueva1 || null,
-          direccionActual: direcActual1,
+          dispositivo: dispositivo,
+          direccionNueva: direcNueva || null,
+          direccionActual: direcActual,
           comentario: comentario || null,
-          idTipoDano: idTipoDano1,
+          idTipoDano: idTipoDano,
         },
       });
 
       //Dependiendo del tipo de dispositivo actualice el estado del dispositivo
       //Liberando el dispostivo y asignado otro a ftth
-      if (fechaInstalacion === null && direcNueva1 === null) {
-        await prisma.cliente.update({
-          where: { idCliente: idCliente },
-          data: {
-            idEstado: 1,
-          },
-        });
-      } else {
+      if (fechaInstalacion === null && direcNueva === null) {
         await prisma.cliente.update({
           where: { idCliente: idCliente },
           data: {
             idEstado: 4,
           },
         });
+      } else {
+        await prisma.cliente.update({
+          where: { idCliente: idCliente },
+          data: {
+            idEstado: 1,
+          },
+        });
       }
 
       await updateDispositivo(
         prisma,
-        dispositivo1,
-        direcActual1,
-        direcNueva1,
+        dispositivo,
+        direcActual,
+        direcNueva,
         idCliente
       );
-
-      //Segundo Dispositivo
-      if (dispositivo2 && direcActual2) {
-        await prisma.danado.upsert({
-          where: {
-            idDanado: idDanado + 1 || -1,
-            direccionActual: direcActual2,
-          },
-          update: {
-            fechaInstalacion: fechaInstalacion || null,
-            direccionNueva: direcNueva2 || null,
-            comentario: comentario || null,
-          },
-          create: {
-            idCliente: idCliente,
-            fechaInstalacion: fechaInstalacion || null,
-            dispositivo: dispositivo2,
-            direccionNueva: direcNueva2 || null,
-            direccionActual: direcActual2,
-            comentario: comentario || null,
-            idTipoDano: idTipoDano1,
-          },
-        });
-
-        if (fechaInstalacion === null && direcNueva2 === null) {
-          await prisma.cliente.update({
-            where: { idCliente: idCliente },
-            data: {
-              idEstado: 1,
-            },
-          });
-        } else {
-          await prisma.cliente.update({
-            where: { idCliente: idCliente },
-            data: {
-              idEstado: 4,
-            },
-          });
-        }
-
-        await updateDispositivo(
-          prisma,
-          dispositivo2,
-          direcActual2,
-          direcNueva2,
-          idCliente
-        );
-      }
     });
 
     response.status(201).json();

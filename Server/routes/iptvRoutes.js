@@ -4,6 +4,8 @@ const router = express.Router();
 const iptv = require("../controllers/iptvController"); 
 
 router.get("/", iptv.getAll); 
+router.get("/cliente", iptv.getClientesByBW); 
+
 
 router.post("/crear", iptv.create); 
 router.put("/actualizar/:idIPTV", iptv.update); 

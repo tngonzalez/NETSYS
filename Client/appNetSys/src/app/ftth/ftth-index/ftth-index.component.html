@@ -222,6 +222,14 @@
 
                   <button
                     mat-mini-fab
+                    class="bt-estado"
+                    matTooltip="Estado"
+                    aria-label="Estado"
+                    (click)="estadoChange(row.id, row.idEstado)"
+                  ></button>
+
+                  <button
+                    mat-mini-fab
                     class="bt-delete"
                     matTooltip="Delete"
                     aria-label="Desactivar"
@@ -263,3 +271,5 @@
 <app-ftth-create #ftthFormModal></app-ftth-create>
 <app-ftth-delete #ftthDeleteModal></app-ftth-delete>
 <app-ftth-detalle #ftthDetalleModal></app-ftth-detalle>
+<app-ftth-estado #ftthEstadoModal></app-ftth-estado>
+

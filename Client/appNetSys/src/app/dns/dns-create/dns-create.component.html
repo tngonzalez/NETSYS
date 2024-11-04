@@ -1,0 +1,179 @@
+<p>dns-create works!</p>
+<div
+  tabindex="-1"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+  [class.hidden]="!isVisible"
+>
+  <div class="relative p-6 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-lg">
+      <!-- Cerrar Modal -->
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+      >
+        <svg
+          class="w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+          />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+
+      <!--Header-->
+      <div class="text-center p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">{{ titleForm }} DNS</h3>
+      </div>
+
+      <!-- Formulario -->
+      <div class="p-6 space-y-4">
+        <form
+          [formGroup]="dnsForm"
+          (ngSubmit)="createDNS()"
+          novalidate
+          class="flex flex-col gap-4"
+        >
+          <!-- Número de activo -->
+          <div>
+            <label
+              for="nombre"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Cliente</label
+            >
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              formControlName="nombre"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese el nombre del cliente"
+            />
+          </div>
+
+          <!-- Mac Address -->
+          <div>
+            <label
+              for="macAddress"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Mac Address</label
+            >
+            <input
+              type="text"
+              id="macAddress"
+              name="macAddress"
+              formControlName="macAddress"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese la dirección MAC"
+              required
+            />
+            <mat-error
+              *ngIf="errorHandling('macAddress', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El MAC Address es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Serie -->
+          <div>
+            <label
+              for="dns"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Serie</label
+            >
+            <input
+              type="text"
+              id="dns"
+              name="dns"
+              formControlName="dns"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              placeholder="Ingrese el DNS"
+            />
+            <mat-error
+              *ngIf="errorHandling('dns', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El número de DNS es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Correo -->
+          <div>
+            <label
+              for="correo"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Correo</label
+            >
+            <input
+              type="text"
+              id="correo"
+              name="correo"
+              formControlName="correo"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              placeholder="Ingrese el correo"
+            />
+            <mat-error
+              *ngIf="errorHandling('correo', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El correo es <strong>requerido</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Clave -->
+          <div>
+            <label
+              for="clave"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Clave</label
+            >
+            <input
+              type="text"
+              id="clave"
+              name="clave"
+              formControlName="clave"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              placeholder="Ingrese la clave"
+            />
+            <mat-error
+              *ngIf="errorHandling('clave', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El número de DNS es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-center p-4">
+            <button
+              type="submit"
+              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+            >
+              Guardar
+            </button>
+            <button
+              type="submit"
+              (click)="closeModal()"
+              class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FtthRoutingModule } from './ftth-routing.module';
-import { SharedModule } from '../shared/shared.module';
+
+import { DnsRoutingModule } from './dns-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogContent } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,25 +12,23 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NgIconsModule } from '@ng-icons/core';
 import { ToastrModule } from 'ngx-toastr';
-import { FtthIndexComponent } from './ftth-index/ftth-index.component';
-import { FtthCreateComponent } from "./ftth-create/ftth-create.component";
-import { FtthDeleteComponent } from './ftth-delete/ftth-delete.component';
-import { FtthDetalleComponent } from './ftth-detalle/ftth-detalle.component';
-import { MatDialogContent } from '@angular/material/dialog';
-import { FtthEstadoComponent } from "./ftth-estado/ftth-estado.component";
-
+import { SharedModule } from '../shared/shared.module';
+import { DnsCreateComponent } from './dns-create/dns-create.component';
+import { DnsDeleteComponent } from './dns-delete/dns-delete.component';
+import { DnsIndexComponent } from './dns-index/dns-index.component';
+import { DnsDetalleComponent } from './dns-detalle/dns-detalle.component';
 
 @NgModule({
   declarations: [
-    FtthIndexComponent,
-    FtthCreateComponent,
-    FtthDeleteComponent,
-    FtthDetalleComponent,
-    FtthEstadoComponent
+    DnsIndexComponent,
+    DnsCreateComponent,
+    DnsDeleteComponent,
+    DnsDetalleComponent
   ],
   imports: [
     CommonModule,
-    FtthRoutingModule,
+    DnsRoutingModule,
+    CommonModule,
     SharedModule,
     MatTableModule,
     MatPaginatorModule,
@@ -41,7 +40,8 @@ import { FtthEstadoComponent } from "./ftth-estado/ftth-estado.component";
     MatFormFieldModule,
     MatSelectModule,
     NgIconsModule.withIcons({}),
-    MatDialogContent,
-]
+    MatDialogContent
+
+  ]
 })
-export class FtthModule { }
+export class DnsModule { }

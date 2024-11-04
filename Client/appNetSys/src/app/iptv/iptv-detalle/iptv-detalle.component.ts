@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-iptv-detalle',
-  standalone: true,
-  imports: [],
   templateUrl: './iptv-detalle.component.html',
-  styleUrl: './iptv-detalle.component.css'
+  styleUrls: ['./iptv-detalle.component.css']
 })
 export class IptvDetalleComponent {
+  
+  @Output() iptvDetalleModal: EventEmitter<void> = new EventEmitter<void>();
 
 }

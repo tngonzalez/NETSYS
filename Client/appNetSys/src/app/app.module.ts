@@ -16,7 +16,8 @@ import 'flowbite';
 import { OntModule } from './ont/ont.module';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { IptvModule } from './iptv/iptv.module'; 
+import { IptvModule } from './iptv/iptv.module';
+import { DnsModule } from './dns/dns.module'; 
 
 @NgModule ({
   declarations: [AppComponent],
@@ -37,6 +38,7 @@ import { IptvModule } from './iptv/iptv.module';
     MatDatepickerModule,
     MatNativeDateModule,
     IptvModule,
+    DnsModule,
 
   ],
   providers: [],

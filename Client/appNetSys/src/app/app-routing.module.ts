@@ -7,7 +7,8 @@ import { OltIndexComponent } from './olt/olt-index/olt-index.component';
 import { FtthIndexComponent } from './ftth/ftth-index/ftth-index.component';
 import { ServiceIndexComponent } from './service/service-index/service-index.component';
 import { OntIndexComponent } from './ont/ont-index/ont-index.component';
-import { FtthCreateComponent } from './ftth/ftth-create/ftth-create.component';
+import { IptvIndexComponent } from './iptv/iptv-index/iptv-index.component';
+import { DnsIndexComponent } from './dns/dns-index/dns-index.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full' }, //Dashboard por defecto
@@ -18,6 +19,8 @@ const routes: Routes = [
   { path: 'olt', component: OltIndexComponent },
   { path: 'service', component: ServiceIndexComponent },
   { path: 'ont', component: OntIndexComponent },
+  { path: 'iptv', component: IptvIndexComponent },
+  { path: 'dns', component: DnsIndexComponent },
 
 
 

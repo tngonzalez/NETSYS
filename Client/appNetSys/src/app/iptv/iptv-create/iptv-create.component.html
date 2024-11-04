@@ -1,1 +1,569 @@
-<p>iptv-create works!</p>
+<mat-dialog-content
+  class="modal-content"
+  style="overflow-y: auto; max-height: auto"
+>
+  <div
+    tabindex="-1"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 modal-body"
+    [class.hidden]="!isVisible"
+  >
+    <div class="relative p-6 w-full max-w-[90%] max-h-full">
+      <div class="relative bg-white rounded-lg shadow-lg">
+        <!-- Cerrar Modal -->
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+        >
+          <svg
+            class="w-4 h-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+            />
+          </svg>
+          <span class="sr-only">Cerrar modal</span>
+        </button>
+
+        <!--Header-->
+        <div class="text-center p-6 border-b border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-800">
+            {{ titleStatus }} IPTV
+          </h3>
+        </div>
+
+        <!-- Formulario -->
+        <div class="p-6 space-y-4">
+          <form
+            [formGroup]="iptvForm"
+            novalidate
+            class="flex flex-col gap-4"
+            autocomplete="off"
+          >
+            <!-- 2  Columns-->
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
+              <!--Cliente - Crear-->
+
+              <!-- ========== Table Clientes  ========== -->
+              <!-- Mostrar tabla cuando se crea-->
+              <div [class.hidden]="!createVisible">
+                <h4><strong>Clientes disponibles</strong></h4>
+
+                <div>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-indigo-600"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      (change)="clienteChange($event)"
+                      type="search"
+                      id="default-search"
+                      class="block w-full h-11 py-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                      placeholder="Buscar por nombre del cliente"
+                      #searchClienteInput
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <table mat-table [dataSource]="dataClientes" matSort>
+                    <ng-container matColumnDef="numero">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        Identificador
+                      </th>
+                      <td scope="element" mat-cell *matCellDef="let element">
+                        {{ element.numero }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="nombre">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        Cliente
+                      </th>
+                      <td scope="element" mat-cell *matCellDef="let element">
+                        {{ element.nombre }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="accion">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        style="margin: 0 auto"
+                      >
+                        Seleccionar
+                      </th>
+
+                      <td mat-cell *matCellDef="let element">
+                        <div class="flex gap-5">
+                          <button
+                            mat-mini-fab
+                            class="bt-editar"
+                            matTooltip="Editar"
+                            aria-label="Editar"
+                            (click)="selectCliente(element)"
+                          ></button>
+                        </div>
+                      </td>
+                    </ng-container>
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="displayedClientes"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let element; columns: displayedClientes"
+                      [ngClass]="{ 'fila-desactivada': element.desactivado }"
+                    ></tr>
+                  </table>
+
+                  <div>
+                    <mat-paginator
+                      #paginator
+                      [lang]="'es'"
+                      [length]="dataClientes.data.length"
+                      [pageIndex]="0"
+                      [pageSize]="4"
+                      aria-label="Seleccione una página"
+                    >
+                    </mat-paginator>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Se muestra unicamente cuando se actualiza-->
+               <!-- Info. Cliente-->
+              <div>
+                <h4><strong>{{titleForm}}</strong></h4>
+
+                <div>
+                  <label
+                    for="nombre"
+                    class="block mb-2 text-sm font-medium text-gray-700"
+                    >Nombre Completo</label
+                  >
+                  <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    formControlName="nombre"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="numero"
+                    class="block mb-2 text-sm font-medium text-gray-700"
+                    >Número del cliente</label
+                  >
+                  <input
+                    type="text"
+                    id="numero"
+                    name="numero"
+                    formControlName="numero"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="cloud"
+                    class="block mb-2 text-sm font-medium text-gray-700"
+                    >Cloud Monitoreo</label
+                  >
+
+                  <textarea
+                  id="cloud"
+                  name="cloud"
+                  formControlName="cloud"
+                  rows="3"
+                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                ></textarea>
+                </div>
+              </div>
+
+              <!-- ========== Table DNS ========== -->
+               <br [class.hidden]="createVisible">
+              <div>
+                <h4><strong>DNS Sticks Disponibles</strong></h4>
+
+                <div>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-indigo-600"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      (change)="activeNumDNSChange($event)"
+                      type="search"
+                      id="search"
+                      class="block w-full h-11 py-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                      placeholder="Buscar por DNS"
+                      #searchDNSInput
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <table mat-table [dataSource]="dataDNS" matSort>
+                    <ng-container matColumnDef="mac">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        MAC Address
+                      </th>
+                      <td scope="element" mat-cell *matCellDef="let element">
+                        {{ element.mac }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="dns">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        DNS
+                      </th>
+                      <td scope="element" mat-cell *matCellDef="let element">
+                        {{ element.dns }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="accion">
+                      <th
+                        scope="col"
+                        class="text-s text-black colcolor"
+                        mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        style="margin: 0 auto"
+                      >
+                        Seleccionar
+                      </th>
+
+                      <td mat-cell *matCellDef="let element">
+                        <div class="flex gap-5">
+                          <button
+                            mat-mini-fab
+                            class="bt-editar"
+                            matTooltip="Editar"
+                            aria-label="Editar"
+                            (click)="selectDNS(element)"
+                          ></button>
+                        </div>
+                      </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedDNS"></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let element; columns: displayedDNS"
+                      [ngClass]="{ 'fila-desactivada': element.desactivado }"
+                    ></tr>
+                  </table>
+                  <div>
+                    <mat-paginator
+                      #paginator
+                      [lang]="'es'"
+                      [length]="dataDNS.data.length"
+                      [pageIndex]="0"
+                      [pageSize]="4"
+                      aria-label="Seleccione una página"
+                    >
+                    </mat-paginator>
+                  </div>
+                </div>
+              </div>
+
+              <!--Cargar DNS-->
+              <div>
+
+                <h4><strong>Dispositivo seleccionado</strong></h4>
+
+                <div>
+                  <label
+                    for="mac"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >MAC Address</label
+                  >
+                  <input
+                    type="text"
+                    id="mac"
+                    name="mac"
+                    formControlName="mac"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="dns"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >DNS</label
+                  >
+                  <input
+                    type="text"
+                    id="dns"
+                    name="dns"
+                    formControlName="dns"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="email"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Correo</label
+                  >
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    formControlName="email"
+                    autocomplete="off"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Mostrar cambio debido a daño-->
+                <div *ngIf="idDNSAnterior !== 0 && !createVisible">
+                  <label for="estadoDNS" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">¿El cambio se debe a un dispositivo dañado?</label>
+                  <select id="estadoDNS" (change)="onStatusDNSChange($event)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected>Seleccione una opción</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <!-- Datos del servicio -->
+              <div>
+                <h4><strong>Datos del servicio</strong></h4>
+
+                <div>
+                  <label
+                    for="idEstadoInstalacion"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Estado de instalación</label
+                  >
+                  <select
+                    id="idEstadoInstalacion"
+                    formControlName="idEstadoInstalacion"
+                    (change)="selectStatus($event)"
+                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option *ngFor="let status of statuses" [value]="status.id">
+                      {{ status.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    for="macAddress"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >MAC Address</label
+                  >
+                  <input
+                    type="text"
+                    id="macAddress"
+                    name="macAddress"
+                    formControlName="macAddress"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese el MAC Address"
+                  />
+                  <mat-error
+                  *ngIf="errorHandling('macAddress', 'required')"
+                  class="mt-2 text-sm text-red-600 dark:text-red-500"
+                >
+                  El MAC Address del servicio es <strong>requerido</strong>.
+                </mat-error>
+                </div>
+
+                <div>
+                  <label
+                    for="correo"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Correo</label
+                  >
+                  <input
+                    type="text"
+                    id="correo"
+                    name="correo"
+                    formControlName="correo"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese la dirección de correo"
+                    />
+                    <mat-error
+                    *ngIf="errorHandling('correo', 'required')"
+                    class="mt-2 text-sm text-red-600 dark:text-red-500"
+                  >
+                    El correo del servicio es <strong>requerido</strong>.
+                  </mat-error>
+                </div>
+
+                <div>
+                  <label
+                    for="clave"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Clave</label
+                  >
+                  <input
+                    type="text"
+                    id="clave"
+                    name="clave"
+                    formControlName="clave"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese la clave"
+                  />
+                  <mat-error
+                  *ngIf="errorHandling('clave', 'required')"
+                  class="mt-2 text-sm text-red-600 dark:text-red-500"
+                >
+                  La clave del servicio es <strong>requerida</strong>.
+                </mat-error>
+                </div>
+              </div>
+
+              <!--Adicional-->
+              <div>
+                <h4><strong>Información adicional</strong></h4>
+
+                <div>
+                  <label
+                    for="fechaInstalacion"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Fecha de instalación</label
+                  >
+                  <input
+                    id="fechaInstalacion"
+                    formControlName="fechaInstalacion"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="dd/mm/yyyy"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="agente"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Nombre del agente encargado</label
+                  >
+                  <input
+                    type="text"
+                    id="agente"
+                    name="agente"
+                    formControlName="agente"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese el nombre del agente encargado"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="comentario"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Comentario adicional</label
+                  >
+                  <textarea
+                    id="comentario"
+                    name="comentario"
+                    formControlName="comentario"
+                    rows="5"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese su comentario"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div>
+              <div class="flex justify-center p-4">
+                <button
+                  type="submit"
+                  (click)="crearIPTV()"
+                  class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+                >
+                  Guardar
+                </button>
+
+                <button
+                  type="button"
+                  (click)="closeModal()"
+                  class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

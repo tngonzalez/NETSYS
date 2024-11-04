@@ -9,6 +9,8 @@ router.post("/crear", datos.create);
 router.put("/actualizar/:idDNS", datos.update); 
 
 router.get("/dns/:idDNS", datos.getById); 
+router.get("/estado/:idEstado", datos.getByIdEstado); 
+
 
 router.delete("/eliminar/:idDNS", datos.delete); 
 

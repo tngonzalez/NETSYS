@@ -10,6 +10,7 @@ import { FtthDeleteComponent } from '../ftth-delete/ftth-delete.component';
 import { FtthDetalleComponent } from '../ftth-detalle/ftth-detalle.component';
 import { Router } from '@angular/router';
 import { GenericService } from '../../shared/generic.service';
+import { FtthEstadoComponent } from '../ftth-estado/ftth-estado.component';
 
 @Component({
   selector: 'app-ftth-index',
@@ -59,6 +60,8 @@ export class FtthIndexComponent implements AfterViewInit {
   @ViewChild('ftthFormModal') ftthFormModal!: FtthCreateComponent;
   @ViewChild('ftthDeleteModal') ftthDeleteModal!: FtthDeleteComponent;
   @ViewChild('ftthDetalleModal') ftthDetalleModal!: FtthDetalleComponent;
+  @ViewChild('ftthEstadoModal') ftthEstadoModal!: FtthEstadoComponent;
+
   @ViewChild('searchInput') searchInput!: ElementRef;
 
   constructor(private gService: GenericService, public router: Router) {
@@ -75,6 +78,10 @@ export class FtthIndexComponent implements AfterViewInit {
       this.fetchServicios();
     });
     this.ftthFormModal.ftthCrearModal.subscribe(() => {
+      this.fetchFtth();
+      this.fetchServicios();
+    });
+    this.ftthEstadoModal.ftthEstadoModal.subscribe(() => {
       this.fetchFtth();
       this.fetchServicios();
     });
@@ -195,6 +202,10 @@ export class FtthIndexComponent implements AfterViewInit {
 
   update(id: any) {
     this.ftthFormModal.openModal(id);
+  }
+
+  estadoChange(idCliente: any, idEstado: any) {
+    this.ftthEstadoModal.openModal(idCliente, idEstado);
   }
 
   deleteFtth(id: any) {

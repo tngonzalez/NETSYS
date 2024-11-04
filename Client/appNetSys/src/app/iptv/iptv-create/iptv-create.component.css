@@ -1,0 +1,65 @@
+.bt-editar {
+  background-image: url("../../../assets/img/finger_pointer_icon.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+  background-color: #fffbff;
+  box-shadow: none;
+}
+
+.modal-content {
+  max-height: auto; /* Limita el alto máximo del modal */
+  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido excede la altura */
+}
+
+.modal-body {
+  max-height: auto; /* Ajusta el tamaño del cuerpo si hay encabezado y acciones */
+  overflow-y: auto;
+  padding: 16px;
+}
+
+div {
+  margin-top: 10px;
+}
+
+.desactivado {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+input:disabled {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+textarea:disabled {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.fila-desactivada {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+input {
+  text-transform: uppercase;
+}
+
+input::placeholder {
+  text-transform: none;
+}
+
+
+
