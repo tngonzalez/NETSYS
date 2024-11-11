@@ -18,7 +18,7 @@ export class DnsIndexComponent implements AfterViewInit {
   selectedStatus: any;
   datos: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  displayedColumns = ['correo', 'macAddress', 'dns', 'estado', 'accion'];
+  displayedColumns = ['usuario', 'macAddress', 'dsn', 'estado', 'accion'];
   filteredData: any;
 
   statuses = [
@@ -135,11 +135,12 @@ export class DnsIndexComponent implements AfterViewInit {
 
     //Update By NumActivo
     numberChange(event: any) {
-      const activo = event.target.value.trim().toUpperCase();
-
-      if (activo !== '') {
+      const cliente = event.target.value.trim().toLowerCase();
+      if (cliente !== '') {
         this.filteredData = this.datos.filter(
-          (i: any) => i.dns && i.dns.toString().toUpperCase().includes(activo)
+          (i: any) =>
+            i.usuario &&
+            i.usuario.toString().toLowerCase().includes(cliente)
         );
       } else {
         this.filteredData = this.datos;

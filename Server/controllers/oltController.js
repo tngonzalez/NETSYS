@@ -6,11 +6,10 @@ module.exports.get = async (request, response, next) => {
   try {
     const dataOLT = await prisma.oLT.findMany({
       orderBy: {
-        idOLT: "desc",
+        idOLT: "asc",
       },
       include: {
         Subred_OLT: true,
-        Zona_OLT: true,
       },
     });
 
@@ -50,7 +49,6 @@ module.exports.getOLTById = async (request, response, next) => {
       where: { idOLT: idOLT },
       include: {
         Subred_OLT: true,
-        Zona_OLT: true,
       },
     });
 
@@ -61,7 +59,6 @@ module.exports.getOLTById = async (request, response, next) => {
       segmentoZona: dataOLT.segmentoZona,
       ipGeneral: dataOLT.ipGeneral,
       puertoNAT: dataOLT.puertoNAT,
-      zonas: dataOLT.Zona_OLT.map((zona) => zona.nombreZona),
       subredes: dataOLT.Subred_OLT.map((subred) => subred.ip),
     };
     response.json(datos);

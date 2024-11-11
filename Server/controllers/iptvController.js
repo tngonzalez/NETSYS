@@ -16,7 +16,7 @@ module.exports.getAll = async (request, response, next) => {
         },
         estadoServicio: true,
         estadoInst: true,
-        dns: true,
+        dsn: true,
       },
     });
 
@@ -48,7 +48,7 @@ module.exports.getByIdIPTV = async (request, response, next) => {
         },
         estadoInst: true,
         estadoServicio: true,
-        dns: true,
+        dsn: true,
       },
     });
 
@@ -69,10 +69,10 @@ module.exports.getByIdIPTV = async (request, response, next) => {
 
       idEstado: servicio.idEstado,
 
-      idDNS: servicio.idDNS,
-      mac: servicio.dns.macAddress,
-      dns:  servicio.dns.dns,
-      email: servicio.dns.correo,
+      idDSN: servicio.idDSN,
+      mac: servicio.dsn.macAddress,
+      dsn:  servicio.dsn.dsn,
+      email: servicio.dsn.correo,
 
       idEstadoInstalacion: servicio.idEstadoInstalacion,
     
@@ -100,9 +100,9 @@ module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
 
-    //DNS - Actualizar estado
-    await prisma.dNS_Stick.update({
-      where: { idDNS: data.idDNS },
+    //dsn - Actualizar estado
+    await prisma.dsn_Stick.update({
+      where: { idDSN: data.idDSN },
       data: {
         idEstado: 2,
       },
@@ -115,7 +115,7 @@ module.exports.create = async (request, response, next) => {
         idCliente: data.idCliente,
         idEstado: 1,
         idEstadoInstalacion: data.idEstadoInstalacion,
-        idDNS: data.idDNS || null,
+        idDSN: data.idDSN || null,
         fechaInstalacion: data.fechaInstalacion || null,
         comentario: data.comentario || null,
         agente: data.agente || null,
@@ -140,33 +140,33 @@ module.exports.update = async (request, response, next) => {
       where: { idIPTV: data.idIPTV },
     });
 
-    //DNS - Actualizar estado
-    if (data.idDNS !== iptv.idDNS) {
+    //dsn - Actualizar estado
+    if (data.idDSN !== iptv.idDSN) {
       
       if (data.danado === true) {
-        await prisma.dNS_Stick.update({
-          where: { idDNS: iptv.idDNS }, 
+        await prisma.dsn_Stick.update({
+          where: { idDSN: iptv.idDSN }, 
           data: {
             idEstado: 3,
           },
         });
 
-        await prisma.dNS_Stick.update({
-          where: { idDNS: data.idDNS },
+        await prisma.dsn_Stick.update({
+          where: { idDSN: data.idDSN },
           data: {
             idEstado: 2,
           },
         });
       } else {
-        await prisma.dNS_Stick.update({
-          where: { idDNS: data.idDNS },
+        await prisma.dsn_Stick.update({
+          where: { idDSN: data.idDSN },
           data: {
             idEstado: 2,
           },
         });
 
-        await prisma.dNS_Stick.update({
-          where: { idDNS: iptv.idDNS },
+        await prisma.dsn_Stick.update({
+          where: { idDSN: iptv.idDSN },
           data: {
             idEstado: 1,
           },
@@ -182,7 +182,7 @@ module.exports.update = async (request, response, next) => {
         idCliente: data.idCliente,
         idEstado: data.idEstado,
         idEstadoInstalacion: data.idEstadoInstalacion,
-        idDNS: data.idDNS,
+        idDSN: data.idDSN,
         fechaInstalacion: data.fechaInstalacion,
         comentario: data.comentario,
         agente: data.agente,
@@ -207,9 +207,9 @@ module.exports.detele = async (request, response, next) => {
       where: { idIPTV: idIPTV },
     });
 
-    await prisma.dNS_Stick.update({
+    await prisma.dsn_Stick.update({
       where: {
-        idDNS: iptv.idDNS,
+        idDSN: iptv.idDSN,
       },
       data: {
         idEstado: 1,

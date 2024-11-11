@@ -90,7 +90,7 @@ export class RtrIndexComponent implements AfterViewInit {
   disableButton() {
     if (this.datos) {
       this.datos.forEach((i: any) => {
-        if (i.existeRouter === true) {
+        if (i.idEstado !== 1) {
           i.desactivado = true;
         } else {
           i.desactivado = false;

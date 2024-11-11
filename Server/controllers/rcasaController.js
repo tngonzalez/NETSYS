@@ -15,25 +15,14 @@ module.exports.getRouter = async (request, response, next) => {
       },
     });
 
-    const data = await Promise.all(
-      router.map(async (r) => {
-        const cliente = await prisma.cliente.findUnique({
-          where: {
-            idRouter_Casa: r.idRouter_Casa,
-          },
-        });
-
-        return {
-          id: r.idRouter_Casa,
-          idEstado: r.idEstado,
-          estado: r.estado.nombre,
-          activo: r.numActivo,
-          serie: r.serie,
-          macAddress: r.macAddress,
-          existeRouter: cliente ? true : false,
-        };
-      })
-    );
+    const data = router.map((r) => ({
+      id: r.idRouter_Casa,
+      idEstado: r.idEstado,
+      estado: r.estado.nombre,
+      activo: r.numActivo,
+      serie: r.serie,
+      macAddress: r.macAddress,
+    }));
 
     response.json(data);
   } catch (error) {
@@ -168,6 +157,7 @@ module.exports.getRouterByEstado = async (request, response, next) => {
     const data = router.map((router) => ({
       id: router.idRouter_Casa,
       idEstado: router.idEstado,
+      estado: router.estado.nombre,
       activo: router.numActivo,
       serie: router.serie,
       macAddress: router.macAddress,

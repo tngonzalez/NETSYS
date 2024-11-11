@@ -36,7 +36,7 @@ model EstadoActivo {
 
   Router_Casa Router_Casa[]
   ont         ONT[]
-  dns         DNS_Stick[]
+  dsn         DSN_Stick[]
 }
 
 model ONT {
@@ -66,12 +66,10 @@ model Router_Casa {
 model Router_Gestor {
   idRouter_Gestor Int @id @default(autoincrement())
   idSubred_OLT    Int
-  idZona_OLT      Int
   idOLT           Int
 
   olt    OLT?        @relation(fields: [idOLT], references: [idOLT])
   subred Subred_OLT? @relation(fields: [idSubred_OLT], references: [idRed])
-  zona   Zona_OLT?   @relation(fields: [idZona_OLT], references: [idZona])
 
   Cliente Cliente[]
 }
@@ -86,7 +84,6 @@ model OLT {
 
   Router_Gestor Router_Gestor[]
   Subred_OLT    Subred_OLT[]
-  Zona_OLT      Zona_OLT[]
 }
 
 model Subred_OLT {
@@ -98,14 +95,14 @@ model Subred_OLT {
   Router_Gestor Router_Gestor[]
 }
 
-model Zona_OLT {
-  idZona     Int    @id @default(autoincrement())
-  idOLT      Int
-  nombreZona String @db.VarChar(100)
+// model Zona_OLT {
+//   idZona     Int    @id @default(autoincrement())
+//   idOLT      Int
+//   nombreZona String @db.VarChar(100)
 
-  olt           OLT             @relation(fields: [idOLT], references: [idOLT])
-  Router_Gestor Router_Gestor[]
-}
+//   olt           OLT             @relation(fields: [idOLT], references: [idOLT])
+//   Router_Gestor Router_Gestor[]
+// }
 
 model Condominio {
   idCondominio Int     @id @default(autoincrement())
@@ -146,9 +143,9 @@ model Cliente {
   cajaDerivada      String  @db.VarChar(150)
   fechaInstalacion  String? @db.VarChar(50)
   comentario        String? @db.VarChar(200)
-  agente            String  @db.VarChar(100)
+  agente            String? @db.VarChar(100)
   cloudMonitoreo    String  @unique @db.VarChar(150)
-  potenciaRecepcion String?  @db.VarChar(100)
+  potenciaRecepcion String? @db.VarChar(100)
 
   infoCliente   InfoCliente    @relation(fields: [idInfoCliente], references: [idInfoCliente])
   tipoCliente   TipoCliente    @relation(fields: [idTipo], references: [idTipo])
@@ -233,37 +230,36 @@ model EstadoInstalacion {
   iptv IPTV[]
 }
 
-model DNS_Stick {
-  idDNS      Int     @id @default(autoincrement())
+model DSN_Stick {
+  idDSN      Int     @id @default(autoincrement())
   idEstado   Int
   nombre     String? @db.VarChar(100)
-  correo     String  @db.VarChar(100)
+  usuario    String  @db.VarChar(100)
   clave      String  @db.VarChar(100)
-  macAddress String  @unique @db.VarChar(100)
-  dns        String  @unique @db.VarChar(100) //Similar al NumSN
+  macAddress String?  @unique @db.VarChar(100)
+  dsn        String? @unique @db.VarChar(100) //Similar al NumSN
 
   iptv   IPTV[]
   estado EstadoActivo @relation(fields: [idEstado], references: [idEstado])
 }
 
 model IPTV {
-  idIPTV              Int    @id @default(autoincrement())
+  idIPTV              Int     @id @default(autoincrement())
   idCliente           Int
   idEstado            Int //Activo Dañado Suspención
   idEstadoInstalacion Int //Instalado - Pendiente 
-  idDNS               Int?
+  idDSN               Int?
   fechaInstalacion    String? @db.VarChar(50)
   comentario          String? @db.VarChar(200)
   agente              String? @db.VarChar(100)
-  macAddress          String @unique @db.VarChar(100)
-  correo              String @unique @db.VarChar(100)
-  clave               String @unique @db.VarChar(100)
+  macAddress          String  @unique @db.VarChar(100)
+  correo              String  @unique @db.VarChar(100)
+  clave               String  @unique @db.VarChar(100)
 
-  cliente Cliente           @relation(fields: [idCliente], references: [idCliente])
-  estadoInst  EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])
-  dns     DNS_Stick?         @relation(fields: [idDNS], references: [idDNS])
-  estadoServicio  EstadoCliente @relation(fields: [idEstado], references: [idEstado])
-
+  cliente        Cliente           @relation(fields: [idCliente], references: [idCliente])
+  estadoInst     EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])
+  dsn            DSN_Stick?        @relation(fields: [idDSN], references: [idDSN])
+  estadoServicio EstadoCliente     @relation(fields: [idEstado], references: [idEstado])
 }
 
 model InfoCliente_IPpublica {

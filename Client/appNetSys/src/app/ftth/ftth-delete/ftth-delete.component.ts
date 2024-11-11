@@ -35,7 +35,6 @@ export class FtthDeleteComponent {
     this.isVisible = false;
   }
 
-
 deleteFTTH() {
   this.gService
     .delete('ftth/eliminar', this.idC)

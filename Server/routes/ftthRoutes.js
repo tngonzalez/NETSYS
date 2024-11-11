@@ -13,6 +13,7 @@ router.post("/crear", datos.create);
 router.post("/retiro/crear", datos.updateStateRetiro); 
 router.post("/suspencion/crear", datos.updateStateSuspencion); 
 router.post("/danado/crear", datos.createStateDanado); 
+router.post("/activo/crear", datos.updateStateActivo); 
 
 
 router.put("/actualizar/:id", datos.update); 

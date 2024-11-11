@@ -3,7 +3,7 @@
     <div class="w-full">
       <div class="bg-gray-100 w-full h-full py-1">
         <header class="header-content">
-          <h2 class="">DNS Sticks</h2>
+          <h2 class="">DSN Sticks</h2>
         </header>
   
         <div
@@ -25,7 +25,7 @@
                 </select>
               </form>
   
-              <!-- ========== Buscar por dns  ========== -->
+              <!-- ========== Buscar por usuario  ========== -->
   
               <div class="flex w-48 mx-2">
                 <div class="relative">
@@ -53,7 +53,7 @@
                     type="search"
                     id="default-search"
                     class="block w-full h-11 p-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
-                    placeholder="Buscar por DNS"
+                    placeholder="Buscar por usuario"
                     #searchInput
                   />
                 </div>
@@ -84,7 +84,7 @@
             </div>
           </div>
   
-          <!-- ========== Table DNS  ========== -->
+          <!-- ========== Table DSN  ========== -->
           <div class="relative overflow-x-auto py-3 shadow-md sm:rounded-lg">
             <table
               mat-table
@@ -92,7 +92,7 @@
               matSort
               class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
             >
-              <ng-container matColumnDef="correo">
+              <ng-container matColumnDef="usuario">
                 <th
                   scope="col"
                   class="text-s text-black colcolor rounded-tl-md"
@@ -100,7 +100,7 @@
                   *matHeaderCellDef
                   mat-sort-header
                 >
-                  Correo
+                  Usuario
                 </th>
                 <td
                   scope="row"
@@ -108,7 +108,7 @@
                   mat-cell
                   *matCellDef="let row"
                 >
-                  {{ row.correo }}
+                  {{ row.usuario }}
                 </td>
               </ng-container>
   
@@ -132,7 +132,7 @@
                 </td>
               </ng-container>
   
-              <ng-container matColumnDef="dns">
+              <ng-container matColumnDef="dsn">
                 <th
                   scope="col"
                   class="text-s text-black colcolor"
@@ -140,7 +140,7 @@
                   *matHeaderCellDef
                   mat-sort-header
                 >
-                  DNS
+                  DSN
                 </th>
                 <td
                   scope="row"
@@ -148,7 +148,7 @@
                   mat-cell
                   *matCellDef="let row"
                 >
-                  {{ row.dns }}
+                  {{ row.dsn }}
                 </td>
               </ng-container>
   

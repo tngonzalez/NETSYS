@@ -17,6 +17,7 @@ import { FtthDeleteComponent } from './ftth-delete/ftth-delete.component';
 import { FtthDetalleComponent } from './ftth-detalle/ftth-detalle.component';
 import { MatDialogContent } from '@angular/material/dialog';
 import { FtthEstadoComponent } from "./ftth-estado/ftth-estado.component";
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { FtthEstadoComponent } from "./ftth-estado/ftth-estado.component";
     MatSelectModule,
     NgIconsModule.withIcons({}),
     MatDialogContent,
+    MatDialogModule,
 ]
 })
 export class FtthModule { }

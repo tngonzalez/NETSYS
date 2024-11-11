@@ -33,7 +33,7 @@
             class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
           >
             <img src="../../../assets/img/add_service_ftth.png" />
-            <p>Servicios</p>
+            <p>Zonas</p>
           </button>
         </div>
 
@@ -218,6 +218,8 @@
                     matTooltip="Editar"
                     aria-label="Editar"
                     (click)="update(row.id)"
+                    [disabled]="row.desactivado"
+                    [class.desactivado]="row.desactivado"
                   ></button>
 
                   <button
@@ -225,7 +227,7 @@
                     class="bt-estado"
                     matTooltip="Estado"
                     aria-label="Estado"
-                    (click)="estadoChange(row.id, row.idEstado)"
+                    (click)="estadoChange(row.id, row.idEstado, row.ontMAC, row.routerMAC)"
                   ></button>
 
                   <button

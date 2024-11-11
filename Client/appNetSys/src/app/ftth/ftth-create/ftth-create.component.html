@@ -110,12 +110,12 @@
                   >
 
                   <textarea
-                  id="cloudMonitoreo"
-                  name="cloudMonitoreo"
-                  formControlName="cloudMonitoreo"
-                  rows="3"
-                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                ></textarea>
+                    id="cloudMonitoreo"
+                    name="cloudMonitoreo"
+                    formControlName="cloudMonitoreo"
+                    rows="3"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  ></textarea>
                 </div>
               </div>
               <div>
@@ -409,7 +409,6 @@
                     <tr
                       mat-row
                       *matRowDef="let element; columns: displayedRouter"
-                      [ngClass]="{ 'fila-desactivada': element.desactivado }"
                     ></tr>
                   </table>
                   <div>
@@ -592,7 +591,6 @@
                     <tr
                       mat-row
                       *matRowDef="let element; columns: displayedONT"
-                      [ngClass]="{ 'fila-desactivada': element.desactivado }"
                     ></tr>
                   </table>
                   <div>
@@ -671,26 +669,51 @@
                     formControlName="potenciaRecepcion"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese la potencia de recepción"
-                    required
                   />
-                  <mat-error
-                    *ngIf="errorHandling('potenciaRecepcion', 'required')"
-                    class="mt-2 text-sm text-red-600 dark:text-red-500"
-                  >
-                    La potencia de recepción es <strong>requerida</strong>.
-                  </mat-error>
                 </div>
               </div>
 
               <!-- OLT + Subred -->
               <div>
-                <h4><strong>Datos del OLT</strong></h4>
-
+                <h4><strong>VLAN de asignación</strong></h4>
+                <!-- Input de búsqueda-->
+                <div>
+                  <div class="relative">
+                    <div
+                      class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                    >
+                      <svg
+                        class="w-4 h-4 text-indigo-600"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      (change)="oltChange($event)"
+                      type="search"
+                      id="searchOLT"
+                      class="block w-full h-11 py-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                      placeholder="Buscar OLT"
+                      #searchOLTInput
+                      [formControl]="searchControl"
+                      />
+                  </div>
+                </div>
                 <div>
                   <label
                     for="idOLT"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >OLT Disponibles</label
+                    >Puertos disponibles</label
                   >
                   <select
                     id="idOLT"
@@ -723,23 +746,6 @@
                     </option>
                   </select>
                 </div>
-
-                <div>
-                  <label
-                    for="nombreZona"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Nombre de la zona</label
-                  >
-                  <input
-                    type="text"
-                    id="nombreZona"
-                    name="nombreZona"
-                    formControlName="nombreZona"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Ingrese la zona de instalación"
-                    required
-                  />
-                </div>
               </div>
 
               <!--Adicional-->
@@ -758,7 +764,6 @@
                     type="text"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="dd/mm/yyyy"
-                    required
                   />
                 </div>
 
@@ -775,14 +780,7 @@
                     formControlName="agente"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese el nombre del agente encargado"
-                    required
                   />
-                  <mat-error
-                    *ngIf="errorHandling('agente', 'required')"
-                    class="mt-2 text-sm text-red-600 dark:text-red-500"
-                  >
-                    El nombre del agente es <strong>requerido</strong>.
-                  </mat-error>
                 </div>
 
                 <div>
@@ -798,257 +796,30 @@
                     rows="5"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Ingrese su comentario"
-                    required
                   ></textarea>
                 </div>
               </div>
 
-              <!-- Estado  -->
-              <div *ngIf="!isCreate">
-                <h4><strong>Estado del servicio</strong></h4>
-
-                <div>
-                  <label
-                    for="idEstado"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Estado del servicio</label
+              <!-- Botones -->
+              <div>
+                <div class="flex justify-center p-4">
+                  <button
+                    type="submit"
+                    (click)="createFTTH()"
+                    class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
                   >
-                  <select
-                    id="idEstado"
-                    formControlName="idEstado"
-                    (change)="selectStatus($event)"
-                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    (click)="closeModal()"
+                    class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
                   >
-                    <option *ngFor="let status of statuses" [value]="status.id">
-                      {{ status.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Dañados Info -->
-                <div *ngIf="!isCreate && idEstado === 4" [formGroup]="danoForm">
-                  <h4><strong>Dañado </strong></h4>
-
-                  <div>
-                    <label
-                      for="idTipoDano"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Tipo de daño</label
-                    >
-                    <select
-                      id="idTipoDano"
-                      formControlName="idTipoDano"
-                      (change)="danoStatus($event)"
-                      class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option *ngFor="let dano of danos" [value]="dano.id">
-                        {{ dano.name }}
-                      </option>
-                    </select>
-                  </div>
-
-                  <!-- Info Daño -->
-                  <div>
-                    <label
-                      for="fechaInstalacionDano"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Fecha de instalación</label
-                    >
-                    <input
-                      id="fechaInstalacionDano"
-                      formControlName="fechaInstalacionDano"
-                      type="text"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="dd/mm/yyyy"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      for="comentarioDano"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Comentario adicional</label
-                    >
-                    <textarea
-                      id="comentarioDano"
-                      name="comentarioDano"
-                      formControlName="comentarioDano"
-                      rows="5"
-                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Ingrese su comentario"
-                    ></textarea>
-                  </div>
+                    Cancelar
+                  </button>
                 </div>
               </div>
-
-              <!-- Dañados - Table-->
-              <div *ngIf="!isCreate && idEstado === 4" [formGroup]="danoForm">
-                <!--Dropdown: Tipos de dispositivos-->
-                <div>
-                  <label
-                    for="dispositivo"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Tipo de dispositivo</label
-                  >
-                  <select
-                    id="dispositivo"
-                    formControlName="dispositivo"
-                    (change)="dispositivosStatus($event)"
-                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option
-                      *ngFor="let dispositivo of dispositivos"
-                      [value]="dispositivo.name"
-                    >
-                      {{ dispositivo.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!--Cargar ONT o Router-->
-                <div>
-                  <div>
-                    <label
-                      for="direccionActual"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Dirección actual</label
-                    >
-                    <input
-                      type="text"
-                      id="direccionActual"
-                      name="direccionActual"
-                      formControlName="direccionActual"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      for="direccionNuevo"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Dirección nueva</label
-                    >
-                    <input
-                      type="text"
-                      id="direccionNuevo"
-                      name="direccionNuevo"
-                      formControlName="direccionNuevo"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Retiro -->
-              <div *ngIf="!isCreate && idEstado === 3" [formGroup]="retiroForm">
-                <h4><strong>Retiro </strong></h4>
-
-                <div>
-                  <label
-                    for="idEstadoR"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Estado del retiro</label
-                  >
-                  <select
-                    id="idEstadoR"
-                    formControlName="idEstadoR"
-                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option *ngFor="let retiro of retiros" [value]="retiro.id">
-                      {{ retiro.name }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- Info Retiro -->
-                <div>
-                  <label
-                    for="numOSRetiro"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Número de orden de servicio</label
-                  >
-                  <input
-                    id="numOSRetiro"
-                    formControlName="numOSRetiro"
-                    type="text"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Ingrese el número de orden de servicio"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    for="fechaDesinstalacionRetiro"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Fecha de desinstalación</label
-                  >
-                  <input
-                    id="fechaDesinstalacionRetiro"
-                    formControlName="fechaDesinstalacionRetiro"
-                    type="text"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="dd/mm/yyyy"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    for="agenteRetiro"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Nombre del agente encargado
-                  </label>
-                  <input
-                    id="agenteRetiro"
-                    formControlName="agenteRetiro"
-                    type="text"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Ingrese el nombre del agente encargado"
-                  />
-                </div>
-              </div>
-
-              <!-- Suspencion Info -->
-              <div
-                *ngIf="!isCreate && idEstado === 2"
-                [formGroup]="suspencionForm"
-              >
-                <h4><strong>Suspención </strong></h4>
-
-                <div>
-                  <label
-                    for="fechaSuspencion"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Fecha de instalación</label
-                  >
-                  <input
-                    id="fechaSuspencion"
-                    formControlName="fechaSuspencion"
-                    type="text"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="dd/mm/yyyy"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Botones -->
-            <div>
-              <div class="flex justify-center p-4">
-                <button
-                  type="submit"
-                  (click)="createFTTH()"
-                  class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
-                >
-                  Guardar
-                </button>
-                <button
-                type="button"
-                (click)="closeModal()"
-                  class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
-                >
-                  Cancelar
-                </button>
-              </div>
+   
             </div>
           </form>
         </div>

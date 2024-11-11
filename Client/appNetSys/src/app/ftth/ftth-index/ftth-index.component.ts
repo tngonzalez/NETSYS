@@ -51,7 +51,7 @@ export class FtthIndexComponent implements AfterViewInit {
   ];
 
   servicios: any[] = [];
-  selectedService: string | null = "Servicios";
+  selectedService: string | null = 'Servicios';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -98,6 +98,8 @@ export class FtthIndexComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.datos = response;
+        console.log(this.datos); 
+        this.disableButton();
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -115,7 +117,7 @@ export class FtthIndexComponent implements AfterViewInit {
       .subscribe((response: any) => {
         this.servicios = response;
 
-        this.servicios.unshift({nombre: 'Servicios'}); 
+        this.servicios.unshift({ nombre: 'Servicios' });
       });
   }
 
@@ -156,6 +158,19 @@ export class FtthIndexComponent implements AfterViewInit {
     }
   }
 
+  //Disable button
+  disableButton() {
+    if (this.datos) {
+      this.datos.forEach((i: any) => {
+        if (i.idEstado !== 1) {
+          i.desactivado = true;
+        } else {
+          i.desactivado = false;
+        }
+      });
+    }
+  }
+
   //Buscar por cliente
   clientChange(event: any) {
     const cliente = event.target.value.trim().toLowerCase();
@@ -171,14 +186,11 @@ export class FtthIndexComponent implements AfterViewInit {
     this.updateTable(this.filteredData);
   }
 
-
   //Dropdown services
   servicesChange(event: any) {
-
     const selectedService = event;
 
     if (selectedService === 'Servicios') {
-
       this.filteredData = this.datos;
     } else {
       this.filteredData = this.datos.filter(
@@ -197,15 +209,15 @@ export class FtthIndexComponent implements AfterViewInit {
   }
 
   crear() {
-    this.ftthFormModal.openModal(); 
+    this.ftthFormModal.openModal();
   }
 
   update(id: any) {
     this.ftthFormModal.openModal(id);
   }
 
-  estadoChange(idCliente: any, idEstado: any) {
-    this.ftthEstadoModal.openModal(idCliente, idEstado);
+  estadoChange(idCliente: any, idEstado: any, ontMAC: any, routerMAC: any) {
+    this.ftthEstadoModal.openModal(idCliente, idEstado, ontMAC, routerMAC);
   }
 
   deleteFtth(id: any) {

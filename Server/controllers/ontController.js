@@ -13,23 +13,14 @@ module.exports.get = async (request, response, next) => {
       },
     });
 
-    const data = await Promise.all(
-      dataONT.map(async (o) => {
-        const Cliente = await prisma.cliente.findUnique({
-          where: { idONT: o.idONT },
-        });
-
-        return {
-          id: o.idONT,
-          idEstado: o.idEstado,
-          estado: o.estado.nombre,
-          numActivo: o.numActivo,
-          macAddress: o.macAddress,
-          numSN: o.numSN,
-          existeCliente: Cliente ? true : false,
-        };
-      })
-    );
+    const data = dataONT.map((o) => ({
+      id: o.idONT,
+      idEstado: o.idEstado,
+      estado: o.estado.nombre,
+      numActivo: o.numActivo,
+      macAddress: o.macAddress,
+      numSN: o.numSN
+    }));
 
     response.json(data);
   } catch (error) {
@@ -85,6 +76,7 @@ module.exports.getONTByEstado = async (request, response, next) => {
     const data = ont.map((ont) => ({
       id: ont.idONT,
       idEstado: ont.idEstado,
+      estado: ont.estado.nombre,
       numActivo: ont.numActivo,
       numSN: ont.numSN,
       macAdd: ont.macAddress,

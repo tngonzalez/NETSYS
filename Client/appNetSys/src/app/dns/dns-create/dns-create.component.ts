@@ -23,10 +23,10 @@ export class DnsCreateComponent {
   isVisible = false;
   idDNS: any;
   nombre: any;
-  correo: any;
+  usuario: any;
   clave: any;
   macAddress: any;
-  dns: any;
+  dsn: any;
 
   formData: any;
   makeSubmit: boolean = false;
@@ -61,10 +61,10 @@ export class DnsCreateComponent {
     this.dnsForm = this.fb.group({
       id: [null, null],
       nombre: [null, null],
-      correo: [null, Validators.required],
-      clave: [null, Validators.required],
-      macAddress: [null, Validators.required],
-      dns: [null, Validators.required],
+      usuario: [null, Validators.required],
+      clave: [null, null],
+      macAddress: [null, null],
+      dsn: [null, null],
     });
   }
 
@@ -87,7 +87,7 @@ export class DnsCreateComponent {
 
       this.scanTimeOut = setTimeout(() => {
         if (this.isScanningMac) {
-          this.dnsForm.controls['dns'].setValue(this.dataScanned);
+          this.dnsForm.controls['dsn'].setValue(this.dataScanned);
           this.isScanningMac = false;
         } else {
           this.dnsForm.controls['macAddress'].setValue(this.dataScanned);
@@ -129,14 +129,15 @@ export class DnsCreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.dnsData = data;
+        console.log(this.dnsData);
 
         this.dnsForm.patchValue({
           id: this.dnsData.id,
-          correo: this.dnsData.email,
-          clave: this.dnsData.clave,
-          dns: this.dnsData.dns,
-          macAddress: this.dnsData.mac,
           nombre: this.dnsData.nombre,
+          usuario: this.dnsData.usuario,
+          clave: this.dnsData.clave,
+          dsn: this.dnsData.serie,
+          macAddress: this.dnsData.macAddress,
         });
       });
   }
@@ -151,10 +152,10 @@ export class DnsCreateComponent {
     if (this.isCreate) {
       const data = {
         nombre: this.dnsForm.value.nombre || null,
-        correo: this.dnsForm.value.correo,
+        usuario: this.dnsForm.value.usuario,
         clave: this.dnsForm.value.clave,
-        dns: this.dnsForm.value.dns,
-        macAddress: this.dnsForm.value.macAddress,
+        dsn: this.dnsForm.value.dsn || null,
+        macAddress: this.dnsForm.value.macAddress || null,
       };
 
       this.gService
@@ -164,8 +165,8 @@ export class DnsCreateComponent {
           (response: any) => {
             this.respuesta = response;
             this.noti.mensajeRedirect(
-              'DNS • Creación',
-              `${data.dns} ha sido creado con exito.`,
+              'DSN • Creación',
+              `${data.usuario} ha sido creado con exito.`,
               TipoMessage.success,
               `/dns`
             );
@@ -174,7 +175,7 @@ export class DnsCreateComponent {
           (error: any) => {
             if (error.status === 400) {
               this.noti.mensaje(
-                'Error en la creación del DNS',
+                'Error en la creación del DSN',
                 error.error.mensaje,
                 TipoMessage.error
               );
@@ -184,12 +185,12 @@ export class DnsCreateComponent {
       this.closeModal();
     } else {
       const data = {
-        idDNS: this.idDNS,
+        idDSN: this.idDNS,
         nombre: this.dnsForm.value.nombre || null,
-        correo: this.dnsForm.value.correo,
+        usuario: this.dnsForm.value.usuario,
         clave: this.dnsForm.value.clave,
-        dns: this.dnsForm.value.dns,
-        macAddress: this.dnsForm.value.macAddress,
+        dsn: this.dnsForm.value.dsn || null,
+        macAddress: this.dnsForm.value.macAddress || null,
       };
 
       this.gService
@@ -198,8 +199,8 @@ export class DnsCreateComponent {
         .subscribe((data: any) => {
           this.respuesta = data;
           this.noti.mensajeRedirect(
-            'DNS • Actualización',
-            `${data.dns} ha sido actualizado con exito.`,
+            'DSN • Actualización',
+            `${data.usuario} ha sido actualizado con exito.`,
             TipoMessage.success,
             `/dns`
           );

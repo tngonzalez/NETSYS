@@ -16,6 +16,7 @@ export class OntCreateComponent {
   isVisible = false;
   idONT: any;
   idEstado: any;
+  nombreEstado: any; 
   numActivo: any;
   numSN: any;
   macAddress: any;
@@ -63,7 +64,8 @@ export class OntCreateComponent {
   reactiveForm() {
     this.ontForm = this.fb.group({
       id: [null, null],
-      idEstado: [null],
+      idEstado: [null,null],
+      nombreEstado: [null,null],
       numActivo: [null, Validators.required],
       numSN: [null, Validators.required],
       macAddress: [null, Validators.required],
@@ -109,6 +111,8 @@ export class OntCreateComponent {
       this.loadData(id);
       this.idONT = id;
       this.isCreate = false;
+      this.ontForm.get('nombreEstado')?.disable();
+
     } else {
       this.isCreate = true;
       this.titleForm = 'Crear';
@@ -132,14 +136,18 @@ export class OntCreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.ontData = data;
-
+        console.log(this.ontData); 
         this.ontForm.patchValue({
           id: this.ontData.id,
           idEstado: this.ontData.idEstado,
+          nombreEstado: this.ontData.estado,
           numActivo: this.ontData.numActivo,
           numSN: this.ontData.numSN,
           macAddress: this.ontData.macAddress,
         });
+
+        this.idEstado = this.ontForm.value.idEstado;  
+
       });
   }
 
@@ -205,6 +213,13 @@ export class OntCreateComponent {
     this.closeModal(); 
   }
 
+  //Permite restablecer el estado en caso de dañado
+  changeStatus(){
+    this.idEstado = 1; 
+    this.ontForm.patchValue({
+      idEstado: 1,
+    }); 
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

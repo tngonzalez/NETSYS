@@ -77,9 +77,11 @@ export class OntIndexComponent implements AfterViewInit {
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+
         if (this.searchInput) {
           this.searchInput.nativeElement.value = '';
         }
+
       });
   }
 
@@ -87,7 +89,7 @@ export class OntIndexComponent implements AfterViewInit {
   disableButton() {
     if (this.datos) {
       this.datos.forEach((i: any) => {
-        if (i.existeCliente === true) {
+        if (i.idEstado !== 1) {
           i.desactivado = true;
         } else {
           i.desactivado = false;

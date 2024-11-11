@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 //Get All
 module.exports.getAll = async (request, response, next) => {
   try {
-    const dns = await prisma.dNS_Stick.findMany({
+    const dsn = await prisma.dSN_Stick.findMany({
       orderBy: {
-        idDNS: "desc",
+        idDSN: "desc",
       },
       include: {
         estado: true,
@@ -15,11 +15,11 @@ module.exports.getAll = async (request, response, next) => {
       },
     });
 
-    const data = dns.map((r) => ({
-      id: r.idDNS,
-      correo: r.correo,
+    const data = dsn.map((r) => ({
+      id: r.idDSN,
+      usuario: r.usuario,
       macAddress: r.macAddress,
-      dns: r.dns, 
+      dsn: r.dsn, 
       estado: r.estado.nombre,
       idEstado: r.idEstado,
       existIPTV: r.iptv.length > 0 ? true : false,
@@ -34,31 +34,31 @@ module.exports.getAll = async (request, response, next) => {
 //Get By Id
 module.exports.getById = async (request, response, next) => {
   try {
-    let idDNS = parseInt(request.params.idDNS);
+    let idDSN = parseInt(request.params.idDSN);
 
-    const dns = await prisma.dNS_Stick.findUnique({
-      where: { idDNS: idDNS },
+    const dsn = await prisma.dSN_Stick.findUnique({
+      where: { idDSN: idDSN },
       include: {
         estado: true,
         iptv: true, 
       },
     });
 
-    if (!dns) {
+    if (!dsn) {
       return response.status(404).json({
         message: "Error en la solicitud",
       });
     }
 
     const data = {
-        id: dns.idDNS,
-        email: dns.correo,
-        clave: dns.clave,
-        mac: dns.macAddress,
-        dns: dns.dns, 
-        estado: dns.estado.nombre,
-        idEstado: dns.idEstado,
-        nombre: dns.nombre,
+      id: dsn.idDSN,
+      nombre: dsn.nombre,
+      usuario: dsn.usuario,
+      clave: dsn.clave,
+      macAddress: dsn.macAddress,
+      serie: dsn.dsn,
+      idEstado: dsn.idEstado,
+      estado: dsn.estado.nombre,
     };
 
     response.json(data);
@@ -72,26 +72,26 @@ module.exports.getByIdEstado = async (request, response, next) => {
   try {
     let idEstado = parseInt(request.params.idEstado);
 
-    const dns = await prisma.dNS_Stick.findMany({
+    const dsn = await prisma.dSN_Stick.findMany({
       where: { idEstado: idEstado },
       include: {
         estado: true,
       },
     });
 
-    if (!dns) {
+    if (!dsn) {
       return response.status(404).json({
         message: "Error en la solicitud",
       });
     }
 
-    const data = dns.map((dns) => ({
-      id: dns.idDNS,
-      email: dns.correo,
-      mac: dns.macAddress,
-      dns: dns.dns, 
-      estado: dns.estado.nombre,
-      idEstado: dns.idEstado,
+    const data = dsn.map((dsn) => ({
+      id: dsn.idDSN,
+      usuario: dsn.usuario,
+      mac: dsn.macAddress,
+      dsn: dsn.dsn, 
+      estado: dsn.estado.nombre,
+      idEstado: dsn.idEstado,
     })); 
 
     response.json(data);
@@ -104,18 +104,18 @@ module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
 
-    const newDNS = await prisma.dNS_Stick.create({
+    const newdsn = await prisma.dSN_Stick.create({
       data: {
         idEstado: 1,
-        nombre: data.nombre,
-        correo: data.correo,
+        nombre: data.nombre || null,
+        usuario: data.usuario,
         clave: data.clave,
-        macAddress: data.macAddress,
-        dns: data.dns,
+        macAddress: data.macAddress || null,
+        dsn: data.dsn || null,
       },
     });
 
-    response.json(newDNS);
+    response.json(newdsn);
 
   } catch (error) {
     if (error.code === "P2002") {
@@ -132,18 +132,18 @@ module.exports.update = async (request, response, next) => {
   try {
     const data = request.body;
 
-    const newDNS = await prisma.dNS_Stick.update({
-        where: {idDNS: data.idDNS},
+    const newdsn = await prisma.dSN_Stick.update({
+        where: {idDSN: data.idDSN},
         data: {
-          nombre: data.nombre,
-          correo: data.correo,
+          nombre: data.nombre || null,
+          usuario: data.usuario,
           clave: data.clave,
-          macAddress: data.macAddress,
-          dns: data.dns,
+          macAddress: data.macAddress || null,
+          dsn: data.dsn || null,
         },
       });
 
-    response.json(newDNS);
+    response.json(newdsn);
   } catch (error) {
     if (error.code === "P2002") {
       return response.status(400).json({
@@ -157,14 +157,14 @@ module.exports.update = async (request, response, next) => {
 
 module.exports.delete = async (request, response, next) => {
   try {
-    let idDNS = parseInt(request.params.idDNS);
+    let idDSN = parseInt(request.params.idDSN);
 
-    await prisma.dNS_Stick.delete({
-        where: {idDNS: idDNS},
+    await prisma.dSN_Stick.delete({
+        where: {idDSN: idDSN},
     }); 
 
     response.status(200).json({
-        message: `DNS eliminado con éxito.`
+        message: `dsn eliminado con éxito.`
     });
 
   } catch (error) {

@@ -22,8 +22,9 @@ import {
 })
 export class RtrCreateComponent implements OnInit {
   isVisible = false;
-  idRouter: any; 
+  idRouter: any;
   idEstado: any;
+  nombreEstado: any; 
   activo: any;
   serie: any;
   macAddress: any;
@@ -40,20 +41,18 @@ export class RtrCreateComponent implements OnInit {
   respuesta: any;
 
   dataScanned: string = '';
-  isScanningMac: boolean = true; 
-  scanTimeOut: any = null; 
+  isScanningMac: boolean = true;
+  scanTimeOut: any = null;
 
-  //Creación / Actualización 
-  isCreate: boolean = true; 
-  titleForm: string = 'Crear'; 
+  //Creación / Actualización
+  isCreate: boolean = true;
+  titleForm: string = 'Crear';
 
   @Output() routerCrear: EventEmitter<void> = new EventEmitter<void>();
-
 
   @ViewChild('macInput') macInput!: ElementRef;
   @ViewChild('serieInput') serieInput!: ElementRef;
   @ViewChild('activoInput') activoInput!: ElementRef;
-
 
   router = {
     macAddress: '',
@@ -72,7 +71,8 @@ export class RtrCreateComponent implements OnInit {
   reactiveForm() {
     this.routerForm = this.fb.group({
       id: [null, null],
-      idEstado: [null],
+      idEstado: [null,null],
+      nombreEstado: [null,null],
       activo: [null, Validators.required],
       serie: [null, Validators.required],
       macAddress: [null, Validators.required],
@@ -84,7 +84,6 @@ export class RtrCreateComponent implements OnInit {
       this.activoInput.nativeElement.focus();
     }, 0);
   }
-
 
   isValid(key: string): boolean {
     const validKeys = /^[a-zA-Z0-9-]+$/; // Solo letras, números y guiones
@@ -117,23 +116,25 @@ export class RtrCreateComponent implements OnInit {
     }
   }
 
-  openModal(id?:any) {
+  openModal(id?: any) {
     this.isVisible = true;
 
     if (id != undefined && !isNaN(Number(id))) {
       this.loadData(id);
       this.idRouter = id;
-      this.isCreate = false; 
+      this.isCreate = false;
+      this.routerForm.get('nombreEstado')?.disable();
+
     } else {
-      this.isCreate = true; 
-      this.titleForm = "Crear"; 
+      this.isCreate = true;
+      this.titleForm = 'Crear';
     }
   }
 
   closeModal() {
     this.submitted = false;
     this.routerForm.reset();
-    this.routerCrear.emit(); 
+    this.routerCrear.emit();
     this.isVisible = false;
   }
 
@@ -147,28 +148,28 @@ export class RtrCreateComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.routerData = data;
-    
 
         this.routerForm.patchValue({
           id: this.routerData.id,
           idEstado: this.routerData.idEstado,
+          nombreEstado: this.routerData.estado,
           activo: this.routerData.activo,
           serie: this.routerData.serie,
           macAddress: this.routerData.macAddress,
         });
+
+        this.idEstado = this.routerForm.value.idEstado; 
       });
   }
 
   createRouter() {
+    this.submitted = true;
 
-    this.submitted = true; 
-
-    if(this.routerForm.invalid) {
+    if (this.routerForm.invalid) {
       return;
     }
 
-    if(this.isCreate) {
-
+    if (this.isCreate) {
       const data = {
         numActivo: this.routerForm.value.activo,
         serie: this.routerForm.value.serie,
@@ -176,45 +177,41 @@ export class RtrCreateComponent implements OnInit {
       };
 
       this.gService
-      .create('rcasa/crear', data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (response: any) => {
-        this.respuesta = response;
-        this.noti.mensaje(
-          'Router • Creación',
-          `${data.numActivo} ha sido creado con exito.`,
-          TipoMessage.success
-        );
-        this.routerCrear.emit(); 
-      },
-      (error: any) => {
-        if(error.status  === 400) {
-          this.noti.mensaje(
-            'Error en la creación del router',
-            error.error.mensaje,
-            TipoMessage.error
-          );
-          this.routerForm.controls['macAddress'].reset();
-          this.routerForm.controls['serie'].reset();
-          this.routerForm.controls['activo'].reset();
+        .create('rcasa/crear', data)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (response: any) => {
+            this.respuesta = response;
+            this.noti.mensaje(
+              'Router • Creación',
+              `${data.numActivo} ha sido creado con exito.`,
+              TipoMessage.success
+            );
+            this.routerCrear.emit();
+          },
+          (error: any) => {
+            if (error.status === 400) {
+              this.noti.mensaje(
+                'Error en la creación del router',
+                error.error.mensaje,
+                TipoMessage.error
+              );
+              this.routerForm.controls['macAddress'].reset();
+              this.routerForm.controls['serie'].reset();
+              this.routerForm.controls['activo'].reset();
 
-          setTimeout(() => {
-            this.macInput.nativeElement.focus();
-          }, 0); 
-        }
-      }
-    );
-    this.closeModal(); 
-    
-    } 
-    else {
-      
+              setTimeout(() => {
+                this.macInput.nativeElement.focus();
+              }, 0);
+            }
+          }
+        );
+      this.closeModal();
+    } else {
       this.gService
-      .update('rcasa/actualizar', this.routerForm.value)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (data: any) => {
+        .update('rcasa/actualizar', this.routerForm.value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: any) => {
           this.respuesta = data;
           this.noti.mensaje(
             'Router • Actualización',
@@ -223,19 +220,18 @@ export class RtrCreateComponent implements OnInit {
           );
           this.routerCrear.emit();
         });
-    this.closeModal(); 
+      this.closeModal();
     }
 
     this.routerCrear.emit();
-    this.closeModal(); 
+    this.closeModal();
   }
 
-  onStatusChange(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedId = Number(selectElement.value);
-
+  //Permite restablecer el estado en caso de dañado
+  changeStatus() {
+    this.idEstado = 1;
     this.routerForm.patchValue({
-      idEstado: selectedId,
+      idEstado: 1,
     });
   }
 
@@ -248,9 +244,11 @@ export class RtrCreateComponent implements OnInit {
     this.routerForm.reset();
   }
 
- 
   // Control de Errores
   errorHandling(control: string, error: string) {
-    return this.routerForm.controls[control].hasError(error) && (this.submitted || this.routerForm.controls[control].touched);
+    return (
+      this.routerForm.controls[control].hasError(error) &&
+      (this.submitted || this.routerForm.controls[control].touched)
+    );
   }
 }

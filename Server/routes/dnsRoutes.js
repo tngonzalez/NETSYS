@@ -6,12 +6,12 @@ const datos = require("../controllers/dnsController");
 router.get("/", datos.getAll); 
 
 router.post("/crear", datos.create); 
-router.put("/actualizar/:idDNS", datos.update); 
+router.put("/actualizar/:idDSN", datos.update); 
 
-router.get("/dns/:idDNS", datos.getById); 
+router.get("/dns/:idDSN", datos.getById); 
 router.get("/estado/:idEstado", datos.getByIdEstado); 
 
 
-router.delete("/eliminar/:idDNS", datos.delete); 
+router.delete("/eliminar/:idDSN", datos.delete); 
 
 module.exports = router;

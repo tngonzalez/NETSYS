@@ -32,7 +32,9 @@
 
       <!--Header-->
       <div class="text-center p-6 border-b border-gray-200">
-        <h3 class="text-xl font-semibold text-gray-800">{{ titleForm }} DNS</h3>
+        <h3 class="text-xl font-semibold text-gray-800">
+          {{ titleForm }} DSN Stick
+        </h3>
       </div>
 
       <!-- Formulario -->
@@ -43,7 +45,7 @@
           novalidate
           class="flex flex-col gap-4"
         >
-          <!-- Número de activo -->
+          <!-- Cliente -->
           <div>
             <label
               for="nombre"
@@ -60,76 +62,28 @@
             />
           </div>
 
-          <!-- Mac Address -->
+          <!-- Usuario -->
           <div>
             <label
-              for="macAddress"
+              for="usuario"
               class="block mb-2 text-sm font-medium text-gray-700"
-              >Mac Address</label
+              >Usuario</label
             >
             <input
               type="text"
-              id="macAddress"
-              name="macAddress"
-              formControlName="macAddress"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ingrese la dirección MAC"
-              required
-            />
-            <mat-error
-              *ngIf="errorHandling('macAddress', 'required')"
-              class="mt-2 text-sm text-red-600 dark:text-red-500"
-            >
-              El MAC Address es <strong>requerida</strong>.
-            </mat-error>
-          </div>
-
-          <!-- Serie -->
-          <div>
-            <label
-              for="dns"
-              class="block mb-2 text-sm font-medium text-gray-700"
-              >Serie</label
-            >
-            <input
-              type="text"
-              id="dns"
-              name="dns"
-              formControlName="dns"
+              id="usuario"
+              name="usuario"
+              formControlName="usuario"
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-              placeholder="Ingrese el DNS"
+              placeholder="Ingrese el usuario"
             />
             <mat-error
-              *ngIf="errorHandling('dns', 'required')"
-              class="mt-2 text-sm text-red-600 dark:text-red-500"
-            >
-              El número de DNS es <strong>requerida</strong>.
-            </mat-error>
-          </div>
-
-          <!-- Correo -->
-          <div>
-            <label
-              for="correo"
-              class="block mb-2 text-sm font-medium text-gray-700"
-              >Correo</label
-            >
-            <input
-              type="text"
-              id="correo"
-              name="correo"
-              formControlName="correo"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-              placeholder="Ingrese el correo"
-            />
-            <mat-error
-              *ngIf="errorHandling('correo', 'required')"
-              class="mt-2 text-sm text-red-600 dark:text-red-500"
-            >
-              El correo es <strong>requerido</strong>.
-            </mat-error>
+            *ngIf="errorHandling('usuario', 'required')"
+            class="mt-2 text-sm text-red-600 dark:text-red-500"
+          >
+            El nombre de usuario es <strong>requerido</strong>.
+          </mat-error>
           </div>
 
           <!-- Clave -->
@@ -145,15 +99,49 @@
               name="clave"
               formControlName="clave"
               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
               placeholder="Ingrese la clave"
+              required
             />
             <mat-error
-              *ngIf="errorHandling('clave', 'required')"
-              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            *ngIf="errorHandling('clave', 'required')"
+            class="mt-2 text-sm text-red-600 dark:text-red-500"
+          >
+            La clave es <strong>requerida</strong>.
+          </mat-error>
+          </div>
+
+          <!-- Mac Address -->
+          <div>
+            <label
+              for="macAddress"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Mac Address</label
             >
-              El número de DNS es <strong>requerida</strong>.
-            </mat-error>
+            <input
+              type="text"
+              id="macAddress"
+              name="macAddress"
+              formControlName="macAddress"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese la dirección MAC"
+            />
+          </div>
+
+          <!-- Serie -->
+          <div>
+            <label
+              for="dsn"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Serie</label
+            >
+            <input
+              type="text"
+              id="dsn"
+              name="dsn"
+              formControlName="dsn"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese el DSN"
+            />
           </div>
 
           <!-- Botones -->
