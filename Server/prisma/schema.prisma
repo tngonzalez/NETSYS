@@ -252,9 +252,7 @@ model IPTV {
   fechaInstalacion    String? @db.VarChar(50)
   comentario          String? @db.VarChar(200)
   agente              String? @db.VarChar(100)
-  macAddress          String  @unique @db.VarChar(100)
-  correo              String  @unique @db.VarChar(100)
-  clave               String  @unique @db.VarChar(100)
+
 
   cliente        Cliente           @relation(fields: [idCliente], references: [idCliente])
   estadoInst     EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])

@@ -46,9 +46,7 @@ export class IptvCreateComponent implements OnInit {
   fechaInstalacion: any;
   comentario: any;
   agente: any;
-  macAddress: any;
-  correo: any;
-  clave: any;
+
 
   formData: any;
   makeSubmit: boolean = false;
@@ -62,7 +60,7 @@ export class IptvCreateComponent implements OnInit {
   respuesta: any;
 
   displayedClientes: string[] = ['numero', 'nombre', 'accion'];
-  displayedDNS: string[] = ['mac', 'dns', 'accion'];
+  displayedDNS: string[] = ['mac', 'dsn', 'accion'];
 
   filteredDataCl: any;
   filteredDataDNS: any;
@@ -128,8 +126,8 @@ export class IptvCreateComponent implements OnInit {
 
       //Info. DNS
       idDNS: [null, null],
-      email: [null, null],
-      dns: [null, null],
+      usuario: [null, null],
+      dsn: [null, null],
       mac: [null, null],
 
       idDNSAnterior: [null, null],
@@ -138,11 +136,7 @@ export class IptvCreateComponent implements OnInit {
 
       fechaInstalacion: [null, null],
       comentario: [null, null],
-      agente: [null, null],
-
-      macAddress: [null, Validators.required],
-      correo: [null, Validators.required],
-      clave: [null, Validators.required],
+      agente: [null, null]
     });
   }
 
@@ -161,8 +155,6 @@ export class IptvCreateComponent implements OnInit {
       this.createVisible = false;
       this.titleForm = 'Cliente Propietorio';
       this.titleStatus = 'Actualizar';
-
-
     } else {
       this.isCreate = true;
       this.titleStatus = 'Crear';
@@ -184,7 +176,6 @@ export class IptvCreateComponent implements OnInit {
     this.isVisible = false;
 
     this.resetScroll();
-
   }
 
   loadData(id: any): void {
@@ -200,10 +191,11 @@ export class IptvCreateComponent implements OnInit {
 
         this.iptvForm.patchValue({
           id: this.iptvData.id,
-          idDNS: this.iptvData.idDNS,
+
+          idDNS: this.iptvData.idDSN,
           mac: this.iptvData.mac,
-          email: this.iptvData.email,
-          dns: this.iptvData.dns,
+          usuario: this.iptvData.usuario,
+          dsn: this.iptvData.dsn,
 
           idCliente: this.iptvData.idCliente,
           nombre: this.iptvData.clienteNum,
@@ -213,13 +205,9 @@ export class IptvCreateComponent implements OnInit {
           idEstadoInstalacion: this.iptvData.idEstadoInstalacion,
           fechaInstalacion: this.iptvData.fechaInstalacion,
           comentario: this.iptvData.comentario,
-          agente: this.iptvData.agente,
-          macAddress: this.iptvData.macAddress,
-          correo: this.iptvData.correo,
-          clave: this.iptvData.clave,
+          agente: this.iptvData.agente
         });
       });
-
   }
 
   fetchClientes() {
@@ -312,8 +300,8 @@ export class IptvCreateComponent implements OnInit {
       this.iptvForm.patchValue({
         idDNS: event.id,
         mac: event.mac,
-        dns: event.dns,
-        email: event.email,
+        dsn: event.dsn,
+        usuario: event.usuario,
       });
     }
 
@@ -357,17 +345,16 @@ export class IptvCreateComponent implements OnInit {
     this.iptvForm.get('cloud')?.disable();
 
     this.iptvForm.get('mac')?.disable();
-    this.iptvForm.get('dns')?.disable();
-    this.iptvForm.get('email')?.disable();
+    this.iptvForm.get('dsn')?.disable();
+    this.iptvForm.get('usuario')?.disable();
   }
 
   crearIPTV() {
     this.submitted = true;
 
-
     if (this.isCreate) {
       const data = {
-        idDNS: this.iptvForm.value.idDNS
+        idDSN: this.iptvForm.value.idDNS
           ? parseInt(this.iptvForm.value.idDNS)
           : null,
         idCliente: parseInt(this.iptvForm.value.idCliente),
@@ -375,9 +362,6 @@ export class IptvCreateComponent implements OnInit {
         fechaInstalacion: this.iptvForm.value.fechaInstalacion || null,
         comentario: this.iptvForm.value.comentario || null,
         agente: this.iptvForm.value.agente || null,
-        macAddress: this.iptvForm.value.macAddress,
-        correo: this.iptvForm.value.correo,
-        clave: this.iptvForm.value.clave,
       };
 
       this.gService
@@ -392,6 +376,7 @@ export class IptvCreateComponent implements OnInit {
               TipoMessage.success,
               `/iptv`
             );
+            this.closeModal();
             this.iptvCrear.emit();
           },
           (error: any) => {
@@ -406,10 +391,9 @@ export class IptvCreateComponent implements OnInit {
         );
       this.closeModal();
     } else {
-
       const data = {
         idIPTV: this.idIPTV,
-        idDNS: this.iptvForm.value.idDNS
+        idDSN: this.iptvForm.value.idDNS
           ? parseInt(this.iptvForm.value.idDNS)
           : null,
         danado: this.danado,
@@ -418,25 +402,22 @@ export class IptvCreateComponent implements OnInit {
         fechaInstalacion: this.iptvForm.value.fechaInstalacion || null,
         comentario: this.iptvForm.value.comentario || null,
         agente: this.iptvForm.value.agente || null,
-        macAddress: this.iptvForm.value.macAddress,
-        correo: this.iptvForm.value.correo,
-        clave: this.iptvForm.value.clave,
-      }; 
+      };
 
       this.gService
-      .update('iptv/actualizar', data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        this.respuesta = data;
-        this.noti.mensajeRedirect(
-          'IPTV • Actualización',
-          `${this.iptvData.clienteNombre} ha sido actualizado con exito.`,
-          TipoMessage.success,
-          `/iptv`
-        );
-        this.iptvCrear.emit();
-      });
-    this.closeModal();
+        .update('iptv/actualizar', data)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: any) => {
+          this.respuesta = data;
+          this.noti.mensajeRedirect(
+            'IPTV • Actualización',
+            `${this.iptvData.clienteNombre} ha sido actualizado con exito.`,
+            TipoMessage.success,
+            `/iptv`
+          );
+        });
+      this.closeModal();
+      this.iptvCrear.emit();
     }
 
     this.iptvCrear.emit();

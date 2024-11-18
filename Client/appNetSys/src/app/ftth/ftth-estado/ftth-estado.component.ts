@@ -49,6 +49,8 @@ export class FtthEstadoComponent implements OnInit {
   direccionNuevo: any;
   idTipoDano: any;
 
+  actual:any; 
+
   //Suspención
   fechaSuspencion: any;
 
@@ -277,6 +279,8 @@ export class FtthEstadoComponent implements OnInit {
             idTipoDano: this.estadoData.idTipoDano,
           });
 
+          this.actual = this.estadoData.direccionActual; 
+
           if (this.estadoData.dispositivo === 'Router') {
             this.isTablaRouter = true;
             this.isTablaONT = false;
@@ -298,6 +302,7 @@ export class FtthEstadoComponent implements OnInit {
               TipoMessage.info
             );
           }
+          console.log(this.estadoData);
         }
       });
   }
@@ -493,31 +498,33 @@ export class FtthEstadoComponent implements OnInit {
           idCliente: this.idCliente,
           fechaInstalacion: this.estadoForm.value.fechaInstalacionDano || todayDate,
           dispositivo: this.estadoForm.value.dispositivo,
-          direcActual: this.direccionActual,
+          direcActual: this.actual,
           direcNueva:  this.direccionNuevo || this.direccionActual,
           comentario: this.estadoForm.value.comentarioDano || null,
           idTipoDano: this.estadoForm.value.idTipoDano,
         };
         console.log(data); 
+        console.log(this.actual);
 
-        // this.gService
-        //   .create('ftth/danado/crear', data)
-        //   .pipe(takeUntil(this.destroy$))
-        //   .subscribe((response: any) => {
-        //     this.respuesta = response;
-        //     this.noti.mensajeRedirect(
-        //       'Estado • Dañado',
-        //       `El daño ha sido actualizado con éxito.`,
-        //       TipoMessage.success,
-        //       `/ftth`
-        //     );
-        //     this.ftthEstadoModal.emit();
-        //   });
-        // this.closeModal();
+
+        this.gService
+          .create('ftth/danado/crear', data)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((response: any) => {
+            this.respuesta = response;
+            this.noti.mensajeRedirect(
+              'Estado • Dañado',
+              `El daño ha sido actualizado con éxito.`,
+              TipoMessage.success,
+              `/ftth`
+            );
+            this.ftthEstadoModal.emit();
+          });
+        this.closeModal();
       }
     }
-    // this.ftthEstadoModal.emit();
-    // this.closeModal();
+    this.ftthEstadoModal.emit();
+    this.closeModal();
   }
 
   //Cambio de estado

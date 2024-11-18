@@ -51,7 +51,7 @@ export class FtthIndexComponent implements AfterViewInit {
   ];
 
   servicios: any[] = [];
-  selectedService: string | null = 'Servicios';
+  selectedService: string | null = 'Zonas';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -98,7 +98,6 @@ export class FtthIndexComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.datos = response;
-        console.log(this.datos); 
         this.disableButton();
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
@@ -117,7 +116,7 @@ export class FtthIndexComponent implements AfterViewInit {
       .subscribe((response: any) => {
         this.servicios = response;
 
-        this.servicios.unshift({ nombre: 'Servicios' });
+        this.servicios.unshift({ nombre: 'Zonas' });
       });
   }
 
@@ -190,7 +189,7 @@ export class FtthIndexComponent implements AfterViewInit {
   servicesChange(event: any) {
     const selectedService = event;
 
-    if (selectedService === 'Servicios') {
+    if (selectedService === 'Zonas') {
       this.filteredData = this.datos;
     } else {
       this.filteredData = this.datos.filter(

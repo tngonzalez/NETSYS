@@ -54,7 +54,6 @@ CREATE TABLE `Router_Casa` (
 CREATE TABLE `Router_Gestor` (
     `idRouter_Gestor` INTEGER NOT NULL AUTO_INCREMENT,
     `idSubred_OLT` INTEGER NOT NULL,
-    `idZona_OLT` INTEGER NOT NULL,
     `idOLT` INTEGER NOT NULL,
 
     PRIMARY KEY (`idRouter_Gestor`)
@@ -82,15 +81,6 @@ CREATE TABLE `Subred_OLT` (
 
     UNIQUE INDEX `Subred_OLT_ip_key`(`ip`),
     PRIMARY KEY (`idRed`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Zona_OLT` (
-    `idZona` INTEGER NOT NULL AUTO_INCREMENT,
-    `idOLT` INTEGER NOT NULL,
-    `nombreZona` VARCHAR(100) NOT NULL,
-
-    PRIMARY KEY (`idZona`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -135,7 +125,7 @@ CREATE TABLE `Cliente` (
     `cajaDerivada` VARCHAR(150) NOT NULL,
     `fechaInstalacion` VARCHAR(50) NULL,
     `comentario` VARCHAR(200) NULL,
-    `agente` VARCHAR(100) NOT NULL,
+    `agente` VARCHAR(100) NULL,
     `cloudMonitoreo` VARCHAR(150) NOT NULL,
     `potenciaRecepcion` VARCHAR(100) NULL,
 
@@ -214,18 +204,18 @@ CREATE TABLE `EstadoInstalacion` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `DNS_Stick` (
-    `idDNS` INTEGER NOT NULL AUTO_INCREMENT,
+CREATE TABLE `DSN_Stick` (
+    `idDSN` INTEGER NOT NULL AUTO_INCREMENT,
     `idEstado` INTEGER NOT NULL,
     `nombre` VARCHAR(100) NULL,
-    `correo` VARCHAR(100) NOT NULL,
+    `usuario` VARCHAR(100) NOT NULL,
     `clave` VARCHAR(100) NOT NULL,
-    `macAddress` VARCHAR(100) NOT NULL,
-    `dns` VARCHAR(100) NOT NULL,
+    `macAddress` VARCHAR(100) NULL,
+    `dsn` VARCHAR(100) NULL,
 
-    UNIQUE INDEX `DNS_Stick_macAddress_key`(`macAddress`),
-    UNIQUE INDEX `DNS_Stick_dns_key`(`dns`),
-    PRIMARY KEY (`idDNS`)
+    UNIQUE INDEX `DSN_Stick_macAddress_key`(`macAddress`),
+    UNIQUE INDEX `DSN_Stick_dsn_key`(`dsn`),
+    PRIMARY KEY (`idDSN`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -234,10 +224,10 @@ CREATE TABLE `IPTV` (
     `idCliente` INTEGER NOT NULL,
     `idEstado` INTEGER NOT NULL,
     `idEstadoInstalacion` INTEGER NOT NULL,
-    `idDNS` INTEGER NOT NULL,
+    `idDSN` INTEGER NULL,
     `fechaInstalacion` VARCHAR(50) NULL,
     `comentario` VARCHAR(200) NULL,
-    `agente` VARCHAR(100) NOT NULL,
+    `agente` VARCHAR(100) NULL,
     `macAddress` VARCHAR(100) NOT NULL,
     `correo` VARCHAR(100) NOT NULL,
     `clave` VARCHAR(100) NOT NULL,
@@ -289,13 +279,7 @@ ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idOLT_fkey` FOREIGN KE
 ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idSubred_OLT_fkey` FOREIGN KEY (`idSubred_OLT`) REFERENCES `Subred_OLT`(`idRed`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Router_Gestor` ADD CONSTRAINT `Router_Gestor_idZona_OLT_fkey` FOREIGN KEY (`idZona_OLT`) REFERENCES `Zona_OLT`(`idZona`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `Subred_OLT` ADD CONSTRAINT `Subred_OLT_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Zona_OLT` ADD CONSTRAINT `Zona_OLT_idOLT_fkey` FOREIGN KEY (`idOLT`) REFERENCES `OLT`(`idOLT`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Cliente` ADD CONSTRAINT `Cliente_idInfoCliente_fkey` FOREIGN KEY (`idInfoCliente`) REFERENCES `InfoCliente`(`idInfoCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -340,7 +324,7 @@ ALTER TABLE `Danado` ADD CONSTRAINT `Danado_idCliente_fkey` FOREIGN KEY (`idClie
 ALTER TABLE `Suspencion` ADD CONSTRAINT `Suspencion_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `DNS_Stick` ADD CONSTRAINT `DNS_Stick_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoActivo`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `DSN_Stick` ADD CONSTRAINT `DSN_Stick_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoActivo`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idCliente_fkey` FOREIGN KEY (`idCliente`) REFERENCES `Cliente`(`idCliente`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -349,7 +333,7 @@ ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idCliente_fkey` FOREIGN KEY (`idCliente`
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstadoInstalacion_fkey` FOREIGN KEY (`idEstadoInstalacion`) REFERENCES `EstadoInstalacion`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idDNS_fkey` FOREIGN KEY (`idDNS`) REFERENCES `DNS_Stick`(`idDNS`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idDSN_fkey` FOREIGN KEY (`idDSN`) REFERENCES `DSN_Stick`(`idDSN`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `IPTV` ADD CONSTRAINT `IPTV_idEstado_fkey` FOREIGN KEY (`idEstado`) REFERENCES `EstadoCliente`(`idEstado`) ON DELETE RESTRICT ON UPDATE CASCADE;

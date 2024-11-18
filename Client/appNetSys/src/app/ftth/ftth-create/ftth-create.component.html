@@ -674,8 +674,9 @@
               </div>
 
               <!-- OLT + Subred -->
-              <div>
+              <div *ngIf="editIP === true || isCreate">
                 <h4><strong>VLAN de asignación</strong></h4>
+
                 <!-- Input de búsqueda-->
                 <div>
                   <div class="relative">
@@ -706,9 +707,10 @@
                       placeholder="Buscar OLT"
                       #searchOLTInput
                       [formControl]="searchControl"
-                      />
+                    />
                   </div>
                 </div>
+
                 <div>
                   <label
                     for="idOLT"
@@ -737,6 +739,7 @@
                     id="ip"
                     formControlName="ip"
                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    (change)="onSubredChange($event)"
                   >
                     <option value="" disabled selected>
                       Subredes Disponibles
@@ -745,6 +748,70 @@
                       {{ subred }}
                     </option>
                   </select>
+                </div>
+              </div>
+
+              <!-- VLAN Seleccionada -->
+              <div *ngIf="!isCreate && editIP === false">
+                <h4><strong>VLAN Seleccionada</strong></h4>
+
+                <div>
+                  <label
+                    for="nombreTipo"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Puerto Seleccionado</label
+                  >
+                  <input
+                    type="text"
+                    id="nombreTipo"
+                    name="nombreTipo"
+                    formControlName="nombreTipo"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    for="subred"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Subred Seleccionada</label
+                  >
+                  <input
+                    type="text"
+                    id="subred"
+                    name="subred"
+                    formControlName="subred"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <!--Btn: Para restablecer el estado-->
+                <div class="mt-7">
+                  <button
+                    type="button"
+                    class="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 me-2"
+                    (click)="changeStatusIP()"
+                  >
+                    <svg
+                      class="w-4 h-4 me-2"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                      />
+                    </svg>
+
+                    Modificar VLAN
+                  </button>
                 </div>
               </div>
 
@@ -799,27 +866,27 @@
                   ></textarea>
                 </div>
               </div>
+            </div>
 
-              <!-- Botones -->
-              <div>
-                <div class="flex justify-center p-4">
-                  <button
-                    type="submit"
-                    (click)="createFTTH()"
-                    class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    (click)="closeModal()"
-                    class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
-                  >
-                    Cancelar
-                  </button>
-                </div>
+            <!-- Botones -->
+            <div>
+              <div class="flex justify-center p-4">
+                <button
+                  type="submit"
+                  (click)="createFTTH()"
+                  class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+                >
+                  Guardar
+                </button>
+
+                <button
+                  type="button"
+                  (click)="closeModal()"
+                  class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+                >
+                  Cancelar
+                </button>
               </div>
-   
             </div>
           </form>
         </div>

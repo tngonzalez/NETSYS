@@ -87,6 +87,7 @@ module.exports.getFTTHById = async (request, response, next) => {
         Router_Gestor: {
           include: {
             subred: true,
+            olt: true,
           },
         },
       },
@@ -346,7 +347,7 @@ module.exports.update = async (request, response, next) => {
         });
       }
 
-      //Libera
+      //Libera Router
       if (data.idRouter_Gestor !== ftth.Router_Gestor.idRouter_Gestor) {
         await prisma.router_Gestor.delete({
           where: { idRouter_Gestor: ftth.Router_Gestor.idRouter_Gestor },
@@ -435,7 +436,8 @@ module.exports.delete = async (request, response, next) => {
         Router_Gestor: {
           include:{
             olt: true,
-            subred: true,
+            subred: true, 
+            Cliente: true,
           },
         },
         Router_Casa: true,
@@ -500,14 +502,16 @@ module.exports.delete = async (request, response, next) => {
     }
 
     // Finalmente, eliminar el cliente
-    
-    await prisma.infoCliente.delete({
-      where: { idInfoCliente: cliente.idInfoCliente },
-    });
-    
+
     await prisma.cliente.delete({
-      where: { idCliente: idCliente },
+      where: { idCliente: cliente.idCliente },
     });
+
+        
+    await prisma.infoCliente.delete({
+      where: { idInfoCliente: cliente.infoCliente.idInfoCliente },
+    });
+    
 
     response.status(200).json({
       message: `Servicio eliminado con éxito.`,
