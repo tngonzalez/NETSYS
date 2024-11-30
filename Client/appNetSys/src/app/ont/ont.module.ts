@@ -6,6 +6,7 @@ import { OntIndexComponent } from './ont-index/ont-index.component';
 import { OntCreateComponent } from './ont-create/ont-create.component';
 import { OntDeleteComponent } from './ont-delete/ont-delete.component';
 import { OntDetalleComponent } from './ont-detalle/ont-detalle.component';
+import { OntGeneralComponent } from './ont-general/ont-general.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,7 +24,8 @@ import { SharedModule } from '../shared/shared.module';
     OntIndexComponent,
     OntCreateComponent,
     OntDeleteComponent,
-    OntDetalleComponent
+    OntDetalleComponent,
+    OntGeneralComponent,
   ],
   imports: [
     CommonModule,

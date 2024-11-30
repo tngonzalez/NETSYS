@@ -1,1 +1,149 @@
-<p>olt-detalle works!</p>
+<div class="flex text-[#112346]">
+  <app-menu> </app-menu>
+  <div class="w-full">
+    <div class="bg-gray-100 w-full h-full py-1">
+      <!--ExportToPDF-->
+      <div class="flex justify-end gap-4 mb-4 mx-8 my-5">
+        <!-- Botón para exportar en PDF -->
+        <button
+          type="button"
+          class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+          (click)="exportToPDF()"
+        >
+          Exportar a PDF
+        </button>
+      </div>
+
+      <div>
+        <div class="bg-white mx-8 my-5 h-34 rounded-lg drop-shadow-md">
+          <!-- Encabezado -->
+          <div class="content-to-export">
+            <div>
+              <div class="logo">
+                <img src="../../../assets/logo_inform.png" alt="Reico" />
+              </div>
+
+              <div
+                class="my-5 py-4 px-7 h-fit flex flex-col items-center gap-2 info"
+              >
+                <p>Informe sobre los datos del OLT</p>
+              </div>
+            </div>
+
+            <span class="mx-30 example-spacer"></span>
+
+            <!-- Datos del OLT -->
+            <div>
+              <div class="relative mx-8 my-8 border-black">
+                <h2
+                  class="relative text-lg font-bold text-gray-800 bg-white px-2 inline-block"
+                >
+                  Datos del OLT
+                </h2>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 mx-40">
+                <div><span class="font-bold">Tipo: </span> {{ rNombre }}</div>
+                <div>
+                  <span class="font-bold">Segmento: </span> {{ rSegmento }}
+                </div>
+                <div><span class="font-bold">IP General: </span> {{ rIP }}</div>
+                <div>
+                  <span class="font-bold">Puerto NAT : </span> {{ rPuerto }}
+                </div>
+                <div><span class="font-bold">ODF: </span> {{ rODF }}</div>
+              </div>
+            </div>
+
+            <span class="mx-40 example-spacer"></span>
+
+          </div>
+
+
+          <!-- ========== Table Usuarios  ========== -->
+          <div *ngIf="datos; else noData" class="relative py-5 px-8">
+            <div class="table-scroll">
+              <table
+              mat-table
+              [dataSource]="dataSource"
+              matSort
+              class="w-full text-s exportPDF"
+            >
+              <ng-container matColumnDef="clienteNombre">
+                <th
+                  scope="col"
+                  class="border text-xs text-black border-white colcolor rounded-tl-md"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Cliente
+                </th>
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.clienteNombre }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="cloudMonitoreo">
+                <th
+                  scope="col"
+                  class="border text-xs text-black border-white colcolor"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Cloud Monitoreo
+                </th>
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.cloudMonitoreo }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="subredIP">
+                <th
+                  scope="col"
+                  class="border text-xs text-black border-white colcolor"
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  IP Asignada
+                </th>
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                  mat-cell
+                  *matCellDef="let row"
+                >
+                  {{ row.subredIP }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+            </div>
+          </div>
+
+          <ng-template #noData>
+            <div class="no-data-message">
+              <p>No hay OLT disponibles en este momento.</p>
+            </div>
+          </ng-template>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -171,3 +171,59 @@ module.exports.delete = async (request, response, next) => {
     response.status(500).json({ message: "Error en la solicitud", error });
   }
 };
+
+//Reporte
+
+module.exports.getDSNReport = async (request, response, next) => {
+  try {
+    const idDSN = parseInt(request.params.idDSN);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT d.nombre, d.usuario, d.clave, d.macAddress, d.dsn, c.cloudMonitoreo AS monitoreo, 
+                i.nombre AS nombreCliente, t.nombre as tipoCliente FROM dsn_stick d 
+                JOIN iptv p ON d.idDSN = p.idDSN
+                JOIN cliente c ON p.idCliente = c.idCliente 
+                JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente 
+                JOIN tipocliente t ON c.idTipo = t.idTipo 
+                WHERE d.idDSN = ${idDSN};`
+    );
+
+    if (result.length === 0) {
+      result = await prisma.$queryRaw(
+        Prisma.sql`SELECT d.nombre, d.usuario, d.clave, d.macAddress, d.dsn FROM dsn_stick d WHERE d.idDSN = ${idDSN};`
+      );
+    }
+
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getGeneralReport = async (request, response, next) => {
+  try {
+    const result = await prisma.$queryRaw(
+      Prisma.sql`SELECT e.idEstado, e.nombre, d.nombre, d.usuario, d.clave, d.macAddress, d.dsn, i.nombre AS nombreCliente
+                FROM dsn_stick d 
+                LEFT JOIN iptv p ON d.idDSN = p.idDSN
+                LEFT JOIN cliente c ON p.idCliente = c.idCliente 
+                LEFT JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente 
+                LEFT JOIN tipocliente t ON c.idTipo = t.idTipo
+                LEFT JOIN estadoactivo e ON e.idEstado = d.idEstado;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    console.error("Error ejecutando la consulta:", error);
+    response.status(500).json({ error: "Error interno del servidor" });
+  }
+};

@@ -1,31 +1,29 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { GenericService } from '../../shared/generic.service';
-import { jsPDF } from 'jspdf';
-import { Router, ActivatedRoute } from '@angular/router';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
-  selector: 'app-rtr-detalle',
-  templateUrl: './rtr-detalle.component.html',
-  styleUrls: ['./rtr-detalle.component.css'],
+  selector: 'app-olt-general',
+  templateUrl: './olt-general.component.html',
+  styleUrl: './olt-general.component.css'
 })
-export class RtrDetalleComponent {
-  routerId: number | null = null;
+export class OltGeneralComponent {
   datos: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  displayedColumns = ['ODF', 'nombreTipo', 'segmentoZona', 'ipGeneral', 'puertoNAT', 'cantIP'];
 
   currentDate: Date = new Date();
 
-  filteredData: any;
-  rActivo: any;
-  rSerie: any;
-  rIP: any;
-  rMAC: any;
-  rMonitoreo: any;
-  rCliente : any;
-  rTipo: any;
-
+  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  dataSource = new MatTableDataSource<any>();
 
   constructor(
     private gService: GenericService,
@@ -33,52 +31,30 @@ export class RtrDetalleComponent {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id !== null) {
-        this.routerId = +id;
-      }
-    });
-
-    this.fetch();
+  ngOnInit(){
+    this.fetchOLT(); 
   }
 
-  fetch() {
+  fetchOLT(){
     this.gService
-      .list(`rcasa/reporte/${this.routerId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((response: any) => {
+    .list('olt/reporte')
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((response: any) => {
+      console.log(response);
+      this.datos = response;
 
-        this.datos = response;
+      this.dataSource = new MatTableDataSource(response);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
 
-        this.fillReciente(this.datos[0]);
-      });
+    });
   }
-
-  fillReciente(data: any) {
-
-   if(data) {
-    this.rSerie = data.serie;
-    this.rActivo = data.numActivo;
-    this.rMAC = data.macAddress;
-
-    this.rIP = data.ip;
-
-    this.rMonitoreo = data.monitoreo;
-    this.rCliente = data.nombreCliente;
-    this.rTipo = data.tipoCliente;
-   }
-   else {
-    console.error; 
-   }
-
-  }
-
+  
   exportToPDF(): void {
     const contentToExport = document.querySelector('.content-to-export') as HTMLElement;
+    const tableScroll = document.querySelector('.exportPDF') as HTMLElement;
   
-    if (contentToExport) {
+    if (contentToExport && tableScroll) {
 
       const container = document.createElement('div');
       container.style.position = 'absolute';
@@ -89,7 +65,9 @@ export class RtrDetalleComponent {
   
 
       const clonedHeader = contentToExport.cloneNode(true) as HTMLElement;
+      const clonedTable = tableScroll.cloneNode(true) as HTMLElement;
       container.appendChild(clonedHeader);
+      container.appendChild(clonedTable);
   
       html2canvas(container, {
         scale: 2, 
@@ -138,11 +116,10 @@ export class RtrDetalleComponent {
         }
   
         document.body.removeChild(container);
-        pdf.save('router_datos.pdf');
+        pdf.save('ONT_generales.pdf');
       });
     } else {
       console.error('No se encontraron los elementos a exportar.');
     }
   }
-
 }

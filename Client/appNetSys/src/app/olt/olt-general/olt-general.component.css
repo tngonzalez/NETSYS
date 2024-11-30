@@ -17,6 +17,7 @@
   font-size: 30px;
   font-family: "Poppins", sans-serif;
   font-weight: bolder;
+  padding-bottom: 15px;
 }
 
 td {
@@ -30,7 +31,7 @@ th {
   text-align: center;
   background-color: #c1c5cc;
   font-size: medium;
-  padding: 10px 130px;
+  padding: 10px auto;
 }
 
 

@@ -9,8 +9,12 @@ router.post("/crear", datos.create);
 router.put("/actualizar/:idRouter", datos.update); 
 
 router.get("/router/:idRouter", datos.getRouterById); 
-router.get("/detail/:idRouter", datos.getRouterDetailById); 
 router.get("/estado/:idEstado", datos.getRouterByEstado); 
+
+//Reportes
+router.get("/reporte", datos.getGeneralReport); 
+router.get("/reporte/:idRouter", datos.getRouterReport); 
+
 
 router.delete("/eliminar/:idRouter", datos.deteleRouter); 
 

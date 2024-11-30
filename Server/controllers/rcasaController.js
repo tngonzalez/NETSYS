@@ -63,79 +63,6 @@ module.exports.getRouterById = async (request, response, next) => {
   }
 };
 
-//GetById - Detalle Router
-module.exports.getRouterDetailById = async (request, response, next) => {
-  try {
-    let idRouter = parseInt(request.params.idRouter);
-
-    const router = await prisma.router_Casa.findUnique({
-      where: {
-        idRouter_Casa: idRouter,
-      },
-      include: {
-        estado: true,
-      },
-    });
-
-    if (router.length === 0) {
-      return response.status(404).json({
-        message: "Error en la solicitud",
-      });
-    }
-
-    if (router.estado.idEstado === 2) {
-      const get = await prisma.cliente.findFirst({
-        where: { idRouter_Casa: idRouter },
-        include: {
-          estado: true,
-          tipoCliente: true,
-          bw: true,
-          infoCliente: { include: { condominio: true } },
-          Router_Casa: true,
-          Router_Gestor: true,
-          ont: true,
-        },
-      });
-
-      const info = {
-        tipoCliente: get.tipoCliente.nombre,
-        estado: get.estado.nombre,
-        numCliente: get.infoCliente.numero,
-        nombreCliente: get.infoCliente.nombre,
-        condominio: get.infoCliente.condominio.zona,
-        numCasa: get.infoCliente.condominio.numCasa,
-        bw: get.bw.nombre,
-        kbps: get.BW_KBPS,
-        ont: get.ont,
-        router_casa: get.Router_Casa,
-        router_gestor: get.Router_Gestor,
-        agente: get.agente,
-        cloudMonitoreo: get.cloudMonitoreo,
-        comentario: get.comentario,
-        cajaDerivada: get.cajaDerivada,
-        numOS: get.numOS,
-        fecha: get.fechaInstalacion,
-      };
-
-      response.json({
-        info,
-      });
-    } else {
-      const data = {
-        id: router.idRouter_Casa,
-        idEstado: router.idEstado,
-        estado: router.estado.nombre,
-        activo: router.numActivo,
-        serie: router.serie,
-        macAddress: router.macAddress,
-      };
-      response.json(data);
-    }
-  } catch (error) {
-    response.status(500).json({ message: "Error en la solicitud", error });
-  }
-};
-
 //GetByEstado
 module.exports.getRouterByEstado = async (request, response, next) => {
   try {
@@ -188,15 +115,14 @@ module.exports.deteleRouter = async (request, response, next) => {
 //Create
 module.exports.create = async (request, response, next) => {
   try {
-    const { numActivo, serie, macAddress } =
-      request.body;
+    const { numActivo, serie, macAddress } = request.body;
 
     const newRouter = await prisma.router_Casa.create({
       data: {
         idEstado: 1,
         numActivo: numActivo,
         serie: serie,
-        macAddress: macAddress
+        macAddress: macAddress,
       },
     });
 
@@ -215,8 +141,7 @@ module.exports.create = async (request, response, next) => {
 //Update
 module.exports.update = async (request, response, next) => {
   try {
-    const { idEstado, activo, serie, macAddress } =
-      request.body;
+    const { idEstado, activo, serie, macAddress } = request.body;
     let idRouter = parseInt(request.params.idRouter);
 
     const oldRouter = await prisma.router_Casa.findUnique({
@@ -235,7 +160,7 @@ module.exports.update = async (request, response, next) => {
         idEstado: idEstado,
         numActivo: activo,
         serie: serie,
-        macAddress: macAddress
+        macAddress: macAddress,
       },
     });
 
@@ -253,4 +178,53 @@ module.exports.update = async (request, response, next) => {
 
 //Reporte
 
-//Cantidad Asignados + Nombre Cliente + Info. Router / Lo mismo con Disponibles info.
+module.exports.getRouterReport = async (request, response, next) => {
+  try {
+    const idRouter = parseInt(request.params.idRouter);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql `SELECT r.numActivo, r.serie, r.macAddress, c.cloudMonitoreo AS monitoreo, 
+                  i.nombre AS nombreCliente, t.nombre as tipoCliente, s.ip FROM router_casa r 
+                  JOIN cliente c ON r.idRouter_Casa = c.idRouter_Casa 
+                  JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente 
+                  JOIN tipocliente t ON c.idTipo = t.idTipo 
+                  JOIN router_gestor g ON c.idRouter_Gestor = g.idRouter_Gestor
+                  JOIN subred_olt s ON g.idSubred_OLT = s.idRed
+                  WHERE r.idRouter_Casa = ${idRouter};`
+    );
+
+    if (result.length === 0) {
+      result = await prisma.$queryRaw(
+        Prisma.sql `SELECT r.numActivo, r.serie, r.macAddress FROM router_casa r WHERE r.idRouter_Casa = ${idRouter};`
+      );
+    }
+
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getGeneralReport =  async (request, response, next) => {
+  try {
+
+    const result = await prisma.$queryRaw(
+      Prisma.sql `SELECT e.idEstado, e.nombre, r.numActivo, r.serie, r.macAddress, i.nombre AS nombreCliente FROM router_casa r LEFT JOIN cliente c ON r.idRouter_Casa = c.idRouter_Casa LEFT JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente LEFT JOIN estadoactivo e ON e.idEstado = r.idEstado;`
+    );
+
+    const conversion_BigInt_String = result.map(item => {
+      const data = { ...item };
+      Object.keys(data).forEach(key => {
+        if (typeof data[key] === 'bigint') {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+    response.json(conversion_BigInt_String);
+
+  } catch (error) {
+    console.error("Error ejecutando la consulta:", error);
+    response.status(500).json({ error: "Error interno del servidor" });
+  }
+}

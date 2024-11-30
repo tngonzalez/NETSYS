@@ -1,84 +1,118 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { GenericService } from '../../shared/generic.service';
-import { jsPDF } from 'jspdf';
-import { Router, ActivatedRoute } from '@angular/router';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
-  selector: 'app-rtr-detalle',
-  templateUrl: './rtr-detalle.component.html',
-  styleUrls: ['./rtr-detalle.component.css'],
+  selector: 'app-dns-general',
+  templateUrl: './dns-general.component.html',
+  styleUrls: ['./dns-general.component.css']
 })
-export class RtrDetalleComponent {
-  routerId: number | null = null;
+export class DnsGeneralComponent {
+  isVisible = false; 
+  selectedStatus: any;
   datos: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  displayedColumns = ['dsn', 'nombre', 'usuario', 'clave', 'macAddress', 'nombreCliente'];
+  filteredData: any; 
 
-  currentDate: Date = new Date();
+    statuses = [
+    { id: 0, name: 'Estado' },
+    {
+      id: 1,
+      name: 'Disponible',
+    },
+    {
+      id: 2,
+      name: 'Asignado',
+    },
+    {
+      id: 3,
+      name: 'Dañado',
+    },
+  ];
 
-  filteredData: any;
-  rActivo: any;
-  rSerie: any;
-  rIP: any;
-  rMAC: any;
-  rMonitoreo: any;
-  rCliente : any;
-  rTipo: any;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
+  dataSource = new MatTableDataSource<any>();
 
   constructor(
     private gService: GenericService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
-
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id !== null) {
-        this.routerId = +id;
-      }
-    });
-
-    this.fetch();
+  ) 
+  {
+    this.selectedStatus = 1;
   }
 
-  fetch() {
+  ngOnInit() {
+    this.fetchRouter();
+  }
+
+  fetchRouter(){
     this.gService
-      .list(`rcasa/reporte/${this.routerId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((response: any) => {
+    .list('dns/reporte')
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((response: any) => {
+      this.datos = response;
 
-        this.datos = response;
+      this.dataSource = new MatTableDataSource(response);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
 
-        this.fillReciente(this.datos[0]);
-      });
+    });
   }
 
-  fillReciente(data: any) {
-
-   if(data) {
-    this.rSerie = data.serie;
-    this.rActivo = data.numActivo;
-    this.rMAC = data.macAddress;
-
-    this.rIP = data.ip;
-
-    this.rMonitoreo = data.monitoreo;
-    this.rCliente = data.nombreCliente;
-    this.rTipo = data.tipoCliente;
-   }
-   else {
-    console.error; 
-   }
-
+  statusChange(value: any, valueDeactivate?: any) {
+    switch (value.value) {
+      case '3': {
+        this.filteredData = this.datos.filter(
+          (data: any) => data.idEstado === 3
+        );
+        this.updateTable(this.filteredData);
+        break;
+      }
+      case '2': {
+        this.filteredData = this.datos.filter(
+          (data: any) => data.idEstado === 2
+        );
+        this.updateTable(this.filteredData);
+        break;
+      }
+      case '1': {
+        this.filteredData = this.datos.filter(
+          (data: any) => data.idEstado === 1
+        );
+        this.updateTable(this.filteredData);
+        break;
+      }
+      default: {
+        this.updateTable(this.datos);
+        break;
+      }
+    }
   }
 
+  updateTable(data: any) {
+    this.dataSource.data = data;
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
+  
+  //Método para exportar la información de encabezado y los datos de la tabla
   exportToPDF(): void {
     const contentToExport = document.querySelector('.content-to-export') as HTMLElement;
+    const tableScroll = document.querySelector('.exportPDF') as HTMLElement;
   
-    if (contentToExport) {
+    if (contentToExport && tableScroll) {
 
       const container = document.createElement('div');
       container.style.position = 'absolute';
@@ -89,7 +123,9 @@ export class RtrDetalleComponent {
   
 
       const clonedHeader = contentToExport.cloneNode(true) as HTMLElement;
+      const clonedTable = tableScroll.cloneNode(true) as HTMLElement;
       container.appendChild(clonedHeader);
+      container.appendChild(clonedTable);
   
       html2canvas(container, {
         scale: 2, 
@@ -138,11 +174,11 @@ export class RtrDetalleComponent {
         }
   
         document.body.removeChild(container);
-        pdf.save('router_datos.pdf');
+        pdf.save('DSN_general.pdf');
       });
     } else {
       console.error('No se encontraron los elementos a exportar.');
     }
   }
-
+  
 }

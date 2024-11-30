@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { NgIconsModule } from '@ng-icons/core';
 import { RtrRoutingModule } from './rtr-routing.module';
 import { RtrIndexComponent } from './rtr-index/rtr-index.component';
+import { RtrCreateComponent } from './rtr-create/rtr-create.component';
+import { RtrDeleteComponent } from './rtr-delete/rtr-delete.component';
+import { RtrDetalleComponent } from './rtr-detalle/rtr-detalle.component';
+import { RtrGeneralComponent } from './rtr-general/rtr-general.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -11,11 +15,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { SharedModule } from '../shared/shared.module';
-import { RtrCreateComponent } from './rtr-create/rtr-create.component';
-import { RtrDeleteComponent } from './rtr-delete/rtr-delete.component';
-import { RtrDetalleComponent } from './rtr-detalle/rtr-detalle.component';
 import { MatButtonModule } from '@angular/material/button';
-
 
 @NgModule({
   declarations: [
@@ -23,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     RtrCreateComponent,
     RtrDeleteComponent,
     RtrDetalleComponent,
+    RtrGeneralComponent,
   ],
   imports: [
     CommonModule,
@@ -37,7 +38,7 @@ import { MatButtonModule } from '@angular/material/button';
     ToastrModule.forRoot(),
     MatFormFieldModule,
     MatSelectModule,
-    NgIconsModule.withIcons({})
+    NgIconsModule.withIcons({}),
   ],
 })
 export class RtrModule { }

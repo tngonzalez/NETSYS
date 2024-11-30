@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { OltRoutingModule } from './olt-routing.module';
 import { OltIndexComponent } from './olt-index/olt-index.component';
 import { OltCreateComponent } from './olt-create/olt-create.component';
 import { OltDeleteComponent } from './olt-delete/olt-delete.component';
 import { OltDetalleComponent } from './olt-detalle/olt-detalle.component';
+import { OltGeneralComponent } from './olt-general/olt-general.component';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,6 +24,7 @@ import { ToastrModule } from 'ngx-toastr';
     OltCreateComponent,
     OltDeleteComponent,
     OltDetalleComponent,
+    OltGeneralComponent,
   ],
   imports: [
     CommonModule,

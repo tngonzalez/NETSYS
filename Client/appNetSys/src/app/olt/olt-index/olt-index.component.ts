@@ -5,10 +5,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { GenericService } from '../../shared/generic.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OltCreateComponent } from '../olt-create/olt-create.component';
 import { OltDeleteComponent } from '../olt-delete/olt-delete.component';
-import { OltDetalleComponent } from '../olt-detalle/olt-detalle.component';
 
 @Component({
   selector: 'app-olt-index',
@@ -28,30 +27,28 @@ export class OltIndexComponent implements AfterViewInit {
 
   @ViewChild('oltFormModal') oltFormModal!: OltCreateComponent;
   @ViewChild('oltDeleteModal') oltDeleteModal!: OltDeleteComponent;
-  @ViewChild('oltDetalleModal') oltDetalleModal!: OltDetalleComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
   constructor(
     private gService: GenericService,
     public router: Router,
-
+    private route: ActivatedRoute
   ){}
 
   ngAfterViewInit(): void {
+    
     this.oltDeleteModal.oltDeleteModal.subscribe(() => {
-      this.fetchOLT(); 
+      this.fetchOLT();
     });
-    this.oltDetalleModal.oltDetalleModal.subscribe(() => {
-      this.fetchOLT(); 
-    });
+
     this.oltFormModal.oltCrear.subscribe(() => {
-      this.fetchOLT(); 
+      this.fetchOLT();
     });
   }
 
   ngOnInit():void {
-    this.fetchOLT(); 
+    this.fetchOLT();
   }
 
   fetchOLT() {
@@ -101,8 +98,8 @@ export class OltIndexComponent implements AfterViewInit {
     } else {
       this.filteredData = this.datos;
     }
-  
-    this.updateTable(this.filteredData); 
+
+    this.updateTable(this.filteredData);
   }
 
   crear() {
@@ -118,7 +115,15 @@ export class OltIndexComponent implements AfterViewInit {
   }
 
   redirectDetalle(id: any) {
-    this.oltDetalleModal.openModal(id);
+    this.router.navigate(['/olt/', id], {
+      relativeTo: this.route,
+    });
+  }
+
+  redirectGeneral() {
+    this.router.navigate(['/olt/general'], {
+      relativeTo: this.route,
+    });
   }
 
   ngOnDestroy() {

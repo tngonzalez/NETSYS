@@ -17,13 +17,15 @@ import { DnsCreateComponent } from './dns-create/dns-create.component';
 import { DnsDeleteComponent } from './dns-delete/dns-delete.component';
 import { DnsIndexComponent } from './dns-index/dns-index.component';
 import { DnsDetalleComponent } from './dns-detalle/dns-detalle.component';
+import { DnsGeneralComponent } from './dns-general/dns-general.component';
 
 @NgModule({
   declarations: [
     DnsIndexComponent,
     DnsCreateComponent,
     DnsDeleteComponent,
-    DnsDetalleComponent
+    DnsDetalleComponent,
+    DnsGeneralComponent,
   ],
   imports: [
     CommonModule,

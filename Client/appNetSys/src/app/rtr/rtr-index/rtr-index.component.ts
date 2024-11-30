@@ -39,18 +39,20 @@ export class RtrIndexComponent implements AfterViewInit {
     },
   ];
 
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild('routerFormModal') routerFormModal!: RtrCreateComponent;
   @ViewChild('routerDeleteModal') routerDeleteModal!: RtrDeleteComponent;
-  @ViewChild('routerDetalleModal') routerDetalleModal!: RtrDetalleComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private gService: GenericService, public router: Router) {
+  constructor(
+    private gService: GenericService,
+    public router: Router,
+    private route: ActivatedRoute
+  ) {
     this.selectedStatus = 1;
   }
 
@@ -58,9 +60,7 @@ export class RtrIndexComponent implements AfterViewInit {
     this.routerDeleteModal.routerDeleteModal.subscribe(() => {
       this.fetchRouter();
     });
-    this.routerDetalleModal.routerDetalleModal.subscribe(() => {
-      this.fetchRouter();
-    });
+
     this.routerFormModal.routerCrear.subscribe(() => {
       this.fetchRouter();
     });
@@ -76,7 +76,7 @@ export class RtrIndexComponent implements AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.datos = response;
-        this.disableButton(); 
+        this.disableButton();
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -129,7 +129,6 @@ export class RtrIndexComponent implements AfterViewInit {
     }
   }
 
-
   //Update by Status
   updateTable(data: any) {
     this.dataSource.data = data;
@@ -165,12 +164,19 @@ export class RtrIndexComponent implements AfterViewInit {
   }
 
   redirectDetalle(id: any) {
-    this.routerDetalleModal.openModal(id);
+    this.router.navigate(['/rtr/', id], {
+      relativeTo: this.route,
+    });
+  }
+
+  redirectGeneral() {
+    this.router.navigate(['/rtr/general'], {
+      relativeTo: this.route,
+    });
   }
 
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

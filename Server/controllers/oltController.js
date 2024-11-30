@@ -144,8 +144,6 @@ module.exports.update = async (request, response, next) => {
   }
 };
 
-//Reporte
-
 //Select Subred By IdOLT 
 module.exports.getSubrededByIdOLT = async (request, response, next) => {
   try {
@@ -200,3 +198,51 @@ module.exports.getSubrededByIdOLT = async (request, response, next) => {
     response.status(500).json({ message: "Error en la solicitud", error });
   }
 };
+
+//Reportes 
+
+module.exports.getOLTReport =  async (request, response, next) => {
+  try {
+    const idOLT = parseInt(request.params.idOLT);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql `SELECT o.nombreTipo, o.ODF, o.segmentoZona, o.ipGeneral, o.puertoNAT, i.nombre AS clienteNombre, c.cloudMonitoreo, s.ip AS subredIP FROM olt o JOIN  router_gestor r ON o.idOLT = r.idOLT JOIN subred_olt s ON r.idSubred_OLT = s.idRed JOIN cliente c ON r.idRouter_Gestor = c.idRouter_Gestor JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente WHERE o.idOLT = ${idOLT} ORDER BY s.ip ASC;`
+    );
+
+    if(result.length === 0) {
+       result = await prisma.$queryRaw(
+        Prisma.sql `SELECT o.nombreTipo, o.ODF, o.segmentoZona, o.ipGeneral, o.puertoNAT FROM olt o WHERE o.idOLT = ${idOLT} ;`
+      );
+    }
+
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+}
+
+module.exports.getGeneralReport =  async (request, response, next) => {
+  try {
+
+    const result = await prisma.$queryRaw(
+      Prisma.sql `SELECT o.nombreTipo, o.ODF, o.segmentoZona, o.ipGeneral, o.puertoNAT, COUNT(s.idOLT) AS cantIP FROM olt o LEFT JOIN subred_olt s ON s.idOLT = o.idOLT GROUP BY o.idOLT, o.nombreTipo, o.ODF, o.segmentoZona, o.ipGeneral, o.puertoNAT ;`
+    );
+
+    const conversion_BigInt_String = result.map(item => {
+      const data = { ...item };
+      Object.keys(data).forEach(key => {
+        if (typeof data[key] === 'bigint') {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+    response.json(conversion_BigInt_String);
+
+  } catch (error) {
+    console.error("Error ejecutando la consulta:", error);
+    response.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+

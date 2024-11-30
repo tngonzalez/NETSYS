@@ -11,6 +11,9 @@ router.put("/actualizar/:idDSN", datos.update);
 router.get("/dns/:idDSN", datos.getById); 
 router.get("/estado/:idEstado", datos.getByIdEstado); 
 
+//Reportes
+router.get("/reporte", datos.getGeneralReport); 
+router.get("/reporte/:idDSN", datos.getDSNReport); 
 
 router.delete("/eliminar/:idDSN", datos.delete); 
 

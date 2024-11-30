@@ -5,8 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
 import { OntCreateComponent } from '../ont-create/ont-create.component';
 import { OntDeleteComponent } from '../ont-delete/ont-delete.component';
-import { OntDetalleComponent } from '../ont-detalle/ont-detalle.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GenericService } from '../../shared/generic.service';
 
 @Component({
@@ -43,18 +42,17 @@ export class OntIndexComponent implements AfterViewInit {
 
   @ViewChild('ontFormModal') ontFormModal!: OntCreateComponent;
   @ViewChild('ontDeleteModal') ontDeleteModal!: OntDeleteComponent;
-  @ViewChild('ontDetalleModal') ontDetalleModal!: OntDetalleComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private gService: GenericService, public router: Router) {
+  constructor(
+    private gService: GenericService, 
+    public router: Router,
+    private route: ActivatedRoute) {
     this.selectedStatus = 1;
   }
 
   ngAfterViewInit(): void {
-    // this.ontDetalleModal.ontDetalleModal.subscribe(() => {
-    //   this.fetchONT();
-    // });
     this.ontDeleteModal.ontDeleteModal.subscribe(() => {
       this.fetchONT();
     });
@@ -163,7 +161,15 @@ export class OntIndexComponent implements AfterViewInit {
   }
 
   redirectDetalle(id: any) {
-   this.ontDetalleModal.openModal(id);
+    this.router.navigate(['/ont/', id], {
+      relativeTo: this.route,
+    });
+  }
+
+  redirectGeneral() {
+    this.router.navigate(['/ont/general'], {
+      relativeTo: this.route,
+    });
   }
 
   ngOnDestroy() {

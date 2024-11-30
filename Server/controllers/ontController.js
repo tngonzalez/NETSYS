@@ -19,7 +19,7 @@ module.exports.get = async (request, response, next) => {
       estado: o.estado.nombre,
       numActivo: o.numActivo,
       macAddress: o.macAddress,
-      numSN: o.numSN
+      numSN: o.numSN,
     }));
 
     response.json(data);
@@ -49,7 +49,6 @@ module.exports.getONTById = async (request, response, next) => {
       numSN: dataONT.numSN,
     };
     response.json(datos);
-
   } catch (error) {
     response.status(500).json({ message: "Error en la solicitud", error });
   }
@@ -108,7 +107,7 @@ module.exports.deteleONT = async (request, response, next) => {
 //Create
 module.exports.create = async (request, response, next) => {
   try {
-    const {numActivo, numSN, macAddress} = request.body;
+    const { numActivo, numSN, macAddress } = request.body;
 
     const newONT = await prisma.oNT.create({
       data: {
@@ -120,7 +119,6 @@ module.exports.create = async (request, response, next) => {
     });
 
     response.json(newONT);
-
   } catch (error) {
     if (error.code === "P2002") {
       return response.status(400).json({
@@ -136,7 +134,7 @@ module.exports.create = async (request, response, next) => {
 module.exports.update = async (request, response, next) => {
   try {
     let idONT = parseInt(request.params.idONT);
-    const {idEstado, numActivo, numSN, macAddress} = request.body;
+    const { idEstado, numActivo, numSN, macAddress } = request.body;
 
     const newONT = await prisma.oNT.update({
       where: {
@@ -163,3 +161,53 @@ module.exports.update = async (request, response, next) => {
 };
 
 //Reporte
+
+module.exports.getONTReport = async (request, response, next) => {
+  try {
+    const idONT = parseInt(request.params.idONT);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT o.numActivo, o.numSN, o.macAddress, c.cloudMonitoreo AS monitoreo, 
+                i.nombre AS nombreCliente, t.nombre as tipoCliente FROM ont o
+                JOIN cliente c ON o.idONT = c.idONT
+                JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente 
+                JOIN tipocliente t ON c.idTipo = t.idTipo 
+                WHERE o.idONT = ${idONT};`
+    );
+
+    if (result.length === 0) {
+      result = await prisma.$queryRaw(
+        Prisma.sql`SELECT o.numActivo, o.numSN, o.macAddress FROM ont o WHERE o.idONT = ${idONT};`
+      );
+    }
+
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getGeneralReport = async (request, response, next) => {
+  try {
+    const result = await prisma.$queryRaw(
+      Prisma.sql`SELECT e.idEstado, e.nombre, o.numActivo, o.numSN as serie, o.macAddress, i.nombre AS nombreCliente
+                  FROM ont o LEFT JOIN cliente c ON o.idONT = c.idONT
+                  LEFT JOIN infocliente i ON c.idInfoCliente = i.idInfoCliente 
+                  LEFT JOIN estadoactivo e ON e.idEstado = o.idEstado;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    console.error("Error ejecutando la consulta:", error);
+    response.status(500).json({ error: "Error interno del servidor" });
+  }
+};

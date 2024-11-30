@@ -1,0 +1,198 @@
+<div class="flex text-[#112346]">
+  <app-menu> </app-menu>
+  <div class="w-full">
+    <div class="bg-gray-100 w-full h-full py-1">
+      <!--Estado + ExportToPDF-->
+      <div class="flex mx-2 mt-2">
+        <!-- ========== Dropdown Estado  ========== -->
+        <div>
+          <form class="mx-3">
+            <select
+              id="estados"
+              (change)="statusChange($event.target)"
+              class="text-[#112346] h-fit font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center border-solid border-2 border-black-600"
+            >
+              <option *ngFor="let status of statuses" [value]="status.id">
+                {{ status.name }}
+              </option>
+            </select>
+          </form>
+        </div>
+
+        <!--========== Botón para exportar en PDF ========== -->
+        <div>
+          <button
+            type="button"
+            class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+            (click)="exportToPDF()"
+          >
+            Exportar a PDF
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="bg-white mx-8 my-5 h-34 rounded-lg drop-shadow-md">
+          <!-- Encabezado -->
+          <div class="content-to-export">
+            <div>
+              <div class="logo">
+                <img src="../../../assets/logo_inform.png" alt="Reico" />
+              </div>
+
+              <div
+                class="my-1 py-2 px-3 h-fit flex flex-col items-center gap-2 info"
+              >
+                <p>Listado de DSN</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== Table Usuarios  ========== -->
+          <div *ngIf="datos; else noData" class="relative py-5 px-8">
+            <div class="table-scroll">
+              <table
+                mat-table
+                [dataSource]="dataSource"
+                matSort
+                class="w-full text-s exportPDF"
+              >
+                <ng-container matColumnDef="dsn">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    DSN
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.dsn }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="nombre">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor rounded-tl-md"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    Nombre
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.nombre }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="usuario">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    Usuario
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.usuario }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="clave">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    Clave
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.clave }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="macAddress">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    MacAddress
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.macAddress }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="nombreCliente">
+                  <th
+                    scope="col"
+                    class="border text-xs text-black border-white colcolor"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                  >
+                    Cliente
+                  </th>
+                  <td
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    mat-cell
+                    *matCellDef="let row"
+                  >
+                    {{ row.nombreCliente }}
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                ></tr>
+              </table>
+            </div>
+          </div>
+
+          <ng-template #noData>
+            <div class="no-data-message">
+              <p>No hay DSN disponibles en este momento.</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DnsDeleteComponent } from '../dns-delete/dns-delete.component';
 import { DnsDetalleComponent } from '../dns-detalle/dns-detalle.component';
 import { GenericService } from '../../shared/generic.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dns-index',
@@ -46,14 +46,16 @@ export class DnsIndexComponent implements AfterViewInit {
   @ViewChild('dnsDetalleModal') dnsDetalleModal!: DnsDetalleComponent;
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private gService: GenericService, public router: Router) {
+  constructor(
+    private gService: GenericService,
+     public router: Router,
+     private route: ActivatedRoute
+
+    ) {
     this.selectedStatus = 1;
   }
 
   ngAfterViewInit(): void {
-    this.dnsDeleteModal.dnsDeleteModal.subscribe(() => {
-      this.fetchDNS();
-    });
     this.dnsDeleteModal.dnsDeleteModal.subscribe(() => {
       this.fetchDNS();
     });
@@ -162,7 +164,15 @@ export class DnsIndexComponent implements AfterViewInit {
     }
   
     redirectDetalle(id: any) {
-      this.dnsDetalleModal.openModal(id);
+      this.router.navigate(['/dns/', id], {
+        relativeTo: this.route,
+      });
+    }
+  
+    redirectGeneral() {
+      this.router.navigate(['/dns/general'], {
+        relativeTo: this.route,
+      });
     }
   
     ngOnDestroy() {
