@@ -1,31 +1,30 @@
 <div>
-    <!-- Info System -->
-    <div class="div-title">
-        <h1> <span class="text-[#112346]">REICO</span> <span class="stroke">NET SYS</span></h1>
+  <!-- Info System -->
+  <div class="div-title">
+    <h1>
+      <span class="text-[#112346]">SISTEMA DE CONTROL</span>
+    </h1>
+  </div>
+
+  <div class="main-section">
+    <div class="btn-section flex">
+      <button
+        type="button"
+        class="btn-method py-2.5 px-7 text-sm h-fit text-white rounded-lg"
+        (click)="redirectToFTTH()"
+      >
+        <p>FTTH</p>
+      </button>
+
+      <span class="mx-30 example-spacer"></span>
+
+      <button
+        type="button"
+        class="btn-method py-2.5 px-8 text-sm h-fit text-white rounded-lg"
+        (click)="redirectToIP()"
+      >
+        <p>IP PÚBLICA</p>
+      </button>
     </div>
-
-    <div class="main-section">
-
-        <div class="btn-section flex ">
-            <button
-              type="button"
-              class="btn-method py-2.5 px-7 text-sm h-fit text-white rounded-lg"
-              (click)="redirectToFTTH()"
-            >
-              <p>FTTH</p>
-            </button>
-    
-            <span class="mx-30 example-spacer"></span>
-
-            <button
-              type="button"
-              class="btn-method py-2.5 px-8 text-sm h-fit text-white rounded-lg"
-              (click)="redirectToIP()"
-              >
-              <p>IP PÚBLICA</p>
-            </button>
-          </div>
-    </div>
-
-    
+  </div>
 </div>
