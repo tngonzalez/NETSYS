@@ -20,7 +20,7 @@
 
           <button
             type="button"
-            (click)="crear()"
+            (click)="redirectGeneral()"
             class="btn-method py-2.5 px-8 me-2 mb-2 text-sm h-fit flex gap-2 text-white rounded-lg"
           >
             <img src="../../../assets/img/inform_icon.png" />
@@ -110,7 +110,7 @@
           </div>
         </div>
 
-        <!-- ========== Table Router  ========== -->
+        <!-- ========== Table FTTH  ========== -->
         <div class="relative overflow-x-auto py-3 shadow-md sm:rounded-lg">
           <table
             mat-table
@@ -279,5 +279,4 @@
 <!-- Modal de Rtr -->
 <app-ftth-create #ftthFormModal></app-ftth-create>
 <app-ftth-delete #ftthDeleteModal></app-ftth-delete>
-<app-ftth-detalle #ftthDetalleModal></app-ftth-detalle>
 <app-ftth-estado #ftthEstadoModal></app-ftth-estado>

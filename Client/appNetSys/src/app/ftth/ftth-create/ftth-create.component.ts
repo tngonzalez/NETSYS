@@ -386,6 +386,9 @@ export class FtthCreateComponent implements OnInit {
           this.ftthForm.patchValue({ idTipo: this.servicios[0].id });
           this.selectedServices = this.servicios[0].id;
         }
+      },
+      (error) => {
+        console.error('Error Fetch ', error);
       });
   }
 
@@ -401,7 +404,10 @@ export class FtthCreateComponent implements OnInit {
           this.selectedOLT = this.olts[0].idOLT;
           this.fetchSubredes(this.selectedOLT);
         }
-      });
+      },        (error) => {
+        console.error('Error Fetch ', error);
+      }
+    );
   }
 
   fetchRouter() {
@@ -427,10 +433,18 @@ export class FtthCreateComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (response: any) => {
-          this.ont = response;
+          if(response && response.length > 0) {
+            this.ont = response;
           this.dataONT = new MatTableDataSource(this.ont);
           this.dataONT.sort = this.sort;
           this.dataONT.paginator = this.paginator;
+          } else {
+            this.noti.mensaje(
+              'ONT',
+              `No hay dispositivos ONT dispobles`,
+              TipoMessage.info
+            );
+          }
         },
         (error) => {
           console.error('Error Fetch ', error);

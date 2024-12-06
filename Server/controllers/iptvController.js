@@ -44,7 +44,7 @@ module.exports.getByIdIPTV = async (request, response, next) => {
       where: { idIPTV: idIPTV },
       include: {
         cliente: {
-          include: { infoCliente: true },
+          include: { infoCliente: true, tipoCliente: true },
         },
         estadoInst: true,
         estadoServicio: true,
@@ -59,7 +59,6 @@ module.exports.getByIdIPTV = async (request, response, next) => {
     }
 
     const data = {
-
       id: servicio.idIPTV,
 
       clienteNum: servicio.cliente.infoCliente.numero,
@@ -67,15 +66,17 @@ module.exports.getByIdIPTV = async (request, response, next) => {
       clienteCloud: servicio.cliente.cloudMonitoreo,
       idCliente: servicio.idCliente,
 
+      numOS: servicio.numOS,
+
       idEstado: servicio.idEstado,
 
       idDSN: servicio.idDSN,
       mac: servicio.dsn.macAddress,
-      dsn:  servicio.dsn.dsn,
+      dsn: servicio.dsn.dsn,
       usuario: servicio.dsn.usuario,
 
       idEstadoInstalacion: servicio.idEstadoInstalacion,
-    
+
       fechaInstalacion: servicio.fechaInstalacion,
 
       comentario: servicio.comentario,
@@ -93,7 +94,7 @@ module.exports.getByIdIPTV = async (request, response, next) => {
 module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
-
+    console.log(data);
     //dsn - Actualizar estado
     await prisma.dSN_Stick.update({
       where: { idDSN: data.idDSN },
@@ -106,13 +107,14 @@ module.exports.create = async (request, response, next) => {
 
     const iptv = await prisma.iPTV.create({
       data: {
-        idCliente: data.idCliente,
+        idCliente: parseInt(data.idCliente),
         idEstado: 1,
-        idEstadoInstalacion: data.idEstadoInstalacion,
-        idDSN: data.idDSN || null,
+        idEstadoInstalacion: parseInt(data.idEstadoInstalacion),
+        idDSN: parseInt(data.idDSN),
         fechaInstalacion: data.fechaInstalacion || null,
         comentario: data.comentario || null,
         agente: data.agente || null,
+        numOS: parseInt(data.numOS)
       },
     });
 
@@ -133,10 +135,9 @@ module.exports.update = async (request, response, next) => {
 
     //dsn - Actualizar estado
     if (data.idDSN !== iptv.idDSN) {
-      
       if (data.danado === true) {
         await prisma.dsn_Stick.update({
-          where: { idDSN: iptv.idDSN }, 
+          where: { idDSN: iptv.idDSN },
           data: {
             idEstado: 3,
           },
@@ -267,7 +268,18 @@ module.exports.getClientesByBW = async (request, response, next) => {
     const clientes_50mbps_raw = await prisma.cliente.findMany({
       where: {
         idEstado: 1,
-        bw: { nombre: { in: ["50/50 Mbps", "60/60 Mbps", "70/70 Mbps", "80/80 Mbps", "90/90 Mbps", "100/100 Mbps"] } },
+        bw: {
+          nombre: {
+            in: [
+              "50/50 Mbps",
+              "60/60 Mbps",
+              "70/70 Mbps",
+              "80/80 Mbps",
+              "90/90 Mbps",
+              "100/100 Mbps",
+            ],
+          },
+        },
       },
       select: {
         idCliente: true,
@@ -290,7 +302,7 @@ module.exports.getClientesByBW = async (request, response, next) => {
       ...clientes_20mbps,
       ...clientes_30mbps,
       ...clientes_50mbps,
-    ].map(cliente => ({
+    ].map((cliente) => ({
       idCliente: cliente.idCliente,
       nombre: cliente.infoCliente.nombre,
       numero: cliente.infoCliente.numero,
@@ -303,4 +315,122 @@ module.exports.getClientesByBW = async (request, response, next) => {
     response.status(500).json({ message: "Error en la solicitud", error });
   }
 };
+
+//GetIPTVById -- Reporte
+module.exports.getIPTVReport = async (request, response, next) => {
+  try {
+    let idIPTV = parseInt(request.params.idIPTV);
+
+    const servicio = await prisma.iPTV.findUnique({
+      where: { idIPTV: idIPTV },
+      include: {
+        cliente: {
+          include: {
+            tipoCliente: true,
+            infoCliente: {
+              include: {
+                Cliente_Condominio: {
+                  where: { estado: 1 },
+                  include: {
+                    condominio: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        estadoInst: true,
+        estadoServicio: true,
+        dsn: true,
+      },
+    });
+
+    if (servicio.length === 0) {
+      return response.status(404).json({
+        message: "Error en la solicitud",
+      });
+    }
+
+    //Trae la cantidad servicio IPTV bajo el nombre del cliente
+    const cantServicio = await prisma.iPTV.count({
+      where: {
+        cliente: {
+          idCliente: servicio.cliente.idCliente,
+        },
+      },
+    });
+
+    //Trae la cantidad de servicio IPTV bajo el nombre del cliente (Instalados)
+    const cantInstalados = await prisma.iPTV.count({
+      where: {
+        cliente: {
+          idCliente: servicio.cliente.idCliente,
+        },
+        estadoInst: { idEstado: servicio.idEstadoInstalacion }, // Asegúrate de ajustar el valor del estado según tu base de datos
+      },
+    });
+
+    //Consecutivo 
+    const clienteCloud = `${servicio.cliente.tipoCliente.nombre.slice(0, 3).toUpperCase()}${String(
+      servicio.idIPTV
+    ).padStart(3, "0")}`;
+
+
+    let data = {}; 
+
+    if (servicio.cliente.tipoCliente.nombre !== "Panica") {
+      data = {
+        infoCliente: servicio.cliente.infoCliente,
+        dsn: servicio.dsn,
+        fechaInstalacion: servicio.fechaInstalacion, 
+        cantidad: cantServicio,
+        numOS: servicio.numOS,
+      };
+    }
+    else {
+       data = {
+        infoCliente: servicio.cliente.infoCliente,
+        dsn: servicio.dsn,
+        fechaInstalacion: servicio.fechaInstalacion, 
+        tipoCliente: servicio.cliente.tipoCliente.nombre,
+        cantidad: cantServicio, 
+        consecutivo: clienteCloud,
+        instalados: cantInstalados,
+        numOS: servicio.numOS,
+      };
+    }
+
+    response.json(data);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getReportGeneral = async (request, response, next) => {
+  try {
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT p.idIPTV,  e.idEstado, e.nombre, p.fechaInstalacion, i.nombre, c.cloudMonitoreo, t.nombre AS tipo 
+                FROM cliente c JOIN iptv p ON c.idCliente = p.idCliente
+                JOIN infoCliente i ON c.idInfoCliente = i.idInfoCliente
+                JOIN estadoCliente e ON  c.idEstado = e.idEstado
+                JOIN tipoCliente t ON c.idTipo = t.idTipo;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
 

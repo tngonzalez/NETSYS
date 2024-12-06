@@ -1,9 +1,85 @@
 <div class="flex">
-    <app-menu></app-menu>
-    <div class="w-full">
+  <app-menu></app-menu>
+  <div class="w-full">
+    <div class="bg-gray-100 w-full h-full py-1">
+      <div class="flex justify-end gap-4 mb-4 mx-8 my-5 relative">
+        <button
+          id="dropdownInformationButton"
+          data-dropdown-toggle="dropdownInformation"
+          class="py-2.5 px-5 ms-10 text-white bg-[#112346] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center drop-shadow-sm"
+          type="button"
+        >
+          <svg
+            class="w-6 h-6 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-width="2"
+              d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
+          </svg>
+          {{ user.nombre }}
+          <svg
+            class="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+      
+        <!-- Dropdown menu -->
+        <div
+          id="dropdownInformation"
+          class="hidden absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 z-10"
+        >
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+            <li>
+              <a
+                (click)="redirecUsuario()"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Usuarios</a
+              >
+            </li>
+          </ul>
+          <div class="py-2">
+            <a
+             (click)="logout()"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+              >Cerrar Sesión</a
+            >
+          </div>
+        </div>
+      </div>
+      
+
+      <!-- Contenedor para los gráficos -->
+      <div class="flex justify-around gap-4 mx-8 my-[20px]">
+        <div class="w-1/2 ">
+          <canvas id="barChart1"></canvas>
+        </div>
+        <div class="w-1/2">
+          <canvas id="barChart2"></canvas>
+        </div>
+      </div>
+
+      <div class="div-title">
+        <h1> <span class="text-[#112346]">REICO </span> <span class="stroke">NET SYS</span></h1>
+    </div>
 
     </div>
   </div>
-  
-
-  
+</div>

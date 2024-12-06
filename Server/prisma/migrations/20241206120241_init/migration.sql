@@ -67,6 +67,7 @@ CREATE TABLE `OLT` (
     `segmentoZona` VARCHAR(50) NOT NULL,
     `ipGeneral` VARCHAR(50) NOT NULL,
     `puertoNAT` VARCHAR(50) NOT NULL,
+    `numOLT` INTEGER NOT NULL,
 
     UNIQUE INDEX `OLT_nombreTipo_key`(`nombreTipo`),
     UNIQUE INDEX `OLT_ipGeneral_key`(`ipGeneral`),
@@ -225,16 +226,11 @@ CREATE TABLE `IPTV` (
     `idEstado` INTEGER NOT NULL,
     `idEstadoInstalacion` INTEGER NOT NULL,
     `idDSN` INTEGER NULL,
+    `numOS` INTEGER NOT NULL,
     `fechaInstalacion` VARCHAR(50) NULL,
     `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NULL,
-    `macAddress` VARCHAR(100) NOT NULL,
-    `correo` VARCHAR(100) NOT NULL,
-    `clave` VARCHAR(100) NOT NULL,
 
-    UNIQUE INDEX `IPTV_macAddress_key`(`macAddress`),
-    UNIQUE INDEX `IPTV_correo_key`(`correo`),
-    UNIQUE INDEX `IPTV_clave_key`(`clave`),
     PRIMARY KEY (`idIPTV`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -264,6 +260,19 @@ CREATE TABLE `IpPublica` (
     UNIQUE INDEX `IpPublica_cliente_key`(`cliente`),
     UNIQUE INDEX `IpPublica_broadcast_key`(`broadcast`),
     PRIMARY KEY (`idIP`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Usuario` (
+    `idUsuario` INTEGER NOT NULL AUTO_INCREMENT,
+    `tipoRol` INTEGER NOT NULL,
+    `nombre` VARCHAR(50) NOT NULL,
+    `apellidos` VARCHAR(50) NOT NULL,
+    `correo` VARCHAR(50) NOT NULL,
+    `clave` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `Usuario_correo_key`(`correo`),
+    PRIMARY KEY (`idUsuario`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey

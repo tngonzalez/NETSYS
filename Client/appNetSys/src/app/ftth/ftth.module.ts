@@ -17,6 +17,9 @@ import { FtthDeleteComponent } from './ftth-delete/ftth-delete.component';
 import { FtthDetalleComponent } from './ftth-detalle/ftth-detalle.component';
 import { MatDialogContent } from '@angular/material/dialog';
 import { FtthEstadoComponent } from "./ftth-estado/ftth-estado.component";
+import { FtthCondominioComponent } from './ftth-condominio/ftth-condominio.component';
+import { FtthHistorialEstadoComponent } from './ftth-historial-estado/ftth-historial-estado.component';
+import { FtthGeneralComponent } from './ftth-general/ftth-general.component';
 import { MatDialogModule } from '@angular/material/dialog';
 
 
@@ -26,7 +29,10 @@ import { MatDialogModule } from '@angular/material/dialog';
     FtthCreateComponent,
     FtthDeleteComponent,
     FtthDetalleComponent,
-    FtthEstadoComponent
+    FtthEstadoComponent,
+    FtthCondominioComponent,
+    FtthHistorialEstadoComponent,
+    FtthGeneralComponent,
   ],
   imports: [
     CommonModule,

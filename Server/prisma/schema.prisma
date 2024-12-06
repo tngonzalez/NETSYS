@@ -81,6 +81,7 @@ model OLT {
   segmentoZona String @db.VarChar(50)
   ipGeneral    String @unique @db.VarChar(50)
   puertoNAT    String @db.VarChar(50)
+  numOLT       Int //1 = Primera OLT
 
   Router_Gestor Router_Gestor[]
   Subred_OLT    Subred_OLT[]
@@ -236,7 +237,7 @@ model DSN_Stick {
   nombre     String? @db.VarChar(100)
   usuario    String  @db.VarChar(100)
   clave      String  @db.VarChar(100)
-  macAddress String?  @unique @db.VarChar(100)
+  macAddress String? @unique @db.VarChar(100)
   dsn        String? @unique @db.VarChar(100) //Similar al NumSN
 
   iptv   IPTV[]
@@ -249,10 +250,10 @@ model IPTV {
   idEstado            Int //Activo Dañado Suspención
   idEstadoInstalacion Int //Instalado - Pendiente 
   idDSN               Int?
+  numOS               Int
   fechaInstalacion    String? @db.VarChar(50)
   comentario          String? @db.VarChar(200)
   agente              String? @db.VarChar(100)
-
 
   cliente        Cliente           @relation(fields: [idCliente], references: [idCliente])
   estadoInst     EstadoInstalacion @relation(fields: [idEstadoInstalacion], references: [idEstado])
@@ -280,3 +281,12 @@ model IpPublica {
 
   infoCliente_IP InfoCliente_IPpublica @relation(fields: [idInfoCliente], references: [idInfoCliente])
 }
+
+model Usuario {
+  idUsuario Int    @id @default(autoincrement())
+  tipoRol   Int
+  nombre    String @db.VarChar(50)
+  apellidos String @db.VarChar(50)
+  correo    String @db.VarChar(50) @unique
+  clave     String
+  }

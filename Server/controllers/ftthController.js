@@ -60,7 +60,6 @@ module.exports.getFTTH = async (request, response, next) => {
   }
 };
 
-
 //GetById - Normal
 module.exports.getFTTHById = async (request, response, next) => {
   try {
@@ -434,9 +433,9 @@ module.exports.delete = async (request, response, next) => {
         estado: true,
         bw: true,
         Router_Gestor: {
-          include:{
+          include: {
             olt: true,
-            subred: true, 
+            subred: true,
             Cliente: true,
           },
         },
@@ -507,11 +506,9 @@ module.exports.delete = async (request, response, next) => {
       where: { idCliente: cliente.idCliente },
     });
 
-        
     await prisma.infoCliente.delete({
       where: { idInfoCliente: cliente.infoCliente.idInfoCliente },
     });
-    
 
     response.status(200).json({
       message: `Servicio eliminado con éxito.`,
@@ -721,7 +718,6 @@ async function updateDispositivo(
 }
 
 module.exports.createStateDanado = async (request, response, next) => {
-
   const data = request.body;
 
   try {
@@ -731,58 +727,57 @@ module.exports.createStateDanado = async (request, response, next) => {
         .json({ message: "Datos incompletos para el primer dispositivo" });
     }
 
-      if (!data.idDanado) {
-        await prisma.danado.create({
-          data: {
-            idCliente: data.idCliente,
-            fechaInstalacion: data.fechaInstalacion || null,
-            dispositivo: data.dispositivo,
-            direccionNueva: data.direcNueva,
-            direccionActual: data.direcActual,
-            comentario: data.comentario || null,
-            idTipoDano: data.idTipoDano,
-          },
-        });
-      } else {
-        await prisma.danado.update({
-          where: {
-            idDanado: data.idDanado,
-            direccionActual: data.direcActual,
-          },
-          data: {
-            fechaInstalacion: data.fechaInstalacion || null,
-            direccionNueva: data.direcNueva,
-            comentario: data.comentario || null,
-          },
-        });
-      }
+    if (!data.idDanado) {
+      await prisma.danado.create({
+        data: {
+          idCliente: data.idCliente,
+          fechaInstalacion: data.fechaInstalacion || null,
+          dispositivo: data.dispositivo,
+          direccionNueva: data.direcNueva,
+          direccionActual: data.direcActual,
+          comentario: data.comentario || null,
+          idTipoDano: data.idTipoDano,
+        },
+      });
+    } else {
+      await prisma.danado.update({
+        where: {
+          idDanado: data.idDanado,
+          direccionActual: data.direcActual,
+        },
+        data: {
+          fechaInstalacion: data.fechaInstalacion || null,
+          direccionNueva: data.direcNueva,
+          comentario: data.comentario || null,
+        },
+      });
+    }
 
-      //Dependiendo del tipo de dispositivo actualice el estado del dispositivo
-      //Liberando el dispostivo y asignado otro a ftth
-      if (data.direcNueva === data.direcActual) {
-        await prisma.cliente.update({
-          where: { idCliente: data.idCliente },
-          data: {
-            idEstado: 4,
-          },
-        });
-      } else {
-        await prisma.cliente.update({
-          where: { idCliente: data.idCliente },
-          data: {
-            idEstado: 1,
-          },
-        });
-      }
+    //Dependiendo del tipo de dispositivo actualice el estado del dispositivo
+    //Liberando el dispostivo y asignado otro a ftth
+    if (data.direcNueva === data.direcActual) {
+      await prisma.cliente.update({
+        where: { idCliente: data.idCliente },
+        data: {
+          idEstado: 4,
+        },
+      });
+    } else {
+      await prisma.cliente.update({
+        where: { idCliente: data.idCliente },
+        data: {
+          idEstado: 1,
+        },
+      });
+    }
 
-      await updateDispositivo(
-        prisma,
-        data.dispositivo,
-        data.direcActual,
-        data.direcNueva,
-        data.idCliente
-      );
-
+    await updateDispositivo(
+      prisma,
+      data.dispositivo,
+      data.direcActual,
+      data.direcNueva,
+      data.idCliente
+    );
 
     response.status(201).json();
   } catch (error) {
@@ -873,6 +868,141 @@ module.exports.getEstado = async (request, response, next) => {
 
       response.json(danado[0]);
     }
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Reporte
+module.exports.getCondominioReport = async (request, response, next) => {
+  try {
+    const idCliente = parseInt(request.params.idCliente);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT c.numCasa, c.zona 
+                  FROM condominio c
+                  JOIN cliente_condominio h ON h.idCondominio = c.idCondominio
+                  JOIN infocliente i ON i.idInfoCliente = h.idInfoCliente
+                  JOIN cliente m ON m.idInfoCliente = i.idInfoCliente
+                  WHERE h.estado = 2 AND m.idCliente = ${idCliente};`
+    );
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getEstadoReport = async (request, response, next) => {
+  try {
+    const idCliente = parseInt(request.params.idCliente);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT r.fechaDesinstalacion AS Fecha, 'Retiro' AS Tipo, r.idCliente
+                  FROM retiro r
+                  WHERE r.idCliente = ${idCliente}
+
+                  UNION ALL
+
+                  SELECT s.fechaSuspencion AS Fecha, 'Suspencion' AS Tipo, s.idCliente
+                  FROM suspencion s
+                  WHERE s.idCliente = ${idCliente}
+
+                  UNION ALL
+
+                  SELECT d.fechaInstalacion AS Fecha, 'Dañado' AS Tipo, d.idCliente
+                  FROM danado d
+                  WHERE d.idCliente = ${idCliente};`
+    );
+    response.json(result);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getFTTHReport = async (request, response, next) => {
+  try {
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT c.idCliente, e.idEstado, e.nombre, c.fechaInstalacion, i.nombre, c.cloudMonitoreo, t.nombre AS tipo FROM tipoCliente t
+                  JOIN cliente c ON t.idTipo = c.idTipo
+                  JOIN infocliente i ON i.idInfoCliente = c.idInfoCliente 
+                  JOIN estadoCliente e ON c.idEstado = e.idEstado;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Reporte - Dashboard
+module.exports.getService1 = async (request, response, next) => {
+  try {
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT t.nombre AS tipoCliente,
+                COUNT(DISTINCT c.idCliente) AS cantClientes,
+                SUM(CASE WHEN e.idEstado = 1 THEN 1 ELSE 0 END) AS activo,
+                SUM(CASE WHEN e.idEstado = 4 THEN 1 ELSE 0 END) AS danando,
+                SUM(CASE WHEN e.idEstado = 2 THEN 1 ELSE 0 END) AS suspension,
+                SUM(CASE WHEN e.idEstado = 3 THEN 1 ELSE 0 END) AS retiro
+                FROM cliente c
+                JOIN tipocliente t ON c.idTipo = t.idTipo
+                JOIN estadocliente e ON c.idEstado = e.idEstado 
+                GROUP BY  t.nombre ORDER BY COUNT(DISTINCT c.idCliente) DESC LIMIT 1;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getService2 = async (request, response, next) => {
+  try {
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT t.nombre AS tipoCliente,
+                COUNT(DISTINCT c.idCliente) AS cantClientes,
+                SUM(CASE WHEN e.idEstado = 1 THEN 1 ELSE 0 END) AS activo,
+                SUM(CASE WHEN e.idEstado = 4 THEN 1 ELSE 0 END) AS danando,
+                SUM(CASE WHEN e.idEstado = 2 THEN 1 ELSE 0 END) AS suspension,
+                SUM(CASE WHEN e.idEstado = 3 THEN 1 ELSE 0 END) AS retiro
+                FROM cliente c
+                JOIN tipocliente t ON c.idTipo = t.idTipo
+                JOIN estadocliente e ON c.idEstado = e.idEstado
+                GROUP BY t.nombre ORDER BY cantClientes DESC
+                LIMIT 1 OFFSET 1;`
+        );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
   } catch (error) {
     response.status(500).json({ message: "Error en la solicitud", error });
   }

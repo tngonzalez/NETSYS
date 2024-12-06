@@ -119,7 +119,6 @@ export class ServiceCreateComponent {
         nombre: this.serviceForm.value.nombre,
       };
 
-      console.log(data); 
       this.gService
         .update('service/actualizar', data)
         .pipe(takeUntil(this.destroy$))

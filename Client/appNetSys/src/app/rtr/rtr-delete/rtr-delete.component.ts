@@ -43,7 +43,6 @@ export class RtrDeleteComponent{
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.respuesta = data;
-        console.log(data); 
         this.noti.mensajeRedirect(
           'Router eliminado',
           `El router seleccionado fue eliminado exitosamente. `,

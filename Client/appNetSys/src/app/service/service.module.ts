@@ -18,13 +18,12 @@ import { NgIconsModule } from '@ng-icons/core';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from '../shared/shared.module';
 
-
 @NgModule({
   declarations: [
     ServiceIndexComponent,
     ServiceCreateComponent,
     ServiceDeleteComponent,
-    ServiceDetalleComponent
+    ServiceDetalleComponent,
   ],
   imports: [
     CommonModule,

@@ -27,6 +27,7 @@ export class OltCreateComponent {
   segmentoZona: any;
   ipGeneral: any;
   puertoNAT: any;
+  numOLT: any; 
 
   formData: any;
   makeSubmit: boolean = false;
@@ -68,6 +69,8 @@ export class OltCreateComponent {
       segmentoZona: [null, Validators.required],
       ipGeneral: [null, Validators.required],
       puertoNAT: [null, Validators.required],
+      numOLT: [null, Validators.required],
+
     });
   }
 
@@ -112,6 +115,8 @@ export class OltCreateComponent {
           segmentoZona: this.oltData.segmentoZona,
           ipGeneral: this.oltData.ipGeneral,
           puertoNAT: this.oltData.puertoNAT,
+          numOLT: this.oltData.numOLT,
+
         });
         
         //Desactiva el input de ipGeneral
@@ -134,6 +139,7 @@ export class OltCreateComponent {
         segmentoZona: this.oltForm.value.segmentoZona,
         ipGeneral: this.oltForm.value.ipGeneral,
         puertoNAT: this.oltForm.value.puertoNAT,
+        numOLT: parseInt(this.oltForm.value.numOLT),
       };
 
       this.gService
@@ -162,6 +168,8 @@ export class OltCreateComponent {
             this.oltForm.controls['segmentoZona'].reset();
             this.oltForm.controls['ipGeneral'].reset();
             this.oltForm.controls['puertoNAT'].reset();
+            this.oltForm.controls['numOLT'].reset();
+
 
             setTimeout(() => {
               this.tipoInput.nativeElement.focus();
@@ -179,6 +187,8 @@ export class OltCreateComponent {
         ODF: parseInt(this.oltForm.value.ODF),
         segmentoZona: this.oltForm.value.segmentoZona,
         puertoNAT: this.oltForm.value.puertoNAT,
+        numOLT: parseInt(this.oltForm.value.numOLT),
+
       };
 
       this.gService

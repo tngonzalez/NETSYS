@@ -1,18 +1,37 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
+import { GenericService } from '../../shared/generic.service';
 
 @Component({
   selector: 'app-main-menu',
-  standalone: true,
-  imports: [],
   templateUrl: './main-menu.component.html',
-  styleUrl: './main-menu.component.css'
+  styleUrls: ['./main-menu.component.css']
 })
-export class MainMenuComponent {
+export class MainMenuComponent implements OnInit{
+
+  user: any = null;
 
   constructor(
+    private authService: AuthService,
     private router: Router,
+    private gService: GenericService,
+    private route: ActivatedRoute
   ) {}
+  
+  ngOnInit() {
+    this.authService.decodeToken.subscribe((usuario: any) => {
+      this.user = usuario;
+
+      console.log(this.user);
+    });
+
+    if (!this.user) {
+      const token = this.authService.getToken;
+    }
+
+  }
+
 
   redirectToFTTH(){
     this.router.navigate(['/dashboard']);

@@ -15,6 +15,7 @@ import { IptvIndexComponent } from './iptv-index/iptv-index.component';
 import { IptvCreateComponent } from './iptv-create/iptv-create.component';
 import { IptvDeleteComponent } from './iptv-delete/iptv-delete.component';
 import { IptvDetalleComponent } from './iptv-detalle/iptv-detalle.component';
+import { IptvGeneralComponent } from './iptv-general/iptv-general.component';
 import { MatDialogContent } from '@angular/material/dialog';
 
 
@@ -23,7 +24,8 @@ import { MatDialogContent } from '@angular/material/dialog';
     IptvIndexComponent,
     IptvCreateComponent,
     IptvDeleteComponent,
-    IptvDetalleComponent
+    IptvDetalleComponent,
+    IptvGeneralComponent,
   ],
   imports: [
     CommonModule,

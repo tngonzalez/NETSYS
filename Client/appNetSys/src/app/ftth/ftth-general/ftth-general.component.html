@@ -1,1 +1,217 @@
-<p>ftth-general works!</p>
+<div class="flex text-[#112346]">
+    <app-menu> </app-menu>
+    <div class="w-full">
+      <div class="bg-gray-100 w-full h-full py-1">
+        <!--Estado + ExportToPDF-->
+        <div class="flex mx-2 mt-2">
+          <!-- ========== Dropdown Estado  ========== -->
+          <div>
+            <form class="mx-3">
+              <select
+                id="estados"
+                (change)="statusChange($event.target)"
+                class="text-[#112346] h-fit font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center border-solid border-2 border-black-600"
+              >
+                <option *ngFor="let status of statuses" [value]="status.id">
+                  {{ status.name }}
+                </option>
+              </select>
+            </form>
+          </div>
+
+          <div>
+            <form class="mx-3">
+                <select
+                  id="servicios"
+                  name="servicios"
+                  [(ngModel)]="selectedService"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="servicesChange($event)"
+                  class="text-[#112346] h-fit font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center border-solid border-2 border-black-600"
+                >
+                  <option
+                    *ngFor="let servicio of servicios"
+                    [value]="servicio.nombre"
+                  >
+                    {{ servicio.nombre }}
+                  </option>
+                </select>
+              </form>
+          </div>
+
+          <div>
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4 text-indigo-600"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+              </div>
+              <input
+                (change)="clientChange($event)"
+                type="search"
+                id="default-search"
+                class="block w-full h-11 p-4 ps-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-600 focus:border-indigo-600"
+                placeholder="Buscar por cliente"
+                #searchInput
+              />
+            </div>
+          </div>
+
+          <!--========== Botón para exportar en PDF ========== -->
+          <div>
+            <button
+              type="button"
+              class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+              (click)="exportToPDF()"
+            >
+              Exportar a PDF
+            </button>
+          </div>
+
+        </div>
+  
+        <div>
+          <div class="bg-white mx-8 my-5 h-34 rounded-lg drop-shadow-md">
+            <!-- Encabezado -->
+            <div class="content-to-export">
+              <div>
+                <div class="logo">
+                  <img src="../../../assets/logo_inform.png" alt="Reico" />
+                </div>
+  
+                <div
+                  class="my-1 py-2 px-3 h-fit flex flex-col items-center gap-2 info"
+                >
+                  <p>Listado de servicios</p>
+                </div>
+              </div>
+            </div>
+  
+            <!-- ========== Table Usuarios  ========== -->
+            <div *ngIf="datos; else noData" class="relative py-5 px-8">
+              <div class="table-scroll">
+                <table
+                  mat-table
+                  [dataSource]="dataSource"
+                  matSort
+                  class="w-full text-s exportPDF"
+                >
+                  <ng-container matColumnDef="fechaInstalacion">
+                    <th
+                      scope="col"
+                      class="border text-xs text-black border-white colcolor rounded-tl-md"
+                      mat-header-cell
+                      *matHeaderCellDef
+                      mat-sort-header
+                    >
+                      Fecha  de instalación
+                    </th>
+                    <td
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      mat-cell
+                      *matCellDef="let row"
+                    >
+                      {{ row.fechaInstalacion }}
+                    </td>
+                  </ng-container>
+  
+                  <ng-container matColumnDef="nombre">
+                    <th
+                      scope="col"
+                      class="border text-xs text-black border-white colcolor"
+                      mat-header-cell
+                      *matHeaderCellDef
+                      mat-sort-header
+                    >
+                      Cliente
+                    </th>
+                    <td
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      mat-cell
+                      *matCellDef="let row"
+                    >
+                      {{ row.nombre }}
+                    </td>
+                  </ng-container>
+  
+                  <ng-container matColumnDef="cloudMonitoreo">
+                    <th
+                      scope="col"
+                      class="border text-xs text-black border-white colcolor"
+                      mat-header-cell
+                      *matHeaderCellDef
+                      mat-sort-header
+                    >
+                      Cloud Monitoreo
+                    </th>
+                    <td
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      mat-cell
+                      *matCellDef="let row"
+                    >
+                      {{ row.cloudMonitoreo }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="accion">
+                    <th
+                      scope="col"
+                      class="text-s text-black colcolor"
+                      mat-header-cell
+                      *matHeaderCellDef
+                      mat-sort-header
+                      style="margin: 0 auto"
+                    >
+                      Acciones
+                    </th>
+      
+                    <td mat-cell *matCellDef="let row">
+                      <div class="flex gap-5">
+      
+                        <button
+                          mat-mini-fab
+                          class="bt-detalle"
+                          matTooltip="Ir a Detalle"
+                          aria-label="Ir a Detalle"
+                          (click)="redirectDetalle(row.idCliente)"
+                        ></button>
+                      </div>
+                    </td>
+                  </ng-container>
+  
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedColumns"
+                  ></tr>
+                </table>
+              </div>
+            </div>
+  
+            <ng-template #noData>
+              <div class="no-data-message">
+                <p>No hay servicios disponibles en este momento.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

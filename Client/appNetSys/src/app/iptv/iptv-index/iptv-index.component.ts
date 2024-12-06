@@ -2,13 +2,11 @@ import { Component, AfterViewInit, ViewChild, ElementRef } from "@angular/core";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { GenericService } from "../../shared/generic.service";
-import { SharedModule } from "../../shared/shared.module";
 import { IptvCreateComponent } from "../iptv-create/iptv-create.component";
 import { IptvDeleteComponent } from "../iptv-delete/iptv-delete.component";
-import { IptvDetalleComponent } from "../iptv-detalle/iptv-detalle.component";
 
 @Component({
   selector: 'app-iptv-index',
@@ -54,11 +52,13 @@ export class IptvIndexComponent implements AfterViewInit {
 
   @ViewChild('iptvFormModal') iptvFormModal!: IptvCreateComponent;
   @ViewChild('iptvDeleteModal') iptvDeleteModal!: IptvDeleteComponent;
-  @ViewChild('iptvDetalleModal') iptvDetalleModal!: IptvDetalleComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private gService: GenericService, public router: Router) {
+  constructor(private gService: GenericService,
+    public router: Router,
+    private route: ActivatedRoute
+  ) {
     this.selectedStatus = 1;
   }
 
@@ -72,9 +72,6 @@ export class IptvIndexComponent implements AfterViewInit {
       this.fetchIPTV();
     });
 
-    // this.iptvDetalleModal.iptvDetalleModal.subscribe(() => {
-    //   this.fetchIPTV();
-    // });
   }
 
   ngOnInit(): void {
@@ -91,9 +88,12 @@ export class IptvIndexComponent implements AfterViewInit {
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+
+
         if (this.searchInput) {
           this.searchInput.nativeElement.value = '';
         }
+        
       });
   }
 
@@ -182,7 +182,17 @@ export class IptvIndexComponent implements AfterViewInit {
     this.iptvDeleteModal.openModal(id);
   }
 
-  redirectDetalle(id:any){}
+  redirectDetalle(id: any) {
+    this.router.navigate(['/iptv/', id], {
+      relativeTo: this.route,
+    });
+  }
+
+  redirectGeneral() {
+    this.router.navigate(['/iptv/general'], {
+      relativeTo: this.route,
+    });
+  }
 
   redirectDNS(){
     this.router.navigate(['dns/']); 

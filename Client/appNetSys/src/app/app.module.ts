@@ -17,7 +17,9 @@ import { OntModule } from './ont/ont.module';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { IptvModule } from './iptv/iptv.module';
-import { DnsModule } from './dns/dns.module'; 
+import { DnsModule } from './dns/dns.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module'; 
 
 @NgModule ({
   declarations: [AppComponent],
@@ -39,6 +41,8 @@ import { DnsModule } from './dns/dns.module';
     MatNativeDateModule,
     IptvModule,
     DnsModule,
+    UserModule,
+    AuthModule,
 
   ],
   providers: [],

@@ -36,7 +36,29 @@
       <!-- Formulario -->
       <div class="p-6 space-y-4">
         <form [formGroup]="oltForm" novalidate class="flex flex-col gap-4">
-       
+  
+            <!-- Número de OLT -->
+            <div>
+              <label
+                for="numOLT"
+                class="block mb-2 text-sm font-medium text-gray-700"
+                >Número de OLT</label
+              >
+              <input
+                type="text"
+                id="numOLT"
+                name="numOLT"
+                formControlName="numOLT"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+                #tipoInput
+                placeholder="Ingrese el número de OLT"
+              />
+              <mat-error  *ngIf="errorHandling('numOLT', 'required')" class="mt-2 text-sm text-red-600 dark:text-red-500">
+                El número de OLT es <strong>requerido</strong>.
+              </mat-error>
+            </div>        
+
           <!-- Nombre de Tipo OLT -->
           <div>
             <label

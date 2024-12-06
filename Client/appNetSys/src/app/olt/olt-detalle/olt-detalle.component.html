@@ -61,7 +61,7 @@
 
 
           <!-- ========== Table Usuarios  ========== -->
-          <div *ngIf="datos; else noData" class="relative py-5 px-8">
+          <div class="relative py-5 px-8">
             <div class="table-scroll">
               <table
               mat-table
@@ -134,12 +134,6 @@
             </table>
             </div>
           </div>
-
-          <ng-template #noData>
-            <div class="no-data-message">
-              <p>No hay OLT disponibles en este momento.</p>
-            </div>
-          </ng-template>
 
         </div>
       </div>

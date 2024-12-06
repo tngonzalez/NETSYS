@@ -41,7 +41,7 @@ export class ServiceDeleteComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.respuesta = data;
-        console.log(data);
+
         this.noti.mensajeRedirect(
           'Servicio • Eliminado',
           `El servicio seleccionado fue eliminado exitosamente. `,

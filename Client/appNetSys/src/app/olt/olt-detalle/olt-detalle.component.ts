@@ -61,7 +61,6 @@ export class OltDetalleComponent implements OnInit {
       .list(`olt/reporte/${this.oltId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
-        console.log(response);
         this.datos = response;
 
         this.dataSource = new MatTableDataSource(response);
@@ -161,10 +160,5 @@ export class OltDetalleComponent implements OnInit {
       console.error('No se encontraron los elementos a exportar.');
     }
   }
-
-
-
-
-
 
 }

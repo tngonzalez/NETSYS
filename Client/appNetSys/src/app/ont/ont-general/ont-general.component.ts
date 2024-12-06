@@ -96,6 +96,20 @@ export class OntGeneralComponent {
     }
   }
 
+  clientChange(event: any) {
+    const cliente = event.target.value.trim().toLowerCase();
+    if (cliente !== '') {
+      this.filteredData = this.datos.filter(
+        (i: any) =>
+          i.nombreCliente && i.nombreCliente.toString().toLowerCase().includes(cliente)
+      );
+    } else {
+      this.filteredData = this.datos;
+    }
+
+    this.updateTable(this.filteredData);
+  }
+
   updateTable(data: any) {
     this.dataSource.data = data;
     if (this.paginator) {

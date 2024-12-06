@@ -38,7 +38,6 @@ export class DnsDetalleComponent {
       const id = params.get('id');
       if (id !== null) {
         this.dnsId = +id;
-        console.log(this.dnsId); 
       }
     });
 
@@ -50,7 +49,6 @@ export class DnsDetalleComponent {
       .list(`dns/reporte/${this.dnsId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
-        console.log(response); 
         this.datos = response;
 
         this.fillReciente(this.datos[0]);

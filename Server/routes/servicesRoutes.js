@@ -11,6 +11,10 @@ router.put("/actualizar/:idTipo", datos.update);
 router.get("/service/:idTipo", datos.getTipoClienteById); 
 router.get("/detalle/:idTipo", datos.getTipoById); 
 
+//Reportes
+router.get("/reporte/:idTipo", datos.getServiceReport); 
+router.get("/reporteClient/:idTipo", datos.getClienteReport); 
+
 
 router.delete("/eliminar/:idTipo", datos.delete); 
 

@@ -20,6 +20,13 @@ router.put("/actualizar/:id", datos.update);
 
 router.get("/ftth/:idCliente", datos.getFTTHById); 
 
+//Reporte 
+router.get("/reporteF", datos.getFTTHReport); 
+router.get("/reporteS", datos.getService1); 
+router.get("/reporteSE", datos.getService2); 
+
+router.get("/reporte/:idCliente", datos.getCondominioReport); 
+router.get("/reporteE/:idCliente", datos.getEstadoReport); 
 
 router.delete("/eliminar/:idCliente", datos.delete); 
 

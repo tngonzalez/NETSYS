@@ -68,12 +68,10 @@ export class OntDetalleComponent {
       console.error; 
     }
   }
-
   exportToPDF(): void {
     const contentToExport = document.querySelector('.content-to-export') as HTMLElement;
-    const tableScroll = document.querySelector('.exportPDF') as HTMLElement;
   
-    if (contentToExport && tableScroll) {
+    if (contentToExport) {
 
       const container = document.createElement('div');
       container.style.position = 'absolute';
@@ -84,9 +82,7 @@ export class OntDetalleComponent {
   
 
       const clonedHeader = contentToExport.cloneNode(true) as HTMLElement;
-      const clonedTable = tableScroll.cloneNode(true) as HTMLElement;
       container.appendChild(clonedHeader);
-      container.appendChild(clonedTable);
   
       html2canvas(container, {
         scale: 2, 
@@ -135,12 +131,13 @@ export class OntDetalleComponent {
         }
   
         document.body.removeChild(container);
-        pdf.save('ont_detalle.pdf');
+        pdf.save('ONT_datos.pdf');
       });
     } else {
       console.error('No se encontraron los elementos a exportar.');
     }
   }
+
   
   
 }

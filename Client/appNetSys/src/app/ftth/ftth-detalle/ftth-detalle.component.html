@@ -1,1 +1,151 @@
-<p>ftth-detalle works!</p>
+<div class="flex text-[#112346]">
+  <app-menu></app-menu>
+
+  <!-- Contenedor principal -->
+  <div class="w-full py-1 bg-gray-100">
+    <div class="flex mx-8 my-5">
+      <!-- Informe básico -->
+      <div class="w-3/4 bg-white rounded-lg drop-shadow-md">
+        <!-- Altas-->
+        <div class="content-to-export">
+          <div
+            class=" py-4 px-7 h-fit flex flex-col items-center gap-2 info"
+          >
+            <p>Altas del servicio</p>
+          </div>
+
+          <div>
+            <div class="relative mx-8 border-black flex justify-center">
+              <h2 class="relative text-lg px-2 inline-block">
+                Servicio de Internet con ONT y Router.
+              </h2>
+            </div>
+
+            <div class="relative py-5 px-8">
+              <div class="table-scroll">
+                <table class="w-3/5 border-collapse border border-black text-center">
+                  <!-- Encabezado -->
+                  <thead>
+                    <tr>
+                      <th class="border text-white px-4 py-2 text-center" 
+                      [ngClass]="{
+                        'bg-green-500': rTipo !== 'Panica',
+                        'bg-blue-500': rTipo === 'Panica'
+                      }">DESCRIPCIÓN</th>
+                      <th class="border text-white px-4 py-2 text-center"                       [ngClass]="{
+                        'bg-green-500': rTipo !== 'Panica',
+                        'bg-blue-500': rTipo === 'Panica'
+                      }">ASIGNACIÓN</th>
+                    </tr>
+                  </thead>
+                  <!-- Cuerpo de la tabla -->
+                  <tbody>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">CLIENTE ID</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rClienteID }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">OS#</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rOS }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">NOMBRE CLIENTE</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rNombreCliente }}</td>
+                    </tr>
+                    <tr *ngIf="rTipo !== 'Panica'">
+                      <td class="border px-4 py-2 font-bold text-black">CONDOMINIO</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rCondominio }}</td>
+                    </tr>
+                    <tr *ngIf="rTipo !== 'Panica'">
+                      <td class="border px-4 py-2 font-bold text-black">CASA #</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rCasa }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">BW</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rBW }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">OLT #</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rOLT }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">PUERTO OLT</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rPuertoOLT }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">PUERTO NAT</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rPuertoNAT }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">CAJA DERIVADA</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rCaja }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">POTENCIA RECEPCIÓN ONT</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rPotencia }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">ACTIVO ONT #</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rActivoONT }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">SN ONT#</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rSNONT }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">ACTIVO ROUTER #</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rActivoR }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">SERIE ROUTER #</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rSerieR }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">IP</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rIP }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border px-4 py-2 font-bold text-black">Fecha de Instalación</td>
+                      <td class="border px-4 py-2 text-gray-800">{{ rFecha }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="relative mx-8 mt-6 border-black flex justify-center">
+                <h2 class="relative text-lg px-2 inline-block">
+                  <strong>Nota:</strong> Queda pendiente la imagen del Alta del Servicio firmado por el cliente.
+                </h2>
+              </div>
+            </div>
+            
+          </div>
+          <span class="mx-40 example-spacer"></span>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="w-1/4 flex flex-col justify-center items-end pl-4">
+        <button
+        class="mb-2 px-4 py-2 w-[250px] text-white rounded-lg shadow-md"
+        (click)="exportToPNG()"
+        >
+        Exportar a PNG
+      </button>
+
+        <button
+          class="mb-2 px-4 py-2 w-[250px] text-white rounded-lg shadow-md"
+        (click)="redirectHistorial()"
+          >
+          Historial Servicio
+        </button>
+
+        <button
+          class="mb-2 px-4 py-2 w-[250px] text-white rounded-lg shadow-md"
+        (click)="redirectCondominio()"
+          >
+          Historial Condominio
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

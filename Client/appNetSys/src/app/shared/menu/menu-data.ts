@@ -6,6 +6,10 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   {
+    displayName: 'DASHBOARD',
+    route: '/dashboard',
+  },
+  {
     displayName: 'OLT',
     route: '/olt',
   },

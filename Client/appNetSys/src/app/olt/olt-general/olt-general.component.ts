@@ -40,7 +40,6 @@ export class OltGeneralComponent {
     .list('olt/reporte')
     .pipe(takeUntil(this.destroy$))
     .subscribe((response: any) => {
-      console.log(response);
       this.datos = response;
 
       this.dataSource = new MatTableDataSource(response);

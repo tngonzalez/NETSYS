@@ -1,89 +1,88 @@
 <div class="flex text-[#112346]">
-    <app-menu> </app-menu>
-    <div class="w-full">
-      <div class="bg-gray-100 w-full h-full py-1">
-        <div class="content-to-export scrollable-content">
-          <div class="bg-white mx-8 my-5 h-34 rounded-lg drop-shadow-md">
-            <!-- Encabezado -->
-            <div>
-              <div class="logo">
-                <img src="../../../assets/logo_inform.png" alt="Reico" />
-              </div>
-  
-              <div
-                class="my-5 py-4 px-7 h-fit flex flex-col items-center gap-2 info"
+  <app-menu> </app-menu>
+  <div class="w-full">
+    <div class="bg-gray-100 w-full h-full py-1">
+      <div class="content-to-export scrollable-content">
+        <div class="bg-white mx-8 my-5 h-34 rounded-lg drop-shadow-md">
+          <!-- Encabezado -->
+          <div>
+            <div class="logo">
+              <img src="../../../assets/logo_inform.png" alt="Reico" />
+            </div>
+
+            <div
+              class="my-5 py-4 px-7 h-fit flex flex-col items-center gap-2 info"
+            >
+              <p>Informe sobre los datos del ONT</p>
+            </div>
+          </div>
+
+          <span class="mx-30 example-spacer"></span>
+
+          <!-- Datos del Router -->
+          <div>
+            <div class="relative mx-8 my-8 border-black">
+              <h2
+                class="relative text-lg font-bold text-gray-800 bg-white px-2 inline-block"
               >
-                <p>Informe sobre los datos del ONT</p>
+                Datos del ONT
+              </h2>
+            </div>
+
+            <div class="grid grid-cols-2 mx-20 p-5">
+              <div class="flex">
+                <strong class="mr-2">Número Activo:</strong>
+                <span>{{ rActivo }}</span>
+              </div>
+              <div class="flex">
+                <strong class="mr-2">Serie:</strong>
+                <span>{{ rSerie }}</span>
+              </div>
+              <div class="flex">
+                <strong class="mr-2">MacAddress:</strong>
+                <span>{{ rMAC }}</span>
               </div>
             </div>
-  
-            <span class="mx-30 example-spacer"></span>
-  
-            <!-- Datos del Router -->
-            <div>
-              <div class="relative mx-8 my-8 border-black">
-                <h2
-                  class="relative text-lg font-bold text-gray-800 bg-white px-2 inline-block"
-                >
-                  Datos del ONT
-                </h2>
-              </div>
-  
-              <div class="grid grid-cols-2 mx-20 p-5">
-                <div class="flex">
-                  <strong class="mr-2">Número Activo:</strong>
-                  <span>{{ rActivo }}</span>
-                </div>
-                <div class="flex">
-                  <strong class="mr-2">Serie:</strong>
-                  <span>{{ rSerie }}</span>
-                </div>
-                <div class="flex">
-                  <strong class="mr-2">MacAddress:</strong>
-                  <span>{{ rMAC }}</span>
-                </div>
-              </div>
+          </div>
+
+          <!-- Datos del Router -->
+          <div *ngIf="rCliente">
+            <div class="relative my-8 border-black">
+              <h2
+                class="relative text-lg font-bold text-gray-800 bg-white px-2 inline-block"
+              >
+                Datos del cliente
+              </h2>
             </div>
-  
-            <!-- Datos del Router -->
-            <div *ngIf="rCliente">
-              <div class="relative my-8 border-black">
-                <h2
-                  class="relative text-lg font-bold text-gray-800 bg-white px-2 inline-block"
-                >
-                  Datos del cliente
-                </h2>
+
+            <div class="grid grid-cols-2 mx-40 pb-10">
+              <div class="flex">
+                <strong class="mr-2">Zona de cobertura:</strong>
+                <span>{{ rTipo }}</span>
               </div>
-  
-              <div class="grid grid-cols-2 mx-40 pb-40">
-                <div class="flex">
-                  <strong class="mr-2">Zona de cobertura:</strong>
-                  <span>{{ rTipo }}</span>
-                </div>
-                <div class="flex">
-                  <strong class="mr-2">Cloud Monitoreo:</strong>
-                  <span>{{ rMonitoreo }}</span>
-                </div>
-                <div class="flex">
-                  <strong class="mr-2">Cliente:</strong>
-                  <span>{{ rCliente }}</span>
-                </div>
+              <div class="flex">
+                <strong class="mr-2">Cloud Monitoreo:</strong>
+                <span>{{ rMonitoreo }}</span>
+              </div>
+              <div class="flex">
+                <strong class="mr-2">Cliente:</strong>
+                <span>{{ rCliente }}</span>
               </div>
             </div>
           </div>
         </div>
-  
-        <div class="flex justify-end gap-4 mb-4 mx-8 my-5">
-          <!-- Botón para exportar en PDF -->
-          <button
-            type="button"
-            class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
-            (click)="exportToPDF()"
-          >
-            Exportar a PDF
-          </button>
-        </div>
+      </div>
+
+      <div class="flex justify-end gap-4 mb-4 mx-8 my-5">
+        <!-- Botón para exportar en PDF -->
+        <button
+          type="button"
+          class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+          (click)="exportToPDF()"
+        >
+          Exportar a PDF
+        </button>
       </div>
     </div>
   </div>
-  
+</div>

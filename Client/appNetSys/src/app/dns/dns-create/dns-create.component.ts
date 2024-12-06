@@ -129,7 +129,6 @@ export class DnsCreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.dnsData = data;
-        console.log(this.dnsData);
 
         this.dnsForm.patchValue({
           id: this.dnsData.id,

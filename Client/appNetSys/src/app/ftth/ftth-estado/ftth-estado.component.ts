@@ -202,8 +202,6 @@ export class FtthEstadoComponent implements OnInit {
     this.ontMACAdd = ontMAC;
     this.routerMACAdd = routerMAC;
 
-    console.log(this.ontMACAdd, this.routerMACAdd);
-
     this.estadoForm.get('direccionActual')?.disable();
     this.estadoForm.get('direccionNuevo')?.disable();
 
@@ -246,7 +244,6 @@ export class FtthEstadoComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.estadoData = data;
-        console.log(data);
 
         this.estadoForm.patchValue({
           idEstado: idEstado,
@@ -302,7 +299,6 @@ export class FtthEstadoComponent implements OnInit {
               TipoMessage.info
             );
           }
-          console.log(this.estadoData);
         }
       });
   }
@@ -382,8 +378,6 @@ export class FtthEstadoComponent implements OnInit {
           agente: this.estadoForm.value.agenteRetiro.toUpperCase() || null,
         };
 
-        console.log(data);
-
         this.gService
           .create('ftth/retiro/crear', data)
           .pipe(takeUntil(this.destroy$))
@@ -442,7 +436,7 @@ export class FtthEstadoComponent implements OnInit {
           .pipe(takeUntil(this.destroy$))
           .subscribe((response: any) => {
             this.respuesta = response;
-            console.log(response);
+
             this.noti.mensajeRedirect(
               'Estado • Activo',
               `El servicio ha sido activado con éxito.`,
@@ -470,7 +464,6 @@ export class FtthEstadoComponent implements OnInit {
           agente: this.estadoForm.value.agenteRetiro.toUpperCase() || null,
         };
 
-        console.log(data);
 
         this.gService
           .create('ftth/retiro/crear', data)
@@ -503,8 +496,6 @@ export class FtthEstadoComponent implements OnInit {
           comentario: this.estadoForm.value.comentarioDano || null,
           idTipoDano: this.estadoForm.value.idTipoDano,
         };
-        console.log(data); 
-        console.log(this.actual);
 
 
         this.gService
@@ -635,7 +626,6 @@ export class FtthEstadoComponent implements OnInit {
   selectONT(element: any) {
     //Falta que permita limpiar
     if (this.direccionNuevo !== element.macAdd) {
-      console.log(element.macAdd);
       this.estadoForm.get('direccionNuevo')?.setValue('');
 
       this.direccionNuevo = element.macAdd;

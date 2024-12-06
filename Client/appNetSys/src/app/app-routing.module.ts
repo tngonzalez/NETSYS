@@ -17,33 +17,114 @@ import { OntGeneralComponent } from './ont/ont-general/ont-general.component';
 import { OntDetalleComponent } from './ont/ont-detalle/ont-detalle.component';
 import { DnsGeneralComponent } from './dns/dns-general/dns-general.component';
 import { DnsDetalleComponent } from './dns/dns-detalle/dns-detalle.component';
+import { ServiceDetalleComponent } from './service/service-detalle/service-detalle.component';
+import { FtthDetalleComponent } from './ftth/ftth-detalle/ftth-detalle.component';
+import { FtthGeneralComponent } from './ftth/ftth-general/ftth-general.component';
+import { FtthCondominioComponent } from './ftth/ftth-condominio/ftth-condominio.component';
+import { FtthHistorialEstadoComponent } from './ftth/ftth-historial-estado/ftth-historial-estado.component';
+import { IptvDetalleComponent } from './iptv/iptv-detalle/iptv-detalle.component';
+import { IptvGeneralComponent } from './iptv/iptv-general/iptv-general.component';
+import { UserIndexComponent } from './user/user-index/user-index.component';
+import { UserLoginComponent } from './user/user-login/user-login.component';
+import { LogoutComponent } from './shared/logout/logout.component';
+import { NotFoundComponent } from './shared/not-found/not-found.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/main', pathMatch: 'full' }, //Dashboard por defecto
-  {path: 'main', component: MainMenuComponent },
-  { path: 'rtr', component: RtrIndexComponent },
-  { path: 'dashboard', component: DashboardIndexComponent },
-  {path: 'ftth', component: FtthIndexComponent},
-  { path: 'olt', component: OltIndexComponent },
-  { path: 'service', component: ServiceIndexComponent },
-  { path: 'ont', component: OntIndexComponent },
-  { path: 'iptv', component: IptvIndexComponent },
-  { path: 'dns', component: DnsIndexComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Ruta predeterminada
+  { path: 'login', component: UserLoginComponent },
+
+  {path: 'main', component: MainMenuComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'rtr', component: RtrIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'dashboard', component: DashboardIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  {path: 'ftth', component: FtthIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'olt', component: OltIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'service', component: ServiceIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'ont', component: OntIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'iptv', component: IptvIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'dns', component: DnsIndexComponent,
+     canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+
+  { path: 'usuario', component: UserIndexComponent,
+    canActivate: [AuthGuard], data:{rol:[1]}
+  },
 
   //Reportes 
-  { path: 'olt/general', component: OltGeneralComponent },
-  { path: 'olt/:id', component: OltDetalleComponent },
+  { path: 'olt/general', component: OltGeneralComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'olt/:id', component: OltDetalleComponent, 
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
 
-  { path: 'rtr/general', component: RtrGeneralComponent },
-  { path: 'rtr/:id', component: RtrDetalleComponent},
+  { path: 'rtr/general', component: RtrGeneralComponent, 
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'rtr/:id', component: RtrDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
 
-  { path: 'ont/general', component: OntGeneralComponent },
-  { path: 'ont/:id', component: OntDetalleComponent},
+  { path: 'ont/general', component: OntGeneralComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'ont/:id', component: OntDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
 
-  { path: 'dns/general', component: DnsGeneralComponent },
-  { path: 'dns/:id', component: DnsDetalleComponent},
+  { path: 'dns/general', component: DnsGeneralComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'dns/:id', component: DnsDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
 
+  { path: 'service/:id', component: ServiceDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
 
+  { path: 'ftth/general', component: FtthGeneralComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+},
+  { path: 'ftth/:id', component: FtthDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+
+  { path: 'ftth/condominio/:id', component: FtthCondominioComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'ftth/historial/:id', component: FtthHistorialEstadoComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+
+  { path: 'iptv/general', component: IptvGeneralComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+  { path: 'iptv/:id', component: IptvDetalleComponent,
+    canActivate: [AuthGuard], data:{rol:[1,2]}
+  },
+
+  { path: 'logout', component: LogoutComponent},
+
+  { path: 'notfound', component: NotFoundComponent },
+  { path: '**', redirectTo: '/notfound', pathMatch: 'full' },
+  
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

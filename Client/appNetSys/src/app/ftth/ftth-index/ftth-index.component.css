@@ -116,3 +116,11 @@ h2 {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+.no-data-message {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 16px;
+  color: gray;
+  padding-bottom: 20px;
+}

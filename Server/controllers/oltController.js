@@ -55,6 +55,7 @@ module.exports.getOLTById = async (request, response, next) => {
     const datos = {
       idOLT: dataOLT.idOLT,
       ODF: dataOLT.ODF,
+      numOLT: dataOLT.numOLT,
       nombreTipoOLT: dataOLT.nombreTipo,
       segmentoZona: dataOLT.segmentoZona,
       ipGeneral: dataOLT.ipGeneral,
@@ -92,6 +93,7 @@ module.exports.create = async (request, response, next) => {
       data: {
         nombreTipo: data.nombreTipo,
         ODF: data.ODF,
+        numOLT: data.numOLT,
         segmentoZona: data.segmentoZona,
         ipGeneral: data.ipGeneral,
         puertoNAT: data.puertoNAT,
@@ -125,6 +127,7 @@ module.exports.update = async (request, response, next) => {
       data: {
         nombreTipo: data.nombreTipo,
         ODF: parseInt(data.ODF),
+        numOLT: data.numOLT,
         segmentoZona: data.segmentoZona,
         puertoNAT: data.puertoNAT,
       },

@@ -12,6 +12,11 @@ router.put("/actualizar/:idIPTV", iptv.update);
 
 router.get("/iptv/:idIPTV", iptv.getByIdIPTV); 
 
+//Reporte
+router.get("/reporteF", iptv.getReportGeneral); 
+router.get("/reporte/:idIPTV", iptv.getIPTVReport); 
+
+
 router.delete("/eliminar/:idIPTV", iptv.detele); 
 
 module.exports = router;

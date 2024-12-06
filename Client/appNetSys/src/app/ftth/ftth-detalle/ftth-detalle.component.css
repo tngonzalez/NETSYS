@@ -1,0 +1,39 @@
+button {
+  background-color: #112346;
+  font-family: "Poppins", sans-serif;
+  font-weight: normal;
+}
+
+button:hover {
+  background-color: #909b9f;
+  color: #1b283b;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+}
+
+.info p {
+  font-size: 30px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+table {
+  font-size: 12px;
+}
+
+td {
+  padding: 4px;
+}
+
+.table-scroll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

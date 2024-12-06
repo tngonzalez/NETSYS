@@ -1,0 +1,44 @@
+#barChart {
+  max-width: auto;
+  width: 100%;
+}
+
+.div-title {
+  width: 100%;
+  height: 150px;
+  font-size: 80px;
+  font-weight: bolder;
+  font-style: italic;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.stroke {
+  color: #89969c;
+  text-shadow: 1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black,
+    -1px 1px 0 black, 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#dropdownInformationButton {
+  position: relative;
+  white-space: nowrap;
+}
+
+#dropdownInformation {
+  position: absolute;
+  top: 100%;
+  right: 0; 
+  min-width: auto;
+}
+
+#dropdownInformation ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#dropdownInformation li a {
+  display: block;
+  width: 100%;
+}
+

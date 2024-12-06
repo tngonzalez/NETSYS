@@ -131,6 +131,8 @@ export class IptvCreateComponent implements OnInit {
       mac: [null, null],
 
       idDNSAnterior: [null, null],
+      numOS: [null, Validators.required],
+
 
       idEstadoInstalacion: [null, Validators.required],
 
@@ -153,8 +155,12 @@ export class IptvCreateComponent implements OnInit {
       this.idIPTV = id;
       this.isCreate = false;
       this.createVisible = false;
-      this.titleForm = 'Cliente Propietorio';
+      this.titleForm = 'Cliente Propietario';
       this.titleStatus = 'Actualizar';
+
+      this.iptvForm.get('numOS')?.disable();
+
+
     } else {
       this.isCreate = true;
       this.titleStatus = 'Crear';
@@ -162,6 +168,8 @@ export class IptvCreateComponent implements OnInit {
       this.titleForm = 'Datos: Cliente Seleccionado';
 
       this.iptvForm.patchValue({ idEstadoInstalacion: 1 });
+      this.iptvForm.get('numOS')?.enable();
+
     }
   }
 
@@ -201,6 +209,7 @@ export class IptvCreateComponent implements OnInit {
           nombre: this.iptvData.clienteNum,
           numero: this.iptvData.clienteNombre,
           cloud: this.iptvData.clienteCloud,
+          numOS: this.iptvData.numOS,
 
           idEstadoInstalacion: this.iptvData.idEstadoInstalacion,
           fechaInstalacion: this.iptvData.fechaInstalacion,
@@ -362,7 +371,10 @@ export class IptvCreateComponent implements OnInit {
         fechaInstalacion: this.iptvForm.value.fechaInstalacion || null,
         comentario: this.iptvForm.value.comentario || null,
         agente: this.iptvForm.value.agente || null,
+        numOS: parseInt(this.iptvForm.value.numOS),
       };
+
+      console.log(data); 
 
       this.gService
         .create('iptv/crear', data)
@@ -372,7 +384,7 @@ export class IptvCreateComponent implements OnInit {
             this.respuesta = response;
             this.noti.mensajeRedirect(
               'IPTV • Creación',
-              `${this.iptvData.clienteNombre} ha sido creado con exito.`,
+              `Servicio creado con exito.`,
               TipoMessage.success,
               `/iptv`
             );
@@ -397,11 +409,13 @@ export class IptvCreateComponent implements OnInit {
           ? parseInt(this.iptvForm.value.idDNS)
           : null,
         danado: this.danado,
+        numOS: parseInt(this.iptvForm.value.numOS),
         idCliente: parseInt(this.iptvForm.value.idCliente),
         idEstadoInstalacion: parseInt(this.iptvForm.value.idEstadoInstalacion),
         fechaInstalacion: this.iptvForm.value.fechaInstalacion || null,
         comentario: this.iptvForm.value.comentario || null,
         agente: this.iptvForm.value.agente || null,
+
       };
 
       this.gService
@@ -411,7 +425,7 @@ export class IptvCreateComponent implements OnInit {
           this.respuesta = data;
           this.noti.mensajeRedirect(
             'IPTV • Actualización',
-            `${this.iptvData.clienteNombre} ha sido actualizado con exito.`,
+            `Servicio actualizado con exito.`,
             TipoMessage.success,
             `/iptv`
           );

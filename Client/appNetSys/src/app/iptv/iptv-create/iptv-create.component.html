@@ -221,6 +221,8 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   ></textarea>
                 </div>
+
+
               </div>
 
               <!-- ========== Table DNS ========== -->
@@ -410,6 +412,30 @@
               <div>
                 <h4><strong>Información adicional</strong></h4>
 
+                <div>
+                  <label
+                    for="numOS"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Número de orden de servicio</label
+                  >
+                  <input
+                    type="text"
+                    id="numOS"
+                    name="numOS"
+                    formControlName="numOS"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Ingrese el número de orden de servicio"
+                    required
+                  />
+                  <mat-error
+                    *ngIf="errorHandling('numOS', 'required')"
+                    class="mt-2 text-sm text-red-600 dark:text-red-500"
+                  >
+                    El número de orden de servicio es
+                    <strong>requerido</strong>.
+                  </mat-error>
+                </div>
+                
                 <div>
                   <label
                     for="idEstadoInstalacion"

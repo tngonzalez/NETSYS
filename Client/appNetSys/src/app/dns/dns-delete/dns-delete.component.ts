@@ -41,7 +41,6 @@ export class DnsDeleteComponent {
     .pipe(takeUntil(this.destroy$))
     .subscribe((data: any) => {
       this.respuesta = data;
-      console.log(data);
       this.noti.mensajeRedirect(
         'DNS • Eliminado',
         `El dispositivo seleccionado fue eliminado exitosamente. `,

@@ -136,7 +136,6 @@ export class OntCreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
         this.ontData = data;
-        console.log(this.ontData); 
         this.ontForm.patchValue({
           id: this.ontData.id,
           idEstado: this.ontData.idEstado,

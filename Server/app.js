@@ -15,6 +15,7 @@ const servicesRoutes = require('./routes/servicesRoutes');
 const ontRoutes = require('./routes/ontRoutes'); 
 const dnsRoutes = require('./routes/dnsRoutes'); 
 const iptvRoutes = require('./routes/iptvRoutes'); 
+const usuarioRoutes = require('./routes/usuarioRoutes'); 
 
 
 // Acceder a la configuracion del archivo .env
@@ -41,6 +42,7 @@ app.use("/service/", servicesRoutes);
 app.use("/ont/", ontRoutes); 
 app.use("/dns/", dnsRoutes); 
 app.use("/iptv/", iptvRoutes); 
+app.use("/usuario/", usuarioRoutes); 
 
 
 // Servidor

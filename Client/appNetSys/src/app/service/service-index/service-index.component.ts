@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { ServiceCreateComponent } from '../service-create/service-create.component';
 import { ServiceDeleteComponent } from '../service-delete/service-delete.component';
 import { ServiceDetalleComponent } from '../service-detalle/service-detalle.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GenericService } from '../../shared/generic.service';
 
 @Component({
@@ -31,15 +31,14 @@ export class ServiceIndexComponent implements AfterViewInit {
 
   @ViewChild('serviceFormModal') serviceFormModal!: ServiceCreateComponent;
   @ViewChild('serviceDeleteModal') serviceDeleteModal!: ServiceDeleteComponent;
-  @ViewChild('serviceDetalleModal') serviceDetalleModal!: ServiceDetalleComponent;
 
-  constructor(private gService: GenericService, public router: Router) {}
+  constructor(
+    private gService: GenericService,
+    private route: ActivatedRoute,
+    public router: Router) {}
   
   ngAfterViewInit(): void {
     this.serviceDeleteModal.serviceDeleteModal.subscribe(() => {
-      this.fetchServicios();
-    });
-    this.serviceDetalleModal.serviceDetalleModal.subscribe(() => {
       this.fetchServicios();
     });
     this.serviceFormModal.serviceCrearModal.subscribe(() => {
@@ -91,7 +90,9 @@ export class ServiceIndexComponent implements AfterViewInit {
   }
 
   redirectDetalle(id: any) {
-    this.serviceDetalleModal.openModal(id);
+    this.router.navigate(['/service/', id], {
+      relativeTo: this.route,
+    }); 
   }
 
   updateTable(data: any) {

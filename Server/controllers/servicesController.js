@@ -26,7 +26,7 @@ module.exports.getTipoCliente = async (request, response, next) => {
   }
 };
 
-//Get By Id -- Salesforce
+//Get By Id
 module.exports.getTipoClienteById = async (request, response, next) => {
   try {
     let idTipo = parseInt(request.params.idTipo);
@@ -159,14 +159,74 @@ module.exports.delete = async (request, response, next) => {
     let idTipo = parseInt(request.params.idTipo);
 
     const data = await prisma.tipoCliente.delete({
-        where: {idTipo: idTipo},
-    }); 
-
-    response.status(200).json({
-        message: `Servicio eliminado con éxito.`,
-        data,
+      where: { idTipo: idTipo },
     });
 
+    response.status(200).json({
+      message: `Servicio eliminado con éxito.`,
+      data,
+    });
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+//Reporte
+module.exports.getServiceReport = async (request, response, next) => {
+  try {
+    const idTipo = parseInt(request.params.idTipo);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT t.nombre AS tipoCliente,
+                      COUNT(CASE WHEN c.idEstado = '4' THEN 1 END) AS danado,
+                      COUNT(CASE WHEN c.idEstado = '3' THEN 1 END) AS retiro,
+                      COUNT(CASE WHEN c.idEstado = '1' THEN 1 END) AS activo,
+                      COUNT(CASE WHEN c.idEstado = '2' THEN 1 END) AS suspensiones
+                  FROM tipocliente t
+                  LEFT JOIN cliente c ON t.idTipo = c.idTipo
+                  LEFT JOIN infocliente i ON i.idInfoCliente = c.idInfoCliente 
+                  WHERE t.idTipo = ${idTipo} GROUP BY t.nombre;`
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
+  } catch (error) {
+    response.status(500).json({ message: "Error en la solicitud", error });
+  }
+};
+
+module.exports.getClienteReport = async (request, response, next) => {
+  try {
+    const idTipo = parseInt(request.params.idTipo);
+
+    let result = await prisma.$queryRaw(
+      Prisma.sql`SELECT e.idEstado, e.nombre, c.fechaInstalacion, i.nombre, c.cloudMonitoreo FROM tipoCliente t
+                  JOIN cliente c ON t.idTipo = c.idTipo
+                  JOIN infocliente i ON i.idInfoCliente = c.idInfoCliente 
+                  JOIN estadoCliente e ON c.idEstado = e.idEstado
+                  WHERE t.idTipo = ${idTipo}; `
+    );
+
+    const conversion_BigInt_String = result.map((item) => {
+      const data = { ...item };
+      Object.keys(data).forEach((key) => {
+        if (typeof data[key] === "bigint") {
+          data[key] = data[key].toString();
+        }
+      });
+      return data;
+    });
+
+    response.json(conversion_BigInt_String);
   } catch (error) {
     response.status(500).json({ message: "Error en la solicitud", error });
   }

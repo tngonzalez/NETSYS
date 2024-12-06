@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FtthCreateComponent } from '../ftth-create/ftth-create.component';
 import { FtthDeleteComponent } from '../ftth-delete/ftth-delete.component';
 import { FtthDetalleComponent } from '../ftth-detalle/ftth-detalle.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GenericService } from '../../shared/generic.service';
 import { FtthEstadoComponent } from '../ftth-estado/ftth-estado.component';
 
@@ -59,21 +59,19 @@ export class FtthIndexComponent implements AfterViewInit {
 
   @ViewChild('ftthFormModal') ftthFormModal!: FtthCreateComponent;
   @ViewChild('ftthDeleteModal') ftthDeleteModal!: FtthDeleteComponent;
-  @ViewChild('ftthDetalleModal') ftthDetalleModal!: FtthDetalleComponent;
   @ViewChild('ftthEstadoModal') ftthEstadoModal!: FtthEstadoComponent;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-  constructor(private gService: GenericService, public router: Router) {
+  constructor(private gService: GenericService,
+    public router: Router,
+    private route: ActivatedRoute
+  ) {
     this.selectedStatus = 1;
   }
 
   ngAfterViewInit(): void {
     this.ftthDeleteModal.ftthDeleteModal.subscribe(() => {
-      this.fetchFtth();
-      this.fetchServicios();
-    });
-    this.ftthDetalleModal.ftthDetalleModal.subscribe(() => {
       this.fetchFtth();
       this.fetchServicios();
     });
@@ -224,7 +222,15 @@ export class FtthIndexComponent implements AfterViewInit {
   }
 
   redirectDetalle(id: any) {
-    this.ftthDetalleModal.openModal(id);
+    this.router.navigate(['/ftth/', id], {
+      relativeTo: this.route,
+    });
+  }
+
+  redirectGeneral() {
+    this.router.navigate(['/ftth/general'], {
+      relativeTo: this.route,
+    });
   }
 
   redirectService() {

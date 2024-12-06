@@ -1,0 +1,173 @@
+<div
+  tabindex="-1"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+  [class.hidden]="!isVisible"
+>
+  <div class="relative p-6 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-lg">
+      <!-- Cerrar Modal -->
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center"
+      >
+        <svg
+          class="w-4 h-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M1 1l6 6m0 0l6 6m-6-6L1 13m6-6L13 1"
+          />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+
+      <!--Header-->
+      <div class="text-center p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">{{ titleForm }} usuario</h3>
+      </div>
+
+      <!-- Formulario -->
+      <div class="p-6 space-y-4">
+        <form [formGroup]="userForm" novalidate class="flex flex-col gap-4">
+ 
+          <div>
+            <label
+              for="tipoRol"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Tipo de rol</label
+            >
+            <select
+              id="tipoRol"
+              formControlName="tipoRol"
+              (change)="selectStatus($event)"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option *ngFor="let tipo of statuses" [value]="tipo.id">
+                {{ tipo.name }}
+              </option>
+            </select>
+          </div>
+ 
+          <div>
+            <label
+              for="nombre"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Nombre</label
+            >
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              formControlName="nombre"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              placeholder="Ingrese el nombre"
+            />
+            <mat-error
+              *ngIf="errorHandling('nombre', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El nombre es <strong>requerido</strong>.
+            </mat-error>
+          </div>
+
+          <div>
+            <label
+              for="apellidos"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Apellidos</label
+            >
+            <input
+              type="text"
+              id="apellidos"
+              name="apellidos"
+              formControlName="apellidos"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese los apellidos"
+              required
+            />
+            <mat-error
+              *ngIf="errorHandling('apellidos', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              Los apellidos son <strong>requeridos</strong>.
+            </mat-error>
+          </div>
+
+          <div>
+            <label
+              for="correo"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Correo</label
+            >
+            <input
+              type="text"
+              id="correo"
+              name="correo"
+              formControlName="correo"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Ingrese el correo asignado"
+              #segmentoInput
+              required
+            />
+            <mat-error
+              *ngIf="errorHandling('correo', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              El correo es <strong>requerido</strong>.
+            </mat-error>
+          </div>
+
+          <div>
+            <label
+              for="clave"
+              class="block mb-2 text-sm font-medium text-gray-700"
+              >Contraseña</label
+            >
+            <input
+              type="password"
+              id="clave"
+              name="clave"
+              formControlName="clave"
+              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              #serieInput
+              required
+              placeholder="Ingrese la contraseña"
+            />
+            <mat-error
+              *ngIf="errorHandling('clave', 'required')"
+              class="mt-2 text-sm text-red-600 dark:text-red-500"
+            >
+              La contraseña es <strong>requerida</strong>.
+            </mat-error>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-center p-4">
+            <button
+              type="submit"
+              (click)="createUser()"
+              class="text-black bg-[#909B9F] focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm hover:bg-[#112346] hover:text-white"
+            >
+              Guardar
+            </button>
+            <button
+              type="submit"
+              (click)="closeModal()"
+              class="py-2.5 px-5 ms-10 text-white bg-[#112346] hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center drop-shadow-sm"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
