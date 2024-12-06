@@ -120,7 +120,6 @@ export class UserCreateComponent {
         correo: this.userForm.value.correo,
         clave: this.userForm.value.clave, 
       };
-      console.log()
 
       this.gService
       .create('usuario/crear', infoUsuario)
@@ -158,7 +157,6 @@ export class UserCreateComponent {
 
       };
 
-      console.log(infoUsuario); 
 
       this.gService
         .update('usuario/', infoUsuario)
@@ -189,7 +187,6 @@ export class UserCreateComponent {
       tipoRol: selectedId,
     });
 
-    console.log(this.tipoRol); 
   }
 
   ngOnDestroy() {

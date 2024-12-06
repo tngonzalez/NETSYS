@@ -23,7 +23,6 @@ export class MainMenuComponent implements OnInit{
     this.authService.decodeToken.subscribe((usuario: any) => {
       this.user = usuario;
 
-      console.log(this.user);
     });
 
     if (!this.user) {

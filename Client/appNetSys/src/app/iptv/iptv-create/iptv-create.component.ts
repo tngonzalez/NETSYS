@@ -374,7 +374,6 @@ export class IptvCreateComponent implements OnInit {
         numOS: parseInt(this.iptvForm.value.numOS),
       };
 
-      console.log(data); 
 
       this.gService
         .create('iptv/crear', data)

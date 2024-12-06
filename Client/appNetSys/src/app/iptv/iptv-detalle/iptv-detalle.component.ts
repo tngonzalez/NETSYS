@@ -66,7 +66,6 @@ export class IptvDetalleComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
         this.data = response;
-        console.log(this.data);
 
         this.rClienteID = this.data.infoCliente.numero;
         this.rOS = this.data.numOS;

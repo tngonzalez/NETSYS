@@ -42,7 +42,6 @@ export class DashboardIndexComponent implements AfterViewInit {
     this.authService.decodeToken.subscribe((usuario: any) => {
       this.user = usuario;
 
-      console.log(this.user);
     });
 
     if (!this.user) {

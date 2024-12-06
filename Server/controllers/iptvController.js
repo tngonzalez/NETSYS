@@ -94,7 +94,7 @@ module.exports.getByIdIPTV = async (request, response, next) => {
 module.exports.create = async (request, response, next) => {
   try {
     const data = request.body;
-    console.log(data);
+
     //dsn - Actualizar estado
     await prisma.dSN_Stick.update({
       where: { idDSN: data.idDSN },

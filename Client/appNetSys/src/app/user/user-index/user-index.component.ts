@@ -58,10 +58,8 @@ export class UserIndexComponent implements AfterViewInit {
       .list('usuario/')
       .pipe(takeUntil(this.destroy$))
       .subscribe((response: any) => {
-        // Asignar datos recibidos
         this.datos = response;
   
-        // Agregar la variable 'rol' a cada usuario
         this.datos.forEach((usuario: any) => {
           if (usuario.tipoRol === 1) {
             usuario.rol = "Support - L1";
@@ -70,10 +68,7 @@ export class UserIndexComponent implements AfterViewInit {
           }
         });
   
-        // Imprimir para depuración
-        console.log(this.datos);
-  
-        // Asignar datos a la fuente de la tabla
+
         this.dataSource = new MatTableDataSource(this.datos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

@@ -70,7 +70,6 @@ module.exports.login = async (request, response, next) => {
       },
     });
 
-    console.log(usuario);
 
     // Verificar si el usuario existe
     if (!usuario) {
@@ -138,7 +137,6 @@ module.exports.create = async (request, response, next) => {
 module.exports.update = async (request, response, next) => {
   try {
     const infoUsuario = request.body;
-    console.log(infoUsuario);
 
     const oldUser = await prisma.usuario.findUnique({
       where: {

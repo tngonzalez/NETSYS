@@ -245,7 +245,7 @@ module.exports.update = async (request, response, next) => {
   try {
     let id = parseInt(request.params.id);
     const data = request.body;
-    console.log(data);
+
     const ftth = await prisma.cliente.findUnique({
       where: { idCliente: data.id },
       include: {
