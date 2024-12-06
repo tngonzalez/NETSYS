@@ -1,1 +1,3 @@
-Reico Net Sys, es una aplicación web que permite en mantenimiento del servicio de FTTCH (Fiber To Home), gestionamiento de IPs y el registro de router.
+Reico NetSys es sistema automatizado que permite optimizar tres puntos claves de la empresa: Servicios FTTH, Direccionamiento IP y Reportería de ambos módulos. 
+
+

@@ -46,7 +46,7 @@ async function main() {
       "nombre": "Technical Support",
       "apellidos": "REICO",
       "correo": "support1@reico.cr",
-      "clave": "reico123"
+      "clave": "$2b$10$XVxmDMCSIr.mJRHJJiGDfu1RZnoUVqgUX5XyfKbOndAV7m3y/lF9q"
     }
   });
 }
