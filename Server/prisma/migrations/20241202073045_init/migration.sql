@@ -226,7 +226,6 @@ CREATE TABLE `IPTV` (
     `idEstado` INTEGER NOT NULL,
     `idEstadoInstalacion` INTEGER NOT NULL,
     `idDSN` INTEGER NULL,
-    `numOS` INTEGER NOT NULL,
     `fechaInstalacion` VARCHAR(50) NULL,
     `comentario` VARCHAR(200) NULL,
     `agente` VARCHAR(100) NULL,
@@ -260,19 +259,6 @@ CREATE TABLE `IpPublica` (
     UNIQUE INDEX `IpPublica_cliente_key`(`cliente`),
     UNIQUE INDEX `IpPublica_broadcast_key`(`broadcast`),
     PRIMARY KEY (`idIP`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Usuario` (
-    `idUsuario` INTEGER NOT NULL AUTO_INCREMENT,
-    `tipoRol` INTEGER NOT NULL,
-    `nombre` VARCHAR(50) NOT NULL,
-    `apellidos` VARCHAR(50) NOT NULL,
-    `correo` VARCHAR(50) NOT NULL,
-    `clave` VARCHAR(191) NOT NULL,
-
-    UNIQUE INDEX `Usuario_correo_key`(`correo`),
-    PRIMARY KEY (`idUsuario`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey

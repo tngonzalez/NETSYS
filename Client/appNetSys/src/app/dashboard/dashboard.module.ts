@@ -13,11 +13,13 @@ import { MatTableModule } from '@angular/material/table';
 import { NgIconsModule } from '@ng-icons/core';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from '../shared/shared.module';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
 
 
 @NgModule({
   declarations: [
     DashboardIndexComponent,
+    UserSettingsComponent,
   ],
   imports: [
     CommonModule,

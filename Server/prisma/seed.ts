@@ -40,15 +40,6 @@ async function main() {
     data: bw,
   });
 
-  await prisma.usuario.create ({
-    data: {
-      "tipoRol": 1, //1 = Support L1, 2 = Support L2 
-      "nombre": "Technical Support",
-      "apellidos": "REICO",
-      "correo": "support1@reico.cr",
-      "clave": "$2b$10$XVxmDMCSIr.mJRHJJiGDfu1RZnoUVqgUX5XyfKbOndAV7m3y/lF9q"
-    }
-  });
 }
 
 main()
