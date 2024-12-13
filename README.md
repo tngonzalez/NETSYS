@@ -48,7 +48,7 @@
 <p>Tylinn González, <a href="https://www.linkedin.com/in/tylinngonzalez/">@tylinngonzalez</a></p>
 
 <h2>Licencia</h2> 
-<p>Este proyecto está bajo la Licencia MIT. Consulte el archivo de <a href="https://github.com/tngonzalez/Noahs-GYM/blob/main/LICENSE">LICENCIA</a> para obtener más información.</p>
+<p>Este proyecto está bajo la Licencia MIT. Consulte el archivo de <a href="https://github.com/tngonzalez/NETSYS/blob/main/LICENSE">LICENCIA</a> para obtener más información.</p>
 
 <h2>Vista previa 🚀</h2> 
 
