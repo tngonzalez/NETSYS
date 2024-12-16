@@ -42,6 +42,7 @@
     <li>AngularJS - Framework</li>
     <li>MySQL Server - Sistema de base de datos </li>
     <li>Prisma - Object Relational Mapping </li>
+    <li>NodeJS - Entorno de ejecución </li>
 </ul>
 
 <h2>Autor</h2> 
